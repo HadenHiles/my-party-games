@@ -6,7 +6,7 @@
  */
 require_once("config.php");
 
-$db = new PDO("mysql:host=$theHost;dbname=$theDatabase", $theUser, $thePass);
+$db = new PDO("mysql:host=".THE_HOST.";dbname=".THE_DB, THE_USER, THE_PASSWORD);
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // example of database connection below
