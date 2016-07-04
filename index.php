@@ -1,3 +1,3 @@
 <?php
-echo "hit";
+require_once("splash/splash.php");
 ?>
