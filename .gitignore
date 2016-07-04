@@ -1,2 +1,4 @@
 .idea
 *.iml
+files
+includes/config.php

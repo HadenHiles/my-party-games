@@ -4,11 +4,7 @@
  * Date: 7/3/2016
  * Description: Require this file anywhere you need connect to the database and call "global $db;" to assign to this connection to the $db variable
  */
-
-$theHost = "localhost";
-$theDatabase = "partygames";
-$theUser = "root";
-$thePass = "21jcws";
+require_once("config.php");
 
 $db = new PDO("mysql:host=$theHost;dbname=$theDatabase", $theUser, $thePass);
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
