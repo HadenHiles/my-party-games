@@ -74,6 +74,11 @@
         </div>
 
         <div class="mdl-layout__content">
+            <div class="mdl-grid mdl-grid--no-spacing" style="height: 760px; width: 100%;">
+                <div class="mdl-cell mdl-cell--12-col banner">
+                    <div class="banner-overlay"></div>
+                </div>
+            </div>
             <footer class="android-footer mdl-mega-footer">
                 <div class="mdl-mega-footer--middle-section">
                     <p class="mdl-typography--font-light">Copyright © <?=date("Y")?> Haden & Justin</p>

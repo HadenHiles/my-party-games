@@ -2,3 +2,4 @@
 *.iml
 files
 includes/config.php
+*.css
