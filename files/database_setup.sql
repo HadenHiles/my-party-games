@@ -28,3 +28,6 @@ ALTER TABLE `game_connections`
 --
 ALTER TABLE `game_connections`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- UPDATE TO game_connection table 7/4/2016
+ALTER TABLE game_connections ADD COLUMN date DATE, ADD COLUMN game_active BOOL
