@@ -10,7 +10,6 @@ require_once('../includes/database.php');
 require_once('../includes/class.GameSession.php');
 
 try {
-
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
     $mySession->setup();
