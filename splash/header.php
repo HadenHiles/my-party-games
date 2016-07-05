@@ -25,10 +25,12 @@
         <title>Android</title>
 
         <!-- Page styles -->
+        <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-amber.min.css" />
-        <link rel="stylesheet" href="splash/styles.css">
+        <link rel="stylesheet" href="splash/android.css" />
+        <link rel="stylesheet" href="splash/splash.css" />
         <style>
             #view-source {
                 position: fixed;
