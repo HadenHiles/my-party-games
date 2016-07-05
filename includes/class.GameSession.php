@@ -33,7 +33,7 @@ class GameSession {
      * Creates a new game session and saves a reference in the database
      * @returns boolean, true/false
      */
-    public function setup() {
+    public function setup($new = false) {
 
         global $db;
 
@@ -54,7 +54,7 @@ class GameSession {
                     $result = $result->fetch(PDO::FETCH_ASSOC);
                     $this->uniquecode = $result['unique_code'];
 
-                } else {
+                } else if ($new) {
 
                     //insert new session into database
                     $this->uniquecode = self::setCode();
