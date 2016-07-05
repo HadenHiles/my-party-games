@@ -5,16 +5,17 @@ require_once("../includes/database.php");
 require_once("header.php");
 
 try {
-    if (!isset($_GET['code'])) {
+    if (!isset($_SESSION['user'])) {
         header ("Location: ../index.php");
-    } else {
-        $code = $_GET['code'];
     }
+    $user = $_SESSION['user'];
 
     //init a new game session
-    $mySession = new GameSession(SESSION_ID, $_SERVER['REMOTE_ADDR']);
-    $mySession->join($code);
+    $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    $game = $mySession->load($user['code']);
 
+    var_dump($game);
+    
 } catch (Exception $e) {
     //show any errors
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();

@@ -10,6 +10,8 @@ class GameSession {
     private $sessionid;
     private $uniquecode;
     private $hostip;
+    private $displayname;
+    private $userid;
 
     public function  __construct($sessionid, $ip) {
 
@@ -18,7 +20,6 @@ class GameSession {
             $this->sessionid = $sessionid;
             $this->uniquecode = 0;
             $this->hostip = $ip;
-            self::setup();
 
         } else {
             throw new Exception ("You need to specify the sessionid!");
@@ -104,6 +105,106 @@ class GameSession {
         } else {
             throw new Exception ("Session could not be updated.");
         }
+    }
+
+    public function join($name, $code, $ip) {
+
+        global $db;
+
+        if (!empty($code)) {
+            $sql = 'SELECT * FROM game_connections WHERE unique_code = :code';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":code", $code);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                //game session found, now create user
+                $sql = 'SELECT * FROM users
+                        WHERE display_name = :name
+                        AND game_id = :code';
+
+                $result = $db->prepare($sql);
+                $result->bindValue(":name", $name);
+                $result->bindValue(":code", $code);
+
+                if ($result->execute() && $result->errorCode() == 0) {
+
+                    if ($result->rowCount() > 0) {
+                        //user alerady exists
+                        return "user-exists";
+                    } else {
+                        //create user and redirect
+                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, last_active_date)
+                                VALUES (:code, :ip, :name, NOW())';
+
+                        $result = $db->prepare($sql);
+                        $result->bindValue(":name", $name);
+                        $result->bindValue(":code", $code);
+                        $result->bindValue(":ip", $ip);
+
+                        if ($result->execute() && $result->errorCode() == 0) {
+
+                            $sql = 'SELECT id FROM users
+                                    WHERE game_id = :code
+                                    AND display_name = :name';
+
+                            $result = $db->prepare($sql);
+                            $result->bindValue(":name", $name);
+                            $result->bindValue(":code", $code);
+
+                            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                                $result = $result->fetch(PDO::FETCH_ASSOC);
+                                $this->userid = $result['id'];
+                                $this->uniquecode = $code;
+                                $this->displayname = $name;
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function load($code) {
+
+        global $db;
+
+        $sql = 'SELECT * FROM game_connections WHERE unique_code = :code';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":code", $code);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            $sql = 'SELECT * FROM users WHERE game_id = :code';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":code", $code);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                return $result->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }
+
+        return false;
+    }
+
+    public function getUser() {
+        if (!empty($this->userid)) {
+
+            return array(
+                'userid' => $this->userid,
+                'code' => $this->uniquecode,
+                'name' => $this->displayname
+            );
+        }
+        return false;
     }
 
     public function setCode() {
