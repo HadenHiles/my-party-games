@@ -5,8 +5,8 @@
 
         <div class="android-header mdl-layout__header mdl-layout__header--waterfall">
             <div class="mdl-layout__header-row">
-              <span class="android-title mdl-layout-title" style="color: #8bc34a;">
-                Party Games
+              <span class="android-title mdl-layout-title" style="color: #757575;">
+                <i class="fa fa-glass" aria-hidden="true" style="color: #8bc34a;"></i> Party Games
               </span>
                 <!-- Add spacer, to align navigation to the right in desktop -->
                 <div class="android-header-spacer mdl-layout-spacer"></div>
@@ -21,62 +21,37 @@
                 <!-- Navigation -->
                 <div class="android-navigation-container">
                     <nav class="android-navigation mdl-navigation">
-                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Phones</a>
-                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Tablets</a>
-                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Wear</a>
-                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">TV</a>
-                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Auto</a>
-                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">One</a>
-                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Play</a>
+                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/games">Games</a>
                     </nav>
                 </div>
                 <button class="android-more-button mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" id="more-button">
                     <i class="material-icons">more_vert</i>
                 </button>
                 <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="more-button">
-                    <li class="mdl-menu__item">5.0 Lollipop</li>
-                    <li class="mdl-menu__item">4.4 KitKat</li>
-                    <li disabled class="mdl-menu__item">4.3 Jelly Bean</li>
-                    <li class="mdl-menu__item">Android History</li>
+                    <li class="mdl-menu__item"><a href="/admin"><i class="fa fa-lock"></i> Admin</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="android-drawer mdl-layout__drawer">
             <span class="mdl-layout-title" style="color: #fff; height: auto; padding-top: 60px;">
-              Party Games
+              <i class="fa fa-glass" aria-hidden="true"></i> Party Games
             </span>
             <nav class="mdl-navigation">
-                <a class="mdl-navigation__link" href="">Phones</a>
-                <a class="mdl-navigation__link" href="">Tablets</a>
-                <a class="mdl-navigation__link" href="">Wear</a>
-                <a class="mdl-navigation__link" href="">TV</a>
-                <a class="mdl-navigation__link" href="">Auto</a>
-                <a class="mdl-navigation__link" href="">One</a>
-                <a class="mdl-navigation__link" href="">Play</a>
+                <span class="mdl-navigation__link">Games</span>
                 <div class="android-drawer-separator"></div>
-                <span class="mdl-navigation__link" href="">Versions</span>
-                <a class="mdl-navigation__link" href="">Lollipop 5.0</a>
-                <a class="mdl-navigation__link" href="">KitKat 4.4</a>
-                <a class="mdl-navigation__link" href="">Jelly Bean 4.3</a>
-                <a class="mdl-navigation__link" href="">Android history</a>
-                <div class="android-drawer-separator"></div>
-                <span class="mdl-navigation__link" href="">Resources</span>
-                <a class="mdl-navigation__link" href="">Official blog</a>
-                <a class="mdl-navigation__link" href="">Android on Google+</a>
-                <a class="mdl-navigation__link" href="">Android on Twitter</a>
-                <div class="android-drawer-separator"></div>
-                <span class="mdl-navigation__link" href="">For developers</span>
-                <a class="mdl-navigation__link" href="">App developer resources</a>
-                <a class="mdl-navigation__link" href="">Android Open Source Project</a>
-                <a class="mdl-navigation__link" href="">Android SDK</a>
+                <a class="mdl-navigation__link" href="/games/drink-or-dare">Drink or Dare</a>
             </nav>
         </div>
 
         <div class="mdl-layout__content">
-            <div class="mdl-grid mdl-grid--no-spacing" style="height: 760px; width: 100%;">
+            <div class="mdl-grid mdl-grid--no-spacing" style="height: 600px; width: 100%;">
                 <div class="mdl-cell mdl-cell--12-col banner">
                     <div class="banner-overlay"></div>
+                    <div class=" mdl-cell mdl-cell--12-col banner-content">
+                        <h1>Fun Games for Every Party</h1>
+                        <p>Try out our new games or brush up on the rules of your favorites.</p>
+                    </div>
                 </div>
             </div>
             <footer class="android-footer mdl-mega-footer">
