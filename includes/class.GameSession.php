@@ -108,8 +108,7 @@ class GameSession {
         list($usec, $sec) = explode(' ', microtime());
         $seed = (float) $sec + ((float) $usec * 100000);
         srand($seed);
-        $rand = rand(999, 9998) +1;
-        return $rand;
+        return rand(999, 9998) +1;
     }
 
     public function getCode() {

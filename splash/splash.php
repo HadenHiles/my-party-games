@@ -1,5 +1,34 @@
 <?php
+    require_once("includes/class.GameSession.php");
+    require_once("includes/common.php");
+    require_once("includes/database.php");
     require_once("header.php");
+
+    try {
+        //init a new game session
+        $mySession = new GameSession(SESSION_ID, $_SERVER['REMOTE_ADDR']);
+
+        if (isset($_POST['new-code'])) {
+
+            //requested to make a new code for the current session
+            $mySession->newCode();
+            header("Location: ".$_SERVER['PHP_SELF']);
+        } else if (isset($_POST['new-session'])) {
+
+            //requested to make a new session
+            session_regenerate_id();
+            $mySession->removeSession(SESSION_ID);
+            header("Location: ".$_SERVER['PHP_SELF']);
+        }
+
+        //get the current game code
+        $code = $mySession->getCode();
+
+    } catch (Exception $e) {
+        //show any errors
+        echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
+    }
+
     ?>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
@@ -74,6 +103,14 @@
         </div>
 
         <div class="mdl-layout__content">
+
+            <form name="game-session-form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                <button type="submit" name="new-code">New Code</button>
+                <button type="submit" name="new-session">New Session</button>
+                <div>Random Code: <?php echo $code; ?></div>
+                <div>Session ID: <?php echo SESSION_ID; ?></div>
+            </form>
+
             <footer class="android-footer mdl-mega-footer">
                 <div class="mdl-mega-footer--middle-section">
                     <p class="mdl-typography--font-light">Copyright © <?=date("Y")?> Haden & Justin</p>
