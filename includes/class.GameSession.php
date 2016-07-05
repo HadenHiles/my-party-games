@@ -47,8 +47,8 @@ class GameSession {
 
                 //insert new session into database
                 $this->uniquecode = self::setCode();
-                $sql = 'INSERT INTO game_connections (session_id, unique_code, host_ip_address)
-                        VALUES (:sessionid, :uniquecode, :hostip)';
+                $sql = 'INSERT INTO game_connections (session_id, unique_code, host_ip_address, date, game_active)
+                        VALUES (:sessionid, :uniquecode, :hostip, NOW(), 1)';
 
                 $result = $db->prepare($sql);
                 $result->bindValue(":sessionid", $this->sessionid);
@@ -73,7 +73,9 @@ class GameSession {
         $this->uniquecode = self::setCode();
 
         $sql = 'UPDATE game_connections 
-                SET unique_code = :uniquecode
+                SET unique_code = :uniquecode,
+                date = NOW(),
+                game_active = 1
                 WHERE session_id = :sessionid';
 
         $result = $db->prepare($sql);

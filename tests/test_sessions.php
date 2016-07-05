@@ -11,19 +11,23 @@ require_once('../includes/class.GameSession.php');
 
 try {
 
+    //init a new game session
     $mySession = new GameSession(SESSION_ID, $_SERVER['REMOTE_ADDR']);
 
     if (isset($_POST['new-code'])) {
 
+        //requested to make a new code for the current session
         $mySession->newCode();
         header("Location: test_sessions.php");
     } else if (isset($_POST['new-session'])) {
 
+        //requested to make a new session
         session_regenerate_id();
         $mySession->removeSession(SESSION_ID);
         header("Location: test_sessions.php");
     }
 
+    //get the current game code
     $code = $mySession->getCode();
 
 } catch (Exception $e) {
