@@ -10,7 +10,7 @@
 session_start();
 
 //examples of constants
-//define("IMAGE_DIR", "images/");
+define("SESSION_ID", session_id());
 
 //examples of authorization for the website
 //define("IS_LOGGED_IN", isset($_SESSION['username']));
