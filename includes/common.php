@@ -11,6 +11,7 @@ session_start();
 
 //examples of constants
 define("SESSION_ID", session_id());
+define("DEVICE_IP", $_SERVER['REMOTE_ADDR']);
 
 //examples of authorization for the website
 //define("IS_LOGGED_IN", isset($_SESSION['username']));
