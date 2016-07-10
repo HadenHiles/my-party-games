@@ -3,8 +3,11 @@
  * Created by handshiles on 2016-07-05.
  */
 require_once("../../includes/common.php");
-require_once("../../vendor/facebook/php-sdk-v4/src/Facebook/autoload.php");
+require_once("../../vendor/autoload.php");
 require_once("config.php");
+
+use Facebook\FacebookRequest;
+use Facebook\Authentication\OAuth2Client;
 
 $fb = new Facebook\Facebook([
     'app_id' => APP_ID,
@@ -15,6 +18,12 @@ $fb = new Facebook\Facebook([
 $helper = $fb->getRedirectLoginHelper();
 try {
     $accessToken = $helper->getAccessToken();
+
+    $client = $fb->getOAuth2Client();
+    // Returns a long-lived access token
+    $accessToken = $client->getLongLivedAccessToken($accessToken);
+    //Debug the access token
+    $metaData = $client->debugToken($accessToken);
 } catch(Facebook\Exceptions\FacebookResponseException $e) {
     // When Graph returns an error
     echo 'Graph returned an error: ' . $e->getMessage();
@@ -27,8 +36,31 @@ try {
 
 if (isset($accessToken)) {
     // Logged in!
-    $_SESSION['facebook_access_token'] = (string) $accessToken;
-    echo $_SESSION['facebook_access_token'];
+    $_SESSION['fb_access_token'] = (string) $accessToken;
+
+    try {
+        // Get the Facebook\GraphNodes\GraphUser object for the current user.
+        // If you provided a 'default_access_token', the '{access-token}' is optional.
+        $response = $fb->get('/me?fields=id,name,picture', $_SESSION['fb_access_token']);
+    } catch(Facebook\Exceptions\FacebookResponseException $e) {
+        // When Graph returns an error
+        echo 'Graph returned an error: ' . $e->getMessage();
+        exit;
+    } catch(Facebook\Exceptions\FacebookSDKException $e) {
+        // When validation fails or other local issues
+        echo 'Facebook SDK returned an error: ' . $e->getMessage();
+        exit;
+    }
+
+    $me = $response->getGraphUser();
+    $userID = $me['id'];
+
+    $picture = $me['picture'];
+    echo '<pre>';
+    echo "<img src='" . $picture['url'] . "' /></br>";
+    echo $accessToken . "</br>";
+    var_dump($metaData->getExpiresAt());
+    echo '</pre>';
 
     // Now you can redirect to another page and use the
     // access token from $_SESSION['facebook_access_token']

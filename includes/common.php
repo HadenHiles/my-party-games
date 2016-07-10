@@ -6,8 +6,10 @@
  *              Also define any constants for the web page here.
  */
 
-//start the session
-session_start();
+//start the session if it isn't already started
+if(!session_id()) {
+    session_start();
+}
 
 //examples of constants
 define("SESSION_ID", session_id());

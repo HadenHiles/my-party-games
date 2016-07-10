@@ -2,6 +2,7 @@
 /**
  * Created by handshiles on 2016-07-05.
  */
+require_once("../../includes/common.php");
 require_once("../../vendor/facebook/php-sdk-v4/src/Facebook/autoload.php");
 require_once("config.php");
 
@@ -21,7 +22,7 @@ $fb = new Facebook\Facebook([
 try {
     // Get the Facebook\GraphNodes\GraphUser object for the current user.
     // If you provided a 'default_access_token', the '{access-token}' is optional.
-    $response = $fb->get('/me', '{access-token}');
+    $response = $fb->get('/me', $_SESSION['facebook_access_token']);
 } catch(Facebook\Exceptions\FacebookResponseException $e) {
     // When Graph returns an error
     echo 'Graph returned an error: ' . $e->getMessage();
