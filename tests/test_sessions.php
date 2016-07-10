@@ -10,9 +10,9 @@ require_once('../includes/database.php');
 require_once('../includes/class.GameSession.php');
 
 try {
-
     //init a new game session
-    $mySession = new GameSession(SESSION_ID, $_SERVER['REMOTE_ADDR']);
+    $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    $mySession->setup(true);
 
     if (isset($_POST['new-code'])) {
 
