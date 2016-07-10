@@ -10,7 +10,7 @@ $fb = new Facebook\Facebook([
     'app_id' => APP_ID,
     'app_secret' => APP_SECRET,
     'default_graph_version' => 'v2.6',
-    //'default_access_token' => '{access-token}', // optional
+    'default_access_token' => $_SESSION['fb_access_token']
 ]);
 
 // Use one of the helper classes to get a Facebook\Authentication\AccessToken entity.
@@ -34,4 +34,6 @@ try {
 }
 
 $me = $response->getGraphUser();
-echo 'Logged in as ' . $me->getName();
+$picture = $me['picture'];
+echo 'Logged in as ' . $me->getName() . '</br>';
+echo "<img src='" . $picture['url'] . "' />";

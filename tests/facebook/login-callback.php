@@ -52,16 +52,7 @@ if (isset($accessToken)) {
         exit;
     }
 
-    $me = $response->getGraphUser();
-    $userID = $me['id'];
-
-    $picture = $me['picture'];
-    echo '<pre>';
-    echo "<img src='" . $picture['url'] . "' /></br>";
-    echo $accessToken . "</br>";
-    var_dump($metaData->getExpiresAt());
-    echo '</pre>';
-
     // Now you can redirect to another page and use the
     // access token from $_SESSION['facebook_access_token']
+    header("Location: ../../lobby/");
 }
