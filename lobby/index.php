@@ -7,7 +7,7 @@ require_once("header.php");
 try {
     //check for user in session
     if (empty($_SESSION['user'])) {
-        header ("Location: ../index.php");
+        header ("Location: go-to-lobby.php");
     }
     $user = $_SESSION['user'];
 
@@ -101,8 +101,6 @@ try {
         </div>
 
         <div class="mdl-layout__content">
-
-
             <footer class="android-footer mdl-mega-footer">
                 <div class="mdl-mega-footer--middle-section">
                     <p class="mdl-typography--font-light">Copyright © <?=date("Y")?> Haden & Justin</p>

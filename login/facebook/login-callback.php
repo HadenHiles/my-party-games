@@ -6,6 +6,7 @@ require_once("../../includes/common.php");
 require_once("../../vendor/autoload.php");
 require_once("config.php");
 
+use Facebook\FacebookRequest;
 use Facebook\Authentication\OAuth2Client;
 
 $fb = new Facebook\Facebook([
@@ -53,5 +54,5 @@ if (isset($accessToken)) {
 
     // Now you can redirect to another page and use the
     // access token from $_SESSION['facebook_access_token']
-    header("Location: ../../lobby/go-to-lobby.php?join=true&fb-login=true");
+    header("Location: ../../lobby/go-to-lobby.php?join=Join");
 }
