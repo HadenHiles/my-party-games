@@ -2,7 +2,6 @@
 /**
  * Created by handshiles on 2016-07-10.
  */
-ini_set("display_errors", 1);
 require_once('../includes/common.php');
 require_once('../includes/database.php');
 require_once('../includes/class.GameSession.php');

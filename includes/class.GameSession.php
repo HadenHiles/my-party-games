@@ -345,13 +345,14 @@ class GameSession {
         global $db;
 
         //query the game details
-        $sql = 'SELECT * FROM game_connections WHERE unique_code = :code';
+        $sql = 'SELECT * FROM game_connections WHERE unique_code = :code LIMIT 1';
 
         $result = $db->prepare($sql);
         $result->bindValue(":code", $code);
+        $result->execute();
+        $game = $result->fetch();
 
-        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-
+        if ($result->rowCount() == 1) {
             //select all users in current game
             $sql = 'SELECT * FROM users WHERE game_id = :code';
 
@@ -360,8 +361,10 @@ class GameSession {
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-                //return associative array of users
-                return $result->fetchAll(PDO::FETCH_ASSOC);
+                //add the users to the game
+                $game['users'] = $result->fetchAll(PDO::FETCH_ASSOC);
+                //return associative array for the game
+                return $game;
             }
         }
 
