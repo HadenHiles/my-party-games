@@ -140,7 +140,7 @@ class GameSession {
      * @param string, fbaccesstoken
      * @returns boolean, true/false
      */
-    public function join($name, $code, $fbaccesstoken) {
+    public function join($name, $code, $fbaccesstoken, $fbuserid) {
 
         global $db;
 
@@ -169,13 +169,14 @@ class GameSession {
                         return "user-exists";
                     } else {
                         //create user reference in database
-                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, fb_access_token, last_active_date)
-                                VALUES (:code, :ip, :name, :fbaccesstoken, NOW())';
+                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, fb_access_token, fb_user_id, last_active_date)
+                                VALUES (:code, :ip, :name, :fbaccesstoken, :fbuserid, NOW())';
 
                         $result = $db->prepare($sql);
                         $result->bindValue(":name", $name);
                         $result->bindValue(":code", $code);
                         $result->bindValue(":fbaccesstoken", $fbaccesstoken);
+                        $result->bindValue(":fbuserid", $fbuserid);
                         $result->bindValue(":ip", $this->hostip);
 
                         if ($result->execute() && $result->errorCode() == 0) {

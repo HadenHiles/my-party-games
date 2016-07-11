@@ -5,14 +5,17 @@
 require_once('../includes/common.php');
 require_once('../includes/database.php');
 require_once('../includes/class.GameSession.php');
+require_once('header.php');
+
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 
     //check for form submission to join a game session
-    if (isset($_REQUEST['join'])) {
+    if ((isset($_REQUEST['unique-id']) && !empty($_REQUEST['unique-id'])) || (isset($_SESSION['current_game_code']) || !empty($_SESSION['current_game_code']))) {
         //vars
         $code = $_REQUEST['unique-id'];
+        $_SESSION['current_game_code'] = $code;
 
         //Facebook login
         require_once("../vendor/autoload.php");
@@ -31,45 +34,48 @@ try {
         ?>
         <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
             <main class="mdl-layout__content">
+                <div style="color: #cccccc;">
+                    <h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4>
+                </div>
                 <div class="mdl-card mdl-shadow--6dp">
                     <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
-                        <h2 class="mdl-card__title-text">Who da hell are you?</h2>
+                        <h2 class="mdl-card__title-text">Who the heck are you?</h2>
                     </div>
                     <div class="mdl-card__supporting-text">
-                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-                            <div class="mdl-textfield mdl-js-textfield">
-                                <input class="mdl-textfield__input" type="text" name="display-name" id="display-name" placeholder="Enter Nickname" />
+                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" id="guestForm">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="text" name="display-name" id="display-name" />
                                 <label class="mdl-textfield__label" for="display-name">Nickname</label>
                             </div>
+                            <input type="hidden" name="unique-id" value="<?php echo $code; ?>" />
                         </form>
                     </div>
-                    <div class="mdl-card__actions">
-                        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Continue</button>
+                    <div class="mdl-card__actions" style="text-align: center; margin-top: -25px;">
+                        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="$('#guestForm').submit();" style="width: 100%;">Continue As Guest</button>
                     </div>
-                    <div class="mdl-card__supporting-text">
-                        OR
+                    <div class="mdl-card__actions mdl-card--border" style="text-align: center; padding: 25px;">
+                        <span style="font-weight: bold;">OR</span>
                     </div>
-                    <div class="mdl-card__actions mdl-card--border">
-                        <a href="<? echo htmlspecialchars($loginUrl); ?>" class="btn btn-block btn-social btn-facebook">
-                            <span class="fa fa-twitter"></span> Sign in with Facebook
+                    <div class="mdl-card__actions mdl-card--border facebook">
+                        <a href="<?php echo htmlspecialchars($loginUrl); ?>" class="btn btn-block btn-social btn-facebook">
+                            <span class="fa fa-facebook"></span> Sign in with Facebook
                         </a>
                     </div>
                 </div>
             </main>
         </div>
-        <?
-        if(isset($_REQUEST['display-name']) && !isset($_REQUEST['fb-login'])) {
+        <?php
+        if(isset($_REQUEST['display-name'])) {
             $name = $_REQUEST['display-name'];
             $fbToken = '';
+            $fbUserId = '';
 
             //basic error handling
-            if (empty($code)) {
-                $msg = "Please enter a game code to join!";
-            } else if (empty($name)) {
-                $msg = "Please choose a nickname!";
+            if (empty($name)) {
+                $msg = "Please enter a nickname!";
             } else {
                 //request to join a session
-                $result = $mySession->join($name, $code, $fbToken);
+                $result = $mySession->join($name, $code, $fbToken, $fbUserId);
 
                 //check result and if true then save user in session and redirect to lobby
                 if ($result == true && intval($result)) {
@@ -79,9 +85,9 @@ try {
                     exit();
 
                 } else if ($result == "user-exists") {
-                    $msg = "Display name already created";
+                    $msg = "Someone is already using that name!";
                 } else {
-                    $msg = "Game session cannot be found!";
+                    $msg = "Game cannot be found!";
                 }
             }
         } else if(isset($_REQUEST['fb-login'])) {
@@ -101,7 +107,7 @@ try {
             $me = $response->getGraphUser();
 
             //request to join a session
-            $result = $mySession->join($me['name'], $code, $_SESSION['fb_access_token']);
+            $result = $mySession->join($me['name'], (int)$_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id']);
 
             //check result and if true then save user in session and redirect to lobby
             if ($result == true && intval($result)) {
@@ -115,18 +121,52 @@ try {
             }
         }
     } else {
-        //get the current game code
-        $code = $mySession->getCode(SESSION_ID);
         ?>
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-            <input type="text" name="unique-id" placeholder="Enter Game Code" value="<?php echo $code; ?>" />
-            <input type="submit" name="join" value="Join" />
-        </form>
-        <?
+        <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+            <main class="mdl-layout__content">
+                <div style="color: #cccccc;">
+                    <h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4>
+                </div>
+                <div class="mdl-card mdl-shadow--6dp">
+                    <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+                        <h2 class="mdl-card__title-text">Join Game</h2>
+                    </div>
+                    </br>
+                    <div class="mdl-card__supporting-text">
+                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" id="joinForm">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="" required />
+                                <label class="mdl-textfield__label" for="unique-id">Game Code</label>
+                                <span class="mdl-textfield__error">Code must be a number!</span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mdl-card__actions" style="text-align: center;">
+                        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="$('#joinForm').submit();" style="width: 100%;">Join</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <?php
     }
 } catch (Exception $e) {
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
 }
+
 if(!empty($msg)) {
-    echo $msg;
+    ?>
+    <dialog class="mdl-dialog">
+        <h4 class="mdl-dialog__title">Oops!</h4>
+        <div class="mdl-dialog__content">
+            <p style="color: #ccc; font-size: 8px;">You done did it.</p>
+            <p><?php echo $msg; ?></p>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button close">OK</button>
+        </div>
+    </dialog>
+    <?php
 }
+
+require_once('footer.php');
+?>
