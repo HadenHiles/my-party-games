@@ -20,9 +20,9 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="description" content="Introducing Lollipop, a sweet new take on Android.">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-        <title>Android</title>
+        <meta name="description" content="Introducing Party Games, a fun new way to get drunk.">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scaleable=no">
+        <title>Party Games</title>
 
         <!-- Page styles -->
         <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
