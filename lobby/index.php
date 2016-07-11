@@ -8,7 +8,7 @@ require_once("header.php");
 try {
     //check for user in session
     if (empty($_SESSION['user'])) {
-        header ("Location: go-to-lobby.php");
+        header ("Location: join.php");
     }
     $user = $_SESSION['user'];
 
