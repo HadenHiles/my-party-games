@@ -12,6 +12,7 @@ class GameSession {
     private $hostip;
     private $displayname;
     private $userid;
+    private $game;
 
     /*
      * Inits the game class
@@ -23,9 +24,10 @@ class GameSession {
             $this->sessionid = $sessionid;
             $this->uniquecode = 0;
             $this->hostip = $ip;
+            $this->game = '';
 
         } else {
-            throw new Exception ("You need to specify the sessionid!");
+            throw new Exception ("You need to specify the sessionid and game!");
         }
     }
 
@@ -33,7 +35,7 @@ class GameSession {
      * Creates a new game session and saves a reference in the database
      * @returns boolean, true/false
      */
-    public function setup($new = false) {
+    public function setup($new = false, $game = 'test') {
 
         global $db;
 
@@ -53,18 +55,22 @@ class GameSession {
                     //fetch current settings
                     $result = $result->fetch(PDO::FETCH_ASSOC);
                     $this->uniquecode = $result['unique_code'];
+                    $this->game = $result['game_name'];
 
-                } else if ($new) {
+                } else if ($new && !empty($game)) {
 
                     //insert new session into database
                     $this->uniquecode = self::setCode();
-                    $sql = 'INSERT INTO game_connections (session_id, unique_code, host_ip_address, date, game_active)
-                            VALUES (:sessionid, :uniquecode, :hostip, NOW(), 1)';
+                    $this->game = $game;
+
+                    $sql = 'INSERT INTO game_connections (session_id, unique_code, host_ip_address, date, game_active, game_name)
+                            VALUES (:sessionid, :uniquecode, :hostip, NOW(), 1, :game)';
 
                     $result = $db->prepare($sql);
                     $result->bindValue(":sessionid", $this->sessionid);
                     $result->bindValue(":uniquecode", $this->uniquecode);
                     $result->bindValue(":hostip", $this->hostip);
+                    $result->bindValue(":game", $this->game);
 
                     //check to see if game session was created
                     if ($result->execute() && $result->errorCode()) {
@@ -72,6 +78,8 @@ class GameSession {
                     } else {
                         throw new Exception ("New session could not be created.");
                     }
+                } else if (empty($game)) {
+                    throw new Exception ("You need to specify a game name");
                 }
             } else {
                 throw new Exception ("Database could not be queried.");
@@ -95,12 +103,14 @@ class GameSession {
         $sql = 'UPDATE game_connections 
                 SET unique_code = :uniquecode,
                 date = NOW(),
-                game_active = 1
+                game_active = 1,
+                game_name = :game
                 WHERE session_id = :sessionid';
 
         $result = $db->prepare($sql);
         $result->bindValue(":uniquecode", $this->uniquecode);
         $result->bindValue(":sessionid", $this->sessionid);
+        $result->bindValue(":game", $this->game);
 
         if ($result->execute() && $result->errorCode()) {
             return true;
