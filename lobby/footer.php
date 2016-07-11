@@ -12,6 +12,10 @@
                         dialog.close();
                     });
                 }
+
+                setTimeout(function() {
+                    $('.mdl-textfield.is-invalid').each(function(){$(this).removeClass('is-invalid')});
+                }, 400);
             })();
         </script>
     </body>
