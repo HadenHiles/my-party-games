@@ -53,5 +53,5 @@ if (isset($accessToken)) {
 
     // Now you can redirect to another page and use the
     // access token from $_SESSION['facebook_access_token']
-    header("Location: ../../lobby/go-to-lobby.php?join=true&fb-login=true");
+    header("Location: ../../lobby/go-to-lobby.php?fb-login=true");
 }
