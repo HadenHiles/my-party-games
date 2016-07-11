@@ -141,7 +141,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     $helper = $fb->getRedirectLoginHelper();
 
     $permissions = ["public_profile"]; // Optional permissions
-    $loginUrl = $helper->getLoginUrl('http://'.$_SERVER['SERVER_NAME'].'/tests/facebook/login-callback.php', $permissions);
+    $loginUrl = $helper->getLoginUrl('http://'.$_SERVER['SERVER_NAME'].'/login/facebook/login-callback.php', $permissions);
     ?>
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
         <main class="mdl-layout__content main-form">
