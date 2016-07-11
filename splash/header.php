@@ -31,16 +31,5 @@
         <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-amber.min.css" />
         <link rel="stylesheet" href="splash/android.css" />
         <link rel="stylesheet" href="splash/splash.css" />
-        <style>
-            #view-source {
-                position: fixed;
-                display: block;
-                right: 0;
-                bottom: 0;
-                margin-right: 40px;
-                margin-bottom: 40px;
-                z-index: 900;
-            }
-        </style>
     </head>
     <body>

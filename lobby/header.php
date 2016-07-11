@@ -32,16 +32,5 @@
         <link rel="stylesheet" href="android.css" />
         <link rel="stylesheet" href="lobby.css" />
         <link rel="stylesheet" href="../3rd-party/bootstrap-social/bootstrap-social.css" />
-        <style>
-            #view-source {
-                position: fixed;
-                display: block;
-                right: 0;
-                bottom: 0;
-                margin-right: 40px;
-                margin-bottom: 40px;
-                z-index: 900;
-            }
-        </style>
     </head>
     <body>
