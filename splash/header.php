@@ -20,9 +20,9 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="description" content="Introducing Lollipop, a sweet new take on Android.">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-        <title>Android</title>
+        <meta name="description" content="Introducing Party Games, a fun new way to get drunk.">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scaleable=no">
+        <title>Party Games</title>
 
         <!-- Page styles -->
         <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
@@ -31,16 +31,5 @@
         <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-amber.min.css" />
         <link rel="stylesheet" href="splash/android.css" />
         <link rel="stylesheet" href="splash/splash.css" />
-        <style>
-            #view-source {
-                position: fixed;
-                display: block;
-                right: 0;
-                bottom: 0;
-                margin-right: 40px;
-                margin-bottom: 40px;
-                z-index: 900;
-            }
-        </style>
     </head>
     <body>
