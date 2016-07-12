@@ -35,7 +35,7 @@ class GameSession {
      * Creates a new game session and saves a reference in the database
      * @returns boolean, true/false
      */
-    public function setup($new = false, $game = 'test') {
+    public function setup($game) {
 
         global $db;
 
@@ -57,7 +57,7 @@ class GameSession {
                     $this->uniquecode = $result['unique_code'];
                     $this->game = $result['game_name'];
 
-                } else if ($new && !empty($game)) {
+                } else if (!empty($game)) {
 
                     //insert new session into database
                     $this->uniquecode = self::setCode();

@@ -7,9 +7,10 @@
  */
 
 //start the session if it isn't already started
-if(!session_id()) {
+//if(!session_id()) {
     session_start();
-}
+  //  echo "hit";
+//}
 
 //examples of constants
 define("SESSION_ID", session_id());

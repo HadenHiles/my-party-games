@@ -2,6 +2,7 @@
 require_once($_SERVER['DOCUMENT_ROOT'].'/includes/common.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/includes/database.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.GameSession.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.User.php');
 //require_once($_SERVER['DOCUMENT_ROOT'].'/header/header.php');
 
 $game = 'drink-or-dare';
@@ -9,10 +10,18 @@ $game = 'drink-or-dare';
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
-    $mySession->setup(true, $game);
+    $mySession->setup($game);
 
     //check for form submission to join a game session
-    if (isset($_POST['new-code'])) {
+    if (isset($_POST['start-game'])) {
+        $displayOnly = (isset($_POST['display']));
+
+        if ($displayOnly) {
+            header("Location: /lobby/?display=true");
+        } else {
+            header("Location: /join/?game=".$mySession->getCode());
+        }
+    } else if (isset($_POST['new-code'])) {
 
         //requested to make a new code for the current session
         $mySession->newCode();
@@ -39,6 +48,15 @@ try {
 <h4>Here is your game code: <?php echo $code; ?></h4>
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+
+    <label>Display Screen</label>
+    <input type="checkbox" name="display">
+
+    <label>Start Game</label>
+    <button type="submit" name="start-game">Start</button>
+
+    <br /><br />
+
     <button type="submit" name="new-code">New Code</button>
     <button type="submit" name="new-session">New Session</button>
 

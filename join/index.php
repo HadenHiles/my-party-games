@@ -10,12 +10,13 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/includes/database.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.GameSession.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/join/header.php');
 
-$game = 'drink-or-dare';
-
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
-    $mySession->setup(true, $game);
+
+    if (isset($_GET['game'])) {
+        $enteredcode = $_GET['game'];
+    }
 
     //check for form submission to join a game session
     if (isset($_POST['join'])) {
@@ -25,6 +26,7 @@ try {
         $name = $_POST['display-name'];
         $enteredname = $name;
         $fbToken = '';
+        $fbUserid = '';
 
         //basic error handling
         if (empty($code)) {
@@ -34,7 +36,7 @@ try {
         } else {
 
             //request to join a session
-            $result = $mySession->join($name, $code, $fbToken);
+            $result = $mySession->join($name, $code, $fbToken, $fbUserid);
 
             //check result and if true then save user in session and redirect to lobby
             if ($result == true && intval($result)) {
@@ -45,7 +47,7 @@ try {
                 exit();
 
             } else if ($result == "user-exists") {
-                $msg = "Display name already created";
+                $msg = "Display name already created for this game";
             } else {
                 $msg = "Game session cannot be found!";
             }
