@@ -1,6 +1,45 @@
+.mdl-layout {
+  align-items: center;
+  justify-content: center;
+  background: url("images/red-solo-cup.png") fixed bottom left #f5f5f5 repeat-x;
+  background-size: 20%;
+  padding-bottom: 100px;
+}
+.mdl-layout__content {
+  padding: 24px;
+  flex: none;
+
+  &.main-form {
+    margin-top: -150px;
+  }
+}
+.mdl-textfield__input {
+  font-size: 20px;
+}
+.mdl-card__actions.facebook {
+  padding: 0;
+
+  a {
+    text-decoration: none;
+    &.btn-facebook {
+      float: left;
+      width: 100%;
+      padding: 20px 20px 20px 54px;
+    }
+  }
+
+  span:first-child {
+    padding: 12px;
+    width: auto;
+    font-size: 1.8em;
+  }
+}
+
 .mdl-card.player {
   width: 100%;
   min-height: 90px;
+  margin: 5px 0;
+  border: 2px solid rgb(33,150,243);
   .mdl-card__supporting-text {
     img {
       background: none !important;
@@ -9,7 +48,7 @@
     }
     h5 {
       float: left;
-      width: 200px;
+      width: 150px;
       margin-top: 20px;
       padding: 0 0 0 15px;
     }

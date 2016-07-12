@@ -8,7 +8,7 @@ require_once("header.php");
 try {
     //check for user in session
     if (empty($_SESSION['user'])) {
-        header ("Location: join.php");
+        header ("Location: ../join/");
     }
     $user = $_SESSION['user'];
 
@@ -33,7 +33,7 @@ try {
 ?>
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100" style="justify-content: initial;">
         <div style="color: #6ab344;">
-            <h2 style="float: left;"><?php echo $game['id']; ?></h2>
+            <h2 style="float: left; text-transform: capitalize;"><?php echo str_replace("-", " ", $game['game_name']); ?></h2>
         </div>
         <?php
         foreach($game['users'] as $user) {

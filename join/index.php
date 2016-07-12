@@ -50,7 +50,7 @@ try {
                     $_SESSION['user'] = $mySession->getUser();
                     unset($_SESSION['current_game_code']);
                     unset($_REQUEST);
-                    header("Location: index.php");
+                    header("Location: ../lobby/");
 
                 } else if ($result == "user-exists") {
                     $msg = "Someone is already using that name!";
@@ -75,7 +75,7 @@ try {
                     $_SESSION['user'] = $mySession->getUser();
                     unset($_SESSION['current_game_code']);
                     unset($_REQUEST);
-                    header("Location: index.php");
+                    header("Location: ../lobby/");
                     exit();
                 } else if ($result == "user-exists") {
                     //override with new information
@@ -84,7 +84,7 @@ try {
                         $_SESSION['user'] = $mySession->getUser();
                         unset($_SESSION['current_game_code']);
                         unset($_REQUEST);
-                        header("Location: index.php");
+                        header("Location: ../lobby/");
                         exit();
                     } else if (intval($result)) {
                     } else {
