@@ -1,86 +1,197 @@
 <?php
-/*
- * Author: Justin Searle
- * Date: 7/4/2016
- * File: join/index.php
- * Description: a form that will allow a user to join a specific game session
+/**
+ * Created by handshiles on 2016-07-10.
  */
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/common.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/database.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.GameSession.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/join/header.php');
+require_once('../includes/common.php');
+require_once('../includes/database.php');
+require_once('../includes/class.GameSession.php');
+
+//Facebook login
+require_once("../vendor/autoload.php");
+require_once("../login/facebook/config.php");
+
+$fb = new Facebook\Facebook([
+    'app_id' => APP_ID,
+    'app_secret' => APP_SECRET,
+    'default_graph_version' => 'v2.6'
+]);
+
+$formToDisplay = "joinGame";
 
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 
-    if (isset($_GET['game'])) {
-        $enteredcode = $_GET['game'];
-    }
-
     //check for form submission to join a game session
-    if (isset($_POST['join'])) {
+    if ((isset($_REQUEST['unique-id']) && !empty($_REQUEST['unique-id'])) || (isset($_SESSION['current_game_code']) && !empty($_SESSION['current_game_code']) && $_SESSION['current_game_code'] != 0)) {
         //vars
-        $code = $_POST['unique-id'];
-        $enteredcode = $code;
-        $name = $_POST['display-name'];
-        $enteredname = $name;
-        $fbToken = '';
-        $fbUserid = '';
+        $formToDisplay = "nickname";
+        $code = $_REQUEST['unique-id'];
 
-        //basic error handling
-        if (empty($code)) {
-            $msg = "You need to enter a game code to join!";
-        } else if (empty($name)) {
-            $msg = "You need to choose a display name!";
-        } else {
+        if(empty($_SESSION['current_game_code']) || !isset($_SESSION['current_game_code'])) {
+            $_SESSION['current_game_code'] = intval($code);
+        }
 
-            //request to join a session
-            $result = $mySession->join($name, $code, $fbToken, $fbUserid);
+        if(isset($_REQUEST['display-name'])) {
+            $name = $_REQUEST['display-name'];
+            $fbToken = '';
+            $fbUserId = '';
 
-            //check result and if true then save user in session and redirect to lobby
-            if ($result == true && intval($result)) {
-
-                $_SESSION['user'] = $mySession->getUser();
-                //var_dump($_SESSION['user']);
-                header("Location: ../lobby/");
-                exit();
-
-            } else if ($result == "user-exists") {
-                $msg = "Display name already created for this game";
+            //basic error handling
+            if (empty($name)) {
+                $msg = "Please enter a nickname!";
             } else {
-                $msg = "Game session cannot be found!";
+                //request to join a session
+                $result = $mySession->join($name, $code, $fbToken, $fbUserId);
+
+                //check result and if true then save user in session and redirect to lobby
+                if ($result == true && intval($result)) {
+
+                    $_SESSION['user'] = $mySession->getUser();
+                    unset($_SESSION['current_game_code']);
+                    unset($_REQUEST);
+                    header("Location: index.php");
+
+                } else if ($result == "user-exists") {
+                    $msg = "Someone is already using that name!";
+                } else {
+                    $msg = "Game cannot be found!";
+                }
+            }
+        } else if(isset($_REQUEST['fb-login'])) {
+            $formToDisplay = "nickname";
+            try {
+                // Get the Facebook\GraphNodes\GraphUser object for the current user.
+                // If you provided a 'default_access_token', the '{access-token}' is optional.
+                $response = $fb->get('/me', $_SESSION['fb_access_token']);
+
+                $me = $response->getGraphUser();
+
+                //request to join a session
+                $result = $mySession->join($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id']);
+
+                //check result and if true then save user in session and redirect to lobby
+                if ($result == true && intval($result)) {
+                    $_SESSION['user'] = $mySession->getUser();
+                    unset($_SESSION['current_game_code']);
+                    unset($_REQUEST);
+                    header("Location: index.php");
+                    exit();
+                } else if ($result == "user-exists") {
+                    //override with new information
+                    $result = $mySession->updateUser($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id']);
+                    if ($result == true) {
+                        $_SESSION['user'] = $mySession->getUser();
+                        unset($_SESSION['current_game_code']);
+                        unset($_REQUEST);
+                        header("Location: index.php");
+                        exit();
+                    } else if (intval($result)) {
+                    } else {
+                        $msg = "Game cannot be found!";
+                    }
+                } else {
+                    $msg = "Game cannot be found!";
+                }
+            } catch(Facebook\Exceptions\FacebookResponseException $e) {
+                // When Graph returns an error
+                $msg = 'Graph returned an error: ' . $e->getMessage();
+            } catch(Facebook\Exceptions\FacebookSDKException $e) {
+                // When validation fails or other local issues
+                $msg = 'Facebook SDK returned an error: ' . $e->getMessage();
             }
         }
+    } else {
+        require_once('header.php');
+        ?>
+        <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+            <main class="mdl-layout__content main-form">
+                <div style="color: #cccccc;">
+                    <h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4>
+                </div>
+                <div class="mdl-card mdl-shadow--6dp">
+                    <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+                        <h2 class="mdl-card__title-text">Join Game</h2>
+                    </div>
+                    </br>
+                    <div class="mdl-card__supporting-text">
+                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" id="joinForm">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="" required />
+                                <label class="mdl-textfield__label" for="unique-id">Game Code</label>
+                                <span class="mdl-textfield__error">Please enter a valid code!</span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mdl-card__actions" style="text-align: center;">
+                        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="$('#joinForm').submit();" style="width: 100%;">Join</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <?php
     }
-
-    //get the current game code
-    $code = $mySession->getCode(SESSION_ID);
-
 } catch (Exception $e) {
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
 }
 
-var_dump($code, SESSION_ID);
-//var_dump($_SERVER);
-?>
+if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
+    require_once('header.php');
 
-<?php echo (!empty($msg) ? '<h2>'.$msg.'</h2>' : ''); ?>
+    $helper = $fb->getRedirectLoginHelper();
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+    $permissions = ["public_profile"]; // Optional permissions
+    $loginUrl = $helper->getLoginUrl('http://'.$_SERVER['SERVER_NAME'].'/login/facebook/login-callback.php', $permissions);
+    ?>
+    <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+        <main class="mdl-layout__content main-form">
+            <div style="color: #cccccc;">
+                <h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4>
+            </div>
+            <div class="mdl-card mdl-shadow--6dp">
+                <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+                    <h2 class="mdl-card__title-text">Who the heck are you?</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" id="guestForm">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" name="display-name" id="display-name" />
+                            <label class="mdl-textfield__label" for="display-name">Nickname</label>
+                        </div>
+                        <input type="hidden" name="unique-id" value="<?php echo $code; ?>" />
+                    </form>
+                </div>
+                <div class="mdl-card__actions" style="text-align: center; margin-top: -25px;">
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="$('#guestForm').submit();" style="width: 100%;">Continue As Guest</button>
+                </div>
+                <div class="mdl-card__actions mdl-card--border" style="text-align: center; padding: 25px;">
+                    <span style="font-weight: bold;">OR</span>
+                </div>
+                <div class="mdl-card__actions mdl-card--border facebook">
+                    <a href="<?php echo htmlspecialchars($loginUrl); ?>" class="btn btn-block btn-social btn-facebook">
+                        <span class="fa fa-facebook"></span> Sign in with Facebook
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <?php
+}
 
-    <h4>Enter your game code</h4>
-    <input type="text" name="unique-id" placeholder="Code" value="<?php echo $enteredcode; ?>">
+if(!empty($msg)) {
+    ?>
+    <dialog class="mdl-dialog">
+        <h4 class="mdl-dialog__title">Oops!</h4>
+        <div class="mdl-dialog__content">
+            <p style="color: #ccc; font-size: 8px;">You done did it.</p>
+            <p><?php echo $msg; ?></p>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button close">OK</button>
+        </div>
+    </dialog>
+    <?php
+}
 
-    <h4>Enter a Display Name User OR Login with Facebook</h4>
-    <input type="text" name="display-name" placeholder="Display Name" value="<?php echo $enteredname; ?>">
-    <br />
-    <a href="#">Login in with facebook</a><br /><br />
-    <input type="submit" name="join" value="Join Game">
-
-</form>
-
-
-<?php
 require_once('footer.php');
 ?>
