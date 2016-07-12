@@ -17,21 +17,21 @@ try {
         //game was not found
     } else {
         //game was found
+        foreach($game['users'] as $user) {
+            ?>
+            <div class="mdl-card mdl-shadow--6dp player">
+                <div class="mdl-card__supporting-text">
+                    <img src="http://graph.facebook.com/<?php echo $user['fb_user_id']; ?>/picture?type=large" border="0" alt="" />
+                    <h5><?php echo $user['display_name']; ?></h5>
+                </div>
+            </div>
+            <?php
+        }
     }
 
 } catch (Exception $e) {
     //show any errors
     $msg = "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
-}
-foreach($game['users'] as $user) {
-    ?>
-    <div class="mdl-card mdl-shadow--6dp player">
-        <div class="mdl-card__supporting-text">
-            <img src="http://graph.facebook.com/<?php echo $user['fb_user_id']; ?>/picture?type=large" border="0" alt="" />
-            <h5><?php echo $user['display_name']; ?></h5>
-        </div>
-    </div>
-    <?php
 }
 if(!empty($msg)) {
     ?>
