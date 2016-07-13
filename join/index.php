@@ -34,6 +34,7 @@ try {
 
         if(isset($_REQUEST['display-name'])) {
             $name = $_REQUEST['display-name'];
+            $picture = $_REQUEST['picture'];
             $fbToken = '';
             $fbUserId = '';
 
@@ -42,7 +43,7 @@ try {
                 $msg = "Please enter a nickname!";
             } else {
                 //request to join a session
-                $result = $mySession->join($name, $code, $fbToken, $fbUserId);
+                $result = $mySession->join($name, $code, $fbToken, $fbUserId, $picture);
 
                 //check result and if true then save user in session and redirect to lobby
                 if ($result == true && intval($result)) {
@@ -68,7 +69,8 @@ try {
                 $me = $response->getGraphUser();
 
                 //request to join a session
-                $result = $mySession->join($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id']);
+                $picture = "http://graph.facebook.com/". $me['id']. "/picture?type=large";
+                $result = $mySession->join($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id'], $picture);
 
                 //check result and if true then save user in session and redirect to lobby
                 if ($result == true && intval($result)) {
@@ -79,7 +81,7 @@ try {
                     exit();
                 } else if ($result == "user-exists") {
                     //override with new information
-                    $result = $mySession->updateUser($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id']);
+                    $result = $mySession->updateUser($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id'], $picture);
                     if ($result == true) {
                         $_SESSION['user'] = $mySession->getUser();
                         unset($_SESSION['current_game_code']);
@@ -152,13 +154,19 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                 <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
                     <h2 class="mdl-card__title-text">Who the heck are you?</h2>
                 </div>
-                <div class="mdl-card__supporting-text">
+                <div class="mdl-card__supporting-text select-avatar">
+                    <div class="avatar">
+                        <a id="show-avatars" type="button" class="mdl-button" style="height: 64px; width: 64px; padding: 5px;">
+                            <img src="pictures/person.png" alt="Avatar" class="responsive" />
+                        </a>
+                    </div>
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" id="guestForm">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="text" name="display-name" id="display-name" />
                             <label class="mdl-textfield__label" for="display-name">Nickname</label>
                         </div>
                         <input type="hidden" name="unique-id" value="<?php echo $code; ?>" />
+                        <input type="text" class="off-screen" id="avatar-picture" name="picture" value="" />
                     </form>
                 </div>
                 <div class="mdl-card__actions" style="text-align: center; margin-top: -25px;">
@@ -177,6 +185,52 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     </div>
     <?php
 }
+
+?>
+<dialog class="mdl-dialog avatars">
+    <h4 class="mdl-dialog__title">Choose An Avatar</h4>
+    <div class="mdl-dialog__content">
+        <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+            <div class="mdl-tabs__tab-bar">
+                <a href="#characters-panel" class="mdl-tabs__tab">Characters</a>
+                <a href="#animals-panel" class="mdl-tabs__tab">Animals</a>
+                <a href="#party-panel" class="mdl-tabs__tab">Party</a>
+            </div>
+            <div class="mdl-tabs__panel is-active" id="characters-panel">
+                <?php
+                $dirname = "pictures/characters/";
+                $images = glob($dirname."*.png");
+                foreach($images as $image) {
+                    echo '<div class="avatar-image"><img src="http://'.$_SERVER['HTTP_HOST'] . '/join/' . $image.'" class="responsive" /></div>';
+                }
+                ?>
+            </div>
+            <div class="mdl-tabs__panel" id="animals-panel">
+                <?php
+                $dirname = "pictures/animals/";
+                $images = glob($dirname."*.png");
+                foreach($images as $image) {
+                    echo '<div class="avatar-image"><img src="http://'.$_SERVER['HTTP_HOST'] . '/join/' . $image.'" class="responsive" /></div>';
+                }
+                ?>
+            </div>
+            <div class="mdl-tabs__panel" id="party-panel">
+                <?php
+                $dirname = "pictures/party/";
+                $images = glob($dirname."*.png");
+                foreach($images as $image) {
+                    echo '<div class="avatar-image"><img src="http://'.$_SERVER['HTTP_HOST'] . '/join/' . $image.'" class="responsive" /></div>';
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div class="mdl-dialog__actions">
+        <button type="button" class="mdl-button close">Continue</button>
+    </div>
+</dialog>
+<?php
 
 if(!empty($msg)) {
     ?>

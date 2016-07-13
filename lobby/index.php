@@ -39,7 +39,7 @@ try {
 }
 if(!empty($msg)) {
     ?>
-    <dialog class="mdl-dialog">
+    <dialog class="mdl-dialog error">
         <h4 class="mdl-dialog__title">Oops!</h4>
         <div class="mdl-dialog__content">
             <p style="color: #ccc; font-size: 8px;">You done did it.</p>

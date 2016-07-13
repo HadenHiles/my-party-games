@@ -150,7 +150,7 @@ class GameSession {
      * @param string, fbaccesstoken
      * @returns boolean, true/false
      */
-    public function join($name, $code, $fbaccesstoken, $fbuserid) {
+    public function join($name, $code, $fbaccesstoken, $fbuserid, $picture) {
 
         global $db;
 
@@ -179,14 +179,15 @@ class GameSession {
                         return "user-exists";
                     } else {
                         //create user reference in database
-                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, fb_access_token, fb_user_id, last_active_date)
-                                VALUES (:code, :ip, :name, :fbaccesstoken, :fbuserid, NOW())';
+                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, fb_access_token, fb_user_id, picture, last_active_date)
+                                VALUES (:code, :ip, :name, :fbaccesstoken, :fbuserid, :picture, NOW())';
 
                         $result = $db->prepare($sql);
                         $result->bindParam(":name", $name, PDO::PARAM_STR, 25);
                         $result->bindParam(":code", $code, PDO::PARAM_INT);
                         $result->bindParam(":fbaccesstoken", $fbaccesstoken, PDO::PARAM_STR, 300);
                         $result->bindParam(":fbuserid", $fbuserid, PDO::PARAM_STR, 25);
+                        $result->bindParam(":picture", $picture, PDO::PARAM_STR, 100);
                         $result->bindParam(":ip", $this->hostip, PDO::PARAM_STR, 25);
 
                         if ($result->execute() && $result->errorCode() == 0) {
@@ -232,7 +233,7 @@ class GameSession {
      * @param string, fbaccesstoken
      * @returns boolean, true/false
      */
-    public function updateUser($name, $code, $fbaccesstoken, $fbuserid) {
+    public function updateUser($name, $code, $fbaccesstoken, $fbuserid, $picture) {
 
         global $db;
 
@@ -267,7 +268,7 @@ class GameSession {
                         $result->bindParam(":code", $code);
                         $result->execute();
 
-                        $sqlUpdate = 'UPDATE users SET game_id = :code, ip_address = :ip, display_name = :name, fb_access_token = :fbaccesstoken, last_active_date = NOW() 
+                        $sqlUpdate = 'UPDATE users SET game_id = :code, ip_address = :ip, display_name = :name, fb_access_token = :fbaccesstoken, picture = :picture, last_active_date = NOW() 
                                       WHERE fb_user_id = :fbuserid';
 
                         $resultUpdate = $db->prepare($sqlUpdate);
@@ -275,6 +276,7 @@ class GameSession {
                         $resultUpdate->bindParam(":code", $code, PDO::PARAM_INT);
                         $resultUpdate->bindParam(":fbaccesstoken", $fbaccesstoken, PDO::PARAM_STR, 300);
                         $resultUpdate->bindParam(":fbuserid", $fbuserid, PDO::PARAM_STR, 25);
+                        $resultUpdate->bindParam(":picture", $picture, PDO::PARAM_STR, 100);
                         $resultUpdate->bindParam(":ip", $this->hostip, PDO::PARAM_STR, 25);
 
                         if ($resultUpdate->execute() && $resultUpdate->errorCode() == 0) {
@@ -298,15 +300,15 @@ class GameSession {
                         }
                     } else {
                         //create user reference in database
-                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, fb_access_token, fb_user_id, last_active_date)
-                                VALUES (:code, :ip, :name, :fbaccesstoken, :fbuserid, NOW())';
+                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, fb_access_token, fb_user_id, picture, last_active_date)
+                                VALUES (:code, :ip, :name, :fbaccesstoken, :fbuserid, :picture, NOW())';
 
                         $result = $db->prepare($sql);
                         $result->bindParam(":name", $name, PDO::PARAM_STR, 25);
                         $result->bindParam(":code", $code, PDO::PARAM_INT);
                         $result->bindParam(":fbaccesstoken", $fbaccesstoken, PDO::PARAM_STR, 300);
                         $result->bindParam(":fbuserid", $fbuserid, PDO::PARAM_STR, 25);
-                        $result->bindParam(":fbpicture", $fbpicture, PDO::PARAM_STR, 250);
+                        $result->bindParam(":picture", $picture, PDO::PARAM_STR, 100);
                         $result->bindParam(":ip", $this->hostip, PDO::PARAM_STR, 25);
 
                         if ($result->execute() && $result->errorCode() == 0) {

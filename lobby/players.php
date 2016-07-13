@@ -21,7 +21,7 @@ try {
             ?>
             <div class="mdl-card mdl-shadow--6dp player">
                 <div class="mdl-card__supporting-text">
-                    <img src="http://graph.facebook.com/<?php echo $user['fb_user_id']; ?>/picture?type=large" border="0" alt="" />
+                    <img src="<?php echo $user['picture']; ?>" border="0" alt="" />
                     <h5><?php echo $user['display_name']; ?></h5>
                 </div>
             </div>
@@ -35,7 +35,7 @@ try {
 }
 if(!empty($msg)) {
     ?>
-    <dialog class="mdl-dialog">
+    <dialog class="mdl-dialog error">
         <h4 class="mdl-dialog__title">Oops!</h4>
         <div class="mdl-dialog__content">
             <p style="color: #ccc; font-size: 8px;">You done did it.</p>
