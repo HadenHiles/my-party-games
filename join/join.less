@@ -31,3 +31,49 @@
     font-size: 1.8em;
   }
 }
+
+/* Avatars */
+.select-avatar {
+  padding-bottom: 25px;
+  .avatar {
+    width: 70px;
+    float: left;
+  }
+  .mdl-textfield {
+    float: left;
+    width: 215px;
+    margin-left: 10px;
+  }
+}
+.avatars {
+  .mdl-tabs {
+    padding: 5px;
+  }
+  width: 400px;
+  .avatar-image {
+    width: 13%;
+    float: left;
+    margin: 1%;
+    padding: 1%;
+    border: 2px solid rgba(33, 150, 243, 0);
+
+    &:hover {
+      cursor: pointer;
+    }
+    &.selected {
+      border: 2px solid rgba(33, 150, 243, 1);
+    }
+  }
+}
+
+/* Extras */
+.clear {
+  clear: both;
+}
+.off-screen {
+  position: fixed;
+  left: -9999px;
+}
+.responsive {
+  max-width: 100%;
+}
