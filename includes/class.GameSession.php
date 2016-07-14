@@ -143,6 +143,24 @@ class GameSession {
         return false;
     }
 
+    public function getGame($code) {
+        global $db;
+
+        if(!empty($code)) {
+            $sql = 'SELECT * FROM game_connections WHERE unique_code = :code LIMIT 1';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":code", $code);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() == 1) {
+                //game found
+                return true;
+            }
+        }
+        //Game wasn't found
+        return false;
+    }
+
     /*
      * Allows a user to join a game session
      * @param string, name
