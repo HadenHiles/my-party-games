@@ -5,8 +5,8 @@
   height: 100%;
   width: 100%;
   position: relative;
-  background: url("images/beerpong.jpg") center center fixed no-repeat;
-  .background-size(cover);
+  //background: url("images/beerpong.jpg") center center fixed no-repeat;
+  //.background-size(auto 100%);
 
   .banner-overlay {
     height: 100%;
@@ -14,11 +14,11 @@
     position: absolute;
     top: 0;
     left: 0;
-    background: darken(rgba(126,211,82, 0.45), 15%);
+    background: rgba(0, 0, 0, 0.45);
   }
 
   .banner-content {
-    margin-top: 50px;
+    margin-top: 15%;
     color: #fff;
     text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
     padding: 15px;
@@ -32,6 +32,9 @@
     }
     p {
       font-size: 18px;
+    }
+    a.mdl-button {
+      text-shadow: none;
     }
   }
 }

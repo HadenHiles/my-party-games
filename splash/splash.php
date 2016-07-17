@@ -45,12 +45,15 @@
         </div>
 
         <div class="mdl-layout__content">
-            <div class="mdl-grid mdl-grid--no-spacing" style="height: 600px; width: 100%;">
-                <div class="mdl-cell mdl-cell--12-col banner">
+            <div class="mdl-grid mdl-grid--no-spacing" style="height: 900px; width: 100%;">
+                <div class="mdl-cell mdl-cell--12-col banner imagefill">
+                    <img src="splash/images/beerpong.jpg" alt="" class="bannerImage" />
                     <div class="banner-overlay"></div>
                     <div class=" mdl-cell mdl-cell--12-col banner-content">
                         <h1>Fun Games for Every Party</h1>
-                        <p>Try out our new games or brush up on the rules of your favorites.</p>
+                        <a href="join/" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                            Join A Game
+                        </a>
                     </div>
                 </div>
             </div>
