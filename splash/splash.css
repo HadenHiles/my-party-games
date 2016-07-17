@@ -49,4 +49,9 @@
 }
 .banner .banner-content a.mdl-button {
   text-shadow: none;
+  background: rgba(255, 255, 255, 0.1);
+}
+.banner .banner-content a.mdl-button:hover,
+.banner .banner-content a.mdl-button:focus {
+  background: #6ab344;
 }
