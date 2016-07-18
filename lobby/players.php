@@ -10,16 +10,24 @@ try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 
-    $user = $_SESSION['user'];
+    $user_session = $_SESSION['user'];
 
     //load the current game details
-    if (!$game = $mySession->loadUsers($user['code'])) {
+    if (!$game = $mySession->loadUsers($user_session['code'])) {
         //game was not found
     } else {
         //game was found
         foreach($game['users'] as $user) {
+            if($user['id'] == $user_session['userid']) {
+                ?>
+                <div class="mdl-card mdl-shadow--6dp player me">
+                <?php
+            } else {
+                ?>
+                <div class="mdl-card mdl-shadow--6dp player">
+                <?php
+            }
             ?>
-            <div class="mdl-card mdl-shadow--6dp player">
                 <div class="mdl-card__supporting-text">
                     <img src="<?php echo $user['picture']; ?>" border="0" alt="" />
                     <h5><?php echo $user['display_name']; ?></h5>
