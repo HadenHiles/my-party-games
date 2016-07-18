@@ -55,7 +55,7 @@ class User {
         }
         return false;
     }
-    
+
     public function findUser($code) {
 
         global $db;
@@ -142,15 +142,40 @@ class User {
      * @returns array, user information
      */
     public function getUser() {
+        global $db;
 
         if (!empty($this->userid)) {
 
             return array(
                 'userid' => $this->userid,
                 'code' => $this->gameid,
+                'gameid' => $this->gameid,
                 'name' => $this->displayname
             );
+        } else if (!empty($this->sessionid)) {
+
+            $sql = 'SELECT * FROM users WHERE session_id = :sessionid';
+
+            $result = $db->prepare($sql);
+            $result->bindParam(":sessionid", $this->sessionid);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                $result = $result->fetch(PDO::FETCH_ASSOC);
+                $this->userid = $result['userid'];
+                $this->code = $result['gameid'];
+                $this->name = $result['displayname'];
+                $this->gameid = $result['gameid'];
+
+                return array(
+                    'userid' => $this->userid,
+                    'code' => $this->gameid,
+                    'gameid' => $this->gameid,
+                    'name' => $this->displayname
+                );
+            }
         }
+
         return false;
     }
 

@@ -98,8 +98,6 @@ try {
                         $result = $mySession->updateUser($me['name'], $_SESSION['fb_access_token'], $me['id'], $picture);
                         
                         if ($result == true) {
-                            
-                            $user->setName($me['name']);
                             $_SESSION['user'] = $user->getUser();
                             header("Location: ../lobby/");
                             exit();
