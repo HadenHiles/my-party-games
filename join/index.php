@@ -5,6 +5,7 @@
 require_once('../includes/common.php');
 require_once('../includes/database.php');
 require_once('../includes/class.GameSession.php');
+require_once('../includes/class.User.php');
 
 //Facebook login
 require_once("../vendor/autoload.php");
@@ -21,12 +22,13 @@ $formToDisplay = "joinGame";
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    $user = new User(SESSION_ID, DEVICE_IP);
 
     //check for form submission to join a game session
     if (!empty($_REQUEST['unique-id']) || !empty($_SESSION['current_game_code'])) {
         //vars
         $code = $_REQUEST['unique-id'];
-
+        
         if(empty($code) && !empty($_SESSION['current_game_code'])) {
             $code = $_SESSION['current_game_code'];
         } else if($_SESSION['current_game_code'] != intval($code)) {
@@ -58,12 +60,12 @@ try {
                     $msg = "Please enter a nickname!";
                 } else {
                     //request to join a session
-                    $result = $mySession->join($name, $code, $fbToken, $fbUserId, $picture);
+                    $result = $mySession->join($name, $fbToken, $fbUserId, $picture);
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
 
-                        $_SESSION['user'] = $mySession->getUser();
+                        $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
 
                     } else if ($result == "user-exists") {
@@ -73,6 +75,7 @@ try {
                     }
                 }
             } else if(isset($_REQUEST['fb-login'])) {
+
                 $formToDisplay = "nickname";
                 try {
                     // Get the Facebook\GraphNodes\GraphUser object for the current user.
@@ -83,7 +86,7 @@ try {
 
                     //request to join a session
                     $picture = "http://graph.facebook.com/". $me['id']. "/picture?type=large";
-                    $result = $mySession->join($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id'], $picture);
+                    $result = $mySession->join($me['name'], $_SESSION['fb_access_token'], $me['id'], $picture);
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
@@ -92,7 +95,7 @@ try {
                         exit();
                     } else if ($result == "user-exists") {
                         //override with new information
-                        $result = $mySession->updateUser($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id'], $picture);
+                        $result = $mySession->updateUser($me['name'], $_SESSION['fb_access_token'], $me['id'], $picture);
                         if ($result == true) {
                             $_SESSION['user'] = $mySession->getUser();
                             header("Location: ../lobby/");
@@ -120,9 +123,10 @@ try {
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
 }
 
+
+
 if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     require_once('header.php');
-
     $helper = $fb->getRedirectLoginHelper();
 
     $permissions = ["public_profile"]; // Optional permissions
@@ -226,7 +230,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                 <div class="mdl-card__supporting-text">
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" id="joinForm">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="<?php echo $_REQUEST['last-game-code']; ?>" required />
+                            <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="" required />
                             <label class="mdl-textfield__label" for="unique-id">Game Code</label>
                             <span class="mdl-textfield__error">Please enter a valid code!</span>
                         </div>

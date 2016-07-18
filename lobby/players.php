@@ -3,12 +3,14 @@
  * Created by handshiles on 2016-07-12.
  */
 require_once("../includes/class.GameSession.php");
+require_once("../includes/class.User.php");
 require_once("../includes/common.php");
 require_once("../includes/database.php");
 
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    $user = new User(SESSION_ID, DEVICE_IP);
 
     $user_session = $_SESSION['user'];
 

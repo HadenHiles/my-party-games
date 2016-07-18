@@ -10,6 +10,8 @@ $game = 'drink-or-dare';
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    $user = new User(SESSION_ID, DEVICE_IP);
+    
     $mySession->setup($game);
 
     //check for form submission to join a game session
@@ -19,7 +21,7 @@ try {
         if ($displayOnly) {
             header("Location: /lobby/?display=true");
         } else {
-            header("Location: /join/?game=".$mySession->getCode());
+            header("Location: /join/?unique-id=".$mySession->getCode(SESSION_ID));
         }
     } else if (isset($_POST['new-code'])) {
 
