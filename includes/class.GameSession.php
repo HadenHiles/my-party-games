@@ -17,7 +17,7 @@ class GameSession {
     /*
      * Inits the game class
      */
-    public function  __construct($sessionid, $ip) {
+    public function  __construct($sessionid, $ip = 0) {
 
         if (!empty($sessionid)) {
 
@@ -37,7 +37,7 @@ class GameSession {
      */
     public function setup($game) {
 
-        global $db;
+        global $db, $user;
 
         if (!empty($this->sessionid)) {
 
@@ -78,6 +78,7 @@ class GameSession {
                     } else {
                         throw new Exception ("New session could not be created.");
                     }
+
                 } else if (empty($game)) {
                     throw new Exception ("You need to specify a game name");
                 }
@@ -129,6 +130,17 @@ class GameSession {
 
         global $db;
 
+        //delete non verified users from this game session
+        $sql = 'DELETE FROM users WHERE game_id = :gameid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":gameid", $this->uniquecode);
+
+        if ($result->execute() && $result->errorCode()) {
+            //if this works, great! if not oh well users will be deleted when un active anyway
+        }
+
+        //delete game connection
         $sql = 'DELETE FROM game_connections      
                 WHERE session_id = :sessionid';
 

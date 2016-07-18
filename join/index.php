@@ -5,6 +5,7 @@
 require_once('../includes/common.php');
 require_once('../includes/database.php');
 require_once('../includes/class.GameSession.php');
+require_once('../includes/class.User.php');
 
 //Facebook login
 require_once("../vendor/autoload.php");
@@ -21,9 +22,11 @@ $formToDisplay = "joinGame";
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    $user = new User(SESSION_ID, DEVICE_IP);
 
     //check for form submission to join a game session
     if ((isset($_REQUEST['unique-id']) && !empty($_REQUEST['unique-id'])) || (isset($_SESSION['current_game_code']) && !empty($_SESSION['current_game_code']) && $_SESSION['current_game_code'] != 0)) {
+
         //vars
         $code = $_REQUEST['unique-id'];
 
