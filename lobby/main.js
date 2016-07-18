@@ -67,4 +67,4 @@ function updateChat() {
     });
 }
 
-window.setInterval(updateChat, 20000000);
+window.setInterval(updateChat, 2000);

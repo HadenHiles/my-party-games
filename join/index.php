@@ -90,12 +90,12 @@ try {
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
-                        $_SESSION['user'] = $mySession->getUser();
+                        $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
                         exit();
                     } else if ($result == "user-exists") {
                         //override with new information
-                        $result = $mySession->updateUser($me['name'], $_SESSION['fb_access_token'], $me['id'], $picture);
+                        $result = $mySession->updateUser($me['name'], $code, $_SESSION['fb_access_token'], $me['id'], $picture);
                         
                         if ($result == true) {
                             $_SESSION['user'] = $user->getUser();
