@@ -27,8 +27,6 @@ try {
         $msg = "You can't leave!";
     }
 
-    $user = $_SESSION['user'];
-
     //load the current game details
     if (!$game = $mySession->loadUsers($thisUser['code'])) {
         //game was not found

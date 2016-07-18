@@ -230,7 +230,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                 <div class="mdl-card__supporting-text">
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" id="joinForm">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="" required />
+                            <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="<?php echo $_REQUEST['last-game-code']; ?>" required />
                             <label class="mdl-textfield__label" for="unique-id">Game Code</label>
                             <span class="mdl-textfield__error">Please enter a valid code!</span>
                         </div>
