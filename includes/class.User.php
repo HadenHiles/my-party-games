@@ -174,7 +174,7 @@ class User {
         return false;
     }
 
-    public function deleteUser($code) {
+    public function deleteUsers($code) {
         global $db;
 
         //delete non verified users from this game session
