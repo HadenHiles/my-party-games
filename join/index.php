@@ -5,6 +5,7 @@
 require_once('../includes/common.php');
 require_once('../includes/database.php');
 require_once('../includes/class.GameSession.php');
+require_once('../includes/class.User.php');
 
 //Facebook login
 require_once("../vendor/autoload.php");
@@ -21,8 +22,9 @@ $formToDisplay = "joinGame";
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
-    
-    if($mySession->isJoined()) {
+    $user = new User(SESSION_ID, DEVICE_IP);
+
+    if($user->isJoined()) {
         header("Location: ../lobby/");
     }
 
@@ -31,20 +33,20 @@ try {
         //vars
         $code = $_REQUEST['unique-id'];
 
-        echo $code . "</br>";
+        //echo $code . "</br>";
         if(empty($code) && !empty($_SESSION['current_game_code'])) {
             $code = $_SESSION['current_game_code'];
         } else if($_SESSION['current_game_code'] != intval($code)) {
             $_SESSION['current_game_code'] = intval($code);
         }
-        echo $code;
+        //echo $code;
 
-        $isGame = $mySession->getGame($code);
-        if(!$isGame) {
+        if(!$isGame = $mySession->getGame($code)) {
             $msg = "Game could not be found.";
             $formToDisplay = "join";
         } else {
             $formToDisplay = "nickname";
+
             if(isset($_REQUEST['display-name'])) {
                 $name = $_REQUEST['display-name'];
                 $picture = $_REQUEST['picture'];
@@ -56,12 +58,12 @@ try {
                     $msg = "Please enter a nickname!";
                 } else {
                     //request to join a session
-                    $result = $mySession->join($name, $code, $fbToken, $fbUserId, $picture);
+                    $result = $mySession->join($name, $fbToken, $fbUserId, $picture);
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
 
-                        $_SESSION['user'] = $mySession->getUser();
+                        $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
 
                     } else if ($result == "user-exists") {
@@ -71,7 +73,7 @@ try {
                     }
                 }
             } else if(isset($_REQUEST['fb-login'])) {
-                echo 'fuck off';
+
                 $formToDisplay = "nickname";
                 try {
                     // Get the Facebook\GraphNodes\GraphUser object for the current user.
@@ -82,7 +84,7 @@ try {
 
                     //request to join a session
                     $picture = "http://graph.facebook.com/". $me['id']. "/picture?type=large";
-                    $result = $mySession->join($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id'], $picture);
+                    $result = $mySession->join($me['name'], $_SESSION['fb_access_token'], $me['id'], $picture);
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
@@ -91,7 +93,7 @@ try {
                         exit();
                     } else if ($result == "user-exists") {
                         //override with new information
-                        $result = $mySession->updateUser($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id'], $picture);
+                        $result = $mySession->updateUser($me['name'], $_SESSION['fb_access_token'], $me['id'], $picture);
                         if ($result == true) {
                             $_SESSION['user'] = $mySession->getUser();
                             header("Location: ../lobby/");
@@ -119,8 +121,9 @@ try {
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
 }
 
+require_once('header.php');
+
 if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
-    require_once('header.php');
 
     $helper = $fb->getRedirectLoginHelper();
 
@@ -210,7 +213,6 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     </dialog>
     <?php
 } else if($formToDisplay == "join") {
-    require_once('header.php');
     ?>
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
         <main class="mdl-layout__content main-form">
