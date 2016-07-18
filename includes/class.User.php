@@ -189,5 +189,27 @@ class User {
         }
         return false;
     }
+
+    public function getName($id = null) {
+        global $db;
+
+        if (!empty($id)) {
+
+            $sql = 'SELECT display_name FROM users WHERE id = :id';
+
+            $result = $db->prepare($sql);
+            $result->bindParam(":id", $id);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                return $result->fetch();
+            }
+        } else if (!empty($this->displayname)) {
+
+            return $this->displayname;
+        }
+        //noting found
+        return false;
+    }
 }
 ?>
