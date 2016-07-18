@@ -154,7 +154,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                             <label class="mdl-textfield__label" for="display-name">Nickname</label>
                         </div>
                         <input type="hidden" name="unique-id" value="<?php echo $code; ?>" />
-                        <input type="text" class="off-screen" id="avatar-picture" name="picture" value="" />
+                        <input type="text" class="off-screen" id="avatar-picture" name="picture" value="/join/pictures/person.png" />
                     </form>
                 </div>
                 <div class="mdl-card__actions" style="text-align: center; margin-top: -25px;">
