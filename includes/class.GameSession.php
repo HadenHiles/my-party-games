@@ -197,8 +197,8 @@ class GameSession {
                         return "user-exists";
                     } else {
                         //create user reference in database
-                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, fb_access_token, fb_user_id, picture, last_active_date)
-                                VALUES (:code, :ip, :name, :fbaccesstoken, :fbuserid, :picture, NOW())';
+                        $sql = 'INSERT INTO users (game_id, ip_address, session_id, display_name, fb_access_token, fb_user_id, picture, last_active_date)
+                                VALUES (:code, :ip, :session_id, :name, :fbaccesstoken, :fbuserid, :picture, NOW())';
 
                         $result = $db->prepare($sql);
                         $result->bindParam(":name", $name, PDO::PARAM_STR, 25);
@@ -207,6 +207,7 @@ class GameSession {
                         $result->bindParam(":fbuserid", $fbuserid, PDO::PARAM_STR, 25);
                         $result->bindParam(":picture", $picture, PDO::PARAM_STR, 100);
                         $result->bindParam(":ip", $this->hostip, PDO::PARAM_STR, 25);
+                        $result->bindParam(":session_id", $this->sessionid, PDO::PARAM_STR, 150);
 
                         if ($result->execute() && $result->errorCode() == 0) {
 
@@ -286,7 +287,7 @@ class GameSession {
                         $result->bindParam(":code", $code);
                         $result->execute();
 
-                        $sqlUpdate = 'UPDATE users SET game_id = :code, ip_address = :ip, display_name = :name, fb_access_token = :fbaccesstoken, picture = :picture, last_active_date = NOW() 
+                        $sqlUpdate = 'UPDATE users SET game_id = :code, ip_address = :ip, session_id = :session_id, display_name = :name, fb_access_token = :fbaccesstoken, picture = :picture, last_active_date = NOW() 
                                       WHERE fb_user_id = :fbuserid';
 
                         $resultUpdate = $db->prepare($sqlUpdate);
@@ -296,6 +297,7 @@ class GameSession {
                         $resultUpdate->bindParam(":fbuserid", $fbuserid, PDO::PARAM_STR, 25);
                         $resultUpdate->bindParam(":picture", $picture, PDO::PARAM_STR, 100);
                         $resultUpdate->bindParam(":ip", $this->hostip, PDO::PARAM_STR, 25);
+                        $result->bindParam(":session_id", $this->sessionid, PDO::PARAM_STR, 150);
 
                         if ($resultUpdate->execute() && $resultUpdate->errorCode() == 0) {
                             //get the row details of this user
@@ -318,8 +320,8 @@ class GameSession {
                         }
                     } else {
                         //create user reference in database
-                        $sql = 'INSERT INTO users (game_id, ip_address, display_name, fb_access_token, fb_user_id, picture, last_active_date)
-                                VALUES (:code, :ip, :name, :fbaccesstoken, :fbuserid, :picture, NOW())';
+                        $sql = 'INSERT INTO users (game_id, ip_address, session_id, display_name, fb_access_token, fb_user_id, picture, last_active_date)
+                                VALUES (:code, :ip, :session_id, :name, :fbaccesstoken, :fbuserid, :picture, NOW())';
 
                         $result = $db->prepare($sql);
                         $result->bindParam(":name", $name, PDO::PARAM_STR, 25);
@@ -328,6 +330,7 @@ class GameSession {
                         $result->bindParam(":fbuserid", $fbuserid, PDO::PARAM_STR, 25);
                         $result->bindParam(":picture", $picture, PDO::PARAM_STR, 100);
                         $result->bindParam(":ip", $this->hostip, PDO::PARAM_STR, 25);
+                        $result->bindParam(":session_id", $this->sessionid, PDO::PARAM_STR, 150);
 
                         if ($result->execute() && $result->errorCode() == 0) {
 
@@ -362,6 +365,23 @@ class GameSession {
         }
 
         //something went wrong if this function returns false
+        return false;
+    }
+
+    /**
+     * Determine if the user is in a game already
+     * @return bool
+     */
+    public function isJoined() {
+        global $db;
+
+        $sql = "SELECT session_id FROM users WHERE session_id = :session_id";
+        $result = $db->prepare($sql);
+        $result->bindValue(":session_id", $this->sessionid);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() == 1) {
+            return true;
+        }
         return false;
     }
 

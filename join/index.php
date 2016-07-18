@@ -21,19 +21,24 @@ $formToDisplay = "joinGame";
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    
+    if($mySession->isJoined()) {
+        header("Location: ../lobby/");
+    }
 
     //check for form submission to join a game session
-    if ((isset($_REQUEST['unique-id']) && !empty($_REQUEST['unique-id'])) || (isset($_SESSION['current_game_code']) && !empty($_SESSION['current_game_code']) && $_SESSION['current_game_code'] != 0)) {
+    if (!empty($_REQUEST['unique-id']) || !empty($_SESSION['current_game_code'])) {
         //vars
         $code = $_REQUEST['unique-id'];
 
-        if(empty($_SESSION['current_game_code']) || !isset($_SESSION['current_game_code'])) {
+        echo $code . "</br>";
+        if(empty($code) && !empty($_SESSION['current_game_code'])) {
+            $code = $_SESSION['current_game_code'];
+        } else if($_SESSION['current_game_code'] != intval($code)) {
             $_SESSION['current_game_code'] = intval($code);
         }
+        echo $code;
 
-        if(empty($code)) {
-            $code = $_SESSION['current_game_code'];
-        }
         $isGame = $mySession->getGame($code);
         if(!$isGame) {
             $msg = "Game could not be found.";
@@ -57,8 +62,6 @@ try {
                     if ($result == true && intval($result)) {
 
                         $_SESSION['user'] = $mySession->getUser();
-                        unset($_SESSION['current_game_code']);
-                        unset($_REQUEST);
                         header("Location: ../lobby/");
 
                     } else if ($result == "user-exists") {
@@ -68,6 +71,7 @@ try {
                     }
                 }
             } else if(isset($_REQUEST['fb-login'])) {
+                echo 'fuck off';
                 $formToDisplay = "nickname";
                 try {
                     // Get the Facebook\GraphNodes\GraphUser object for the current user.
@@ -83,8 +87,6 @@ try {
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
                         $_SESSION['user'] = $mySession->getUser();
-                        unset($_SESSION['current_game_code']);
-                        unset($_REQUEST);
                         header("Location: ../lobby/");
                         exit();
                     } else if ($result == "user-exists") {
@@ -92,8 +94,6 @@ try {
                         $result = $mySession->updateUser($me['name'], $_SESSION['current_game_code'], $_SESSION['fb_access_token'], $me['id'], $picture);
                         if ($result == true) {
                             $_SESSION['user'] = $mySession->getUser();
-                            unset($_SESSION['current_game_code']);
-                            unset($_REQUEST);
                             header("Location: ../lobby/");
                             exit();
                         } else if (intval($result)) {
@@ -223,7 +223,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                 </div>
                 </br>
                 <div class="mdl-card__supporting-text">
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" id="joinForm">
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" id="joinForm">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                             <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="" required />
                             <label class="mdl-textfield__label" for="unique-id">Game Code</label>
