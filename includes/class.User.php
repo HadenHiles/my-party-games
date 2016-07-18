@@ -20,7 +20,7 @@ class User {
     /*
      * Inits the user class
      */
-    public function  __construct($sessionid, $ip = 0) {
+    public function  __construct($sessionid, $ip = 0, $name = null) {
 
         if (!empty($sessionid)) {
 
@@ -28,6 +28,10 @@ class User {
             $this->uniquecode = 0;
             $this->hostip = $ip;
             $this->game = '';
+
+            if (!empty($name)) {
+                $this->displayname = $name;
+            }
 
         } else {
             throw new Exception ("You need to specify the sessionid and game!");
@@ -146,6 +150,42 @@ class User {
                 'code' => $this->gameid,
                 'name' => $this->displayname
             );
+        }
+        return false;
+    }
+
+    public function getAll($code) {
+        global $db;
+
+        if (!empty($code)) {
+            //select all users in current game
+            $sql = 'SELECT * FROM users WHERE game_id = :code';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":code", $code);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                //add the users to the game
+                return $result->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }
+
+        return false;
+    }
+
+    public function deleteUser($code) {
+        global $db;
+
+        //delete non verified users from this game session
+        $sql = 'DELETE FROM users WHERE game_id = :gameid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":gameid", $this->uniquecode);
+
+        if ($result->execute() && $result->errorCode()) {
+            //if this works, great! if not oh well users will be deleted when un active anyway
+            return true;
         }
         return false;
     }

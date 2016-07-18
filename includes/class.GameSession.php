@@ -128,17 +128,9 @@ class GameSession {
      */
     public function removeSession($sessionid) {
 
-        global $db;
+        global $db, $user;
 
-        //delete non verified users from this game session
-        $sql = 'DELETE FROM users WHERE game_id = :gameid';
-
-        $result = $db->prepare($sql);
-        $result->bindValue(":gameid", $this->uniquecode);
-
-        if ($result->execute() && $result->errorCode()) {
-            //if this works, great! if not oh well users will be deleted when un active anyway
-        }
+        $user->deleteUsers($this->uniquecode);
 
         //delete game connection
         $sql = 'DELETE FROM game_connections      
@@ -351,32 +343,24 @@ class GameSession {
      */
     public function loadUsers($code) {
 
-        global $db;
+        global $db, $user;
 
         //query the game details
         $sql = 'SELECT * FROM game_connections WHERE unique_code = :code LIMIT 1';
 
         $result = $db->prepare($sql);
         $result->bindValue(":code", $code);
-        $result->execute();
-        $game = $result->fetch();
 
-        if ($result->rowCount() == 1) {
-            //select all users in current game
-            $sql = 'SELECT * FROM users WHERE game_id = :code';
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-            $result = $db->prepare($sql);
-            $result->bindValue(":code", $code);
+            $game = $result->fetch();
 
-            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-
-                //add the users to the game
-                $game['users'] = $result->fetchAll(PDO::FETCH_ASSOC);
+            if ($users = $user->getAll($code)) {
+                $game['users'] = $users;
                 //return associative array for the game
                 return $game;
             }
         }
-
         //if returned false, game could not be found
         return false;
     }

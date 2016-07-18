@@ -1,5 +1,6 @@
 <?php
 require_once("../includes/class.GameSession.php");
+require_once("../includes/class.User.php");
 require_once("../includes/common.php");
 require_once("../includes/database.php");
 
@@ -11,14 +12,16 @@ if (empty($_SESSION['user'])) {
 }
 
 try {
+    $thisUser = $_SESSION['user'];
+
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
-
-    $user = $_SESSION['user'];
+    $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
 
     //load the current game details
-    if (!$game = $mySession->loadUsers($user['code'])) {
+    if (!$game = $mySession->loadUsers($thisUser['code'])) {
         //game was not found
+        $msg = "Sorry your game was deleted";
     } else {
         //game was found
         ?>
