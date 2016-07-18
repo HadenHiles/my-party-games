@@ -129,8 +129,9 @@ class GameSession {
 
         global $db, $user;
 
-        $user->deleteUsers($this->uniquecode);
-
+        if (!empty($this->uniquecode)) {
+            $user->deleteUsers($this->uniquecode);
+        }
         //delete game connection
         $sql = 'DELETE FROM game_connections      
                 WHERE session_id = :sessionid';
@@ -138,7 +139,7 @@ class GameSession {
         $result = $db->prepare($sql);
         $result->bindValue(":sessionid", $sessionid);
 
-        if ($result->execute() && $result->errorCode()) {
+        if ($result->execute() && $result->errorCode() == 0) {
             return true;
         } else {
             throw new Exception ("Session could not be updated.");
