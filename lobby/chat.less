@@ -1,0 +1,49 @@
+@import "mixins/elements";
+#chatMessages {
+  .chat {
+    width: 100%;
+    padding: 10px;
+    min-height: 200px;
+    padding-bottom: 0 !important;
+
+    .message {
+      float: left;
+      width: 48%;
+      height: auto;
+      padding: 10px;
+      margin: 10px;
+      background: #f1f1f1;
+      .border-radius(10px, 10px, 10px, 10px) !important;
+
+      &.me {
+        float: right;
+        color: #fff;
+        background: rgb(33,150,243);
+      }
+
+      pre {
+        font-family: "Roboto","Helvetica","Arial",sans-serif;
+      }
+    }
+  }
+}
+
+.messageArea {
+  position: relative;
+  float: left;
+  width: 100% !important;
+  textarea {
+    width: 100% !important;
+  }
+  .send {
+    position: absolute;
+    top: 0;
+    right: 0;
+    i {
+      position: relative;
+      top: -2px;
+      left: -1px;
+      font-size: 18px !important;
+    }
+  }
+}

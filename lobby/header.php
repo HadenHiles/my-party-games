@@ -31,6 +31,7 @@
         <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-amber.min.css" />
         <link rel="stylesheet" href="android.css" />
         <link rel="stylesheet" href="lobby.css" />
+        <link rel="stylesheet" href="chat.css" />
         <link rel="stylesheet" href="../3rd-party/bootstrap-social/bootstrap-social.css" />
     </head>
     <body>

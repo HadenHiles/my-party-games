@@ -385,6 +385,10 @@ class GameSession {
         return false;
     }
 
+    /**
+     * @param $code
+     * @return bool
+     */
     public function switchGame($code) {
         global $db;
 
@@ -395,6 +399,34 @@ class GameSession {
 
         if ($result->execute() && $result->errorCode() == 0) {
             return true;
+        }
+        return false;
+    }
+
+    public function addChatMessage($message, $owner) {
+        global $db;
+
+        $sql = "INSERT INTO messages (game_id, message, owner) VALUES(:code, :message, :owner)";
+        $result = $db->prepare($sql);
+        $result->bindValue(":code", $_SESSION['current_game_code']);
+        $result->bindValue(":message", $message);
+        $result->bindValue(":owner", $owner);
+
+        if ($result->execute() && $result->errorCode() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function loadChatMessages() {
+        global $db;
+
+        $sql = "SELECT * FROM messages WHERE game_id = :code";
+        $result = $db->prepare($sql);
+        $result->bindValue(":code", $_SESSION['current_game_code']);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+            return $result->fetchAll(PDO::FETCH_ASSOC);
         }
         return false;
     }

@@ -42,6 +42,16 @@ try {
             </div>
             <div class="mdl-cell mdl-cell--5-col">
                 <div id="players"></div>
+                <div id="chatMessages"></div>
+                <form action="chat.php" id="chatMessageForm">
+                    <div class="mdl-textfield mdl-js-textfield messageArea">
+                        <textarea class="mdl-textfield__input" type="text" rows="2" name="message" maxlength="500" id="messageText"></textarea>
+                        <label class="mdl-textfield__label" for="messageText">Enter a Message</label>
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--primary send" id="sendMessage">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
         <?php
