@@ -55,7 +55,7 @@ class User {
         }
         return false;
     }
-
+    
     public function findUser($code) {
 
         global $db;

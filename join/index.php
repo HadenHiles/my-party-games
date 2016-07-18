@@ -96,8 +96,11 @@ try {
                     } else if ($result == "user-exists") {
                         //override with new information
                         $result = $mySession->updateUser($me['name'], $_SESSION['fb_access_token'], $me['id'], $picture);
+                        
                         if ($result == true) {
-                            $_SESSION['user'] = $mySession->getUser();
+                            
+                            $user->setName($me['name']);
+                            $_SESSION['user'] = $user->getUser();
                             header("Location: ../lobby/");
                             exit();
                         } else if (intval($result)) {
