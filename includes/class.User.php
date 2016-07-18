@@ -202,7 +202,9 @@ class User {
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-                return $result->fetch();
+                $result = $result->fetch(PDO::FETCH_ASSOC);
+
+                return $result['display_name'];
             }
         } else if (!empty($this->displayname)) {
 
