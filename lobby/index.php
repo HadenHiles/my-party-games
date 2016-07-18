@@ -14,6 +14,15 @@ try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 
+    if($_REQUEST['leave'] == true) {
+        if($mySession->leave()) {
+            $code = $_SESSION['current_game_code'];
+            unset($_SESSION['current_game_code']);
+            header('Location: /join/?last-game-code=' . $code);
+        }
+        $msg = "You can't leave!";
+    }
+
     $user = $_SESSION['user'];
 
     //load the current game details
@@ -23,8 +32,13 @@ try {
         //game was found
         ?>
         <div class="mdl-layout mdl-js-layout mdl-color--grey-100" style="justify-content: initial;">
+            <div class="icon_bar">
+                <div class="mdl-cell mdl-cell--1-col left">
+                    <a href="<?php echo $_SERVER['PHP_SELF']; ?>?leave=true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><i class="fa fa-times" style="position: relative; left: -5px; top: -1px;"></i> Leave</a>
+                </div>
+            </div>
             <div style="color: #6ab344;">
-                <h2 style="float: left; text-transform: capitalize;"><?php echo str_replace("-", " ", $game['game_name']); ?></h2>
+                <h2 style="float: left; font-size: 36px; text-transform: capitalize;"><?php echo str_replace("-", " ", $game['game_name']); ?></h2>
             </div>
             <div class="mdl-cell mdl-cell--5-col">
                 <div id="players"></div>

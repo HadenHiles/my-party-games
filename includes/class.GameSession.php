@@ -369,13 +369,44 @@ class GameSession {
     }
 
     /**
+     * Remove user from their current game
+     * @return bool
+     */
+    public function leave() {
+        global $db;
+
+        $sql = "UPDATE users SET game_id = 0 WHERE session_id = :session_id";
+        $result = $db->prepare($sql);
+        $result->bindValue(":session_id", $this->sessionid);
+
+        if ($result->execute() && $result->errorCode() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function switchGame($code) {
+        global $db;
+
+        $sql = "UPDATE users SET game_id = :code WHERE session_id = :session_id";
+        $result = $db->prepare($sql);
+        $result->bindValue(":code", $code);
+        $result->bindValue(":session_id", $this->sessionid);
+
+        if ($result->execute() && $result->errorCode() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Determine if the user is in a game already
      * @return bool
      */
     public function isJoined() {
         global $db;
 
-        $sql = "SELECT session_id FROM users WHERE session_id = :session_id";
+        $sql = "SELECT session_id FROM users WHERE session_id = :session_id AND game_id != 0";
         $result = $db->prepare($sql);
         $result->bindValue(":session_id", $this->sessionid);
 

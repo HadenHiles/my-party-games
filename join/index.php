@@ -21,23 +21,17 @@ $formToDisplay = "joinGame";
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
-    
-    if($mySession->isJoined()) {
-        header("Location: ../lobby/");
-    }
 
     //check for form submission to join a game session
     if (!empty($_REQUEST['unique-id']) || !empty($_SESSION['current_game_code'])) {
         //vars
         $code = $_REQUEST['unique-id'];
 
-        echo $code . "</br>";
         if(empty($code) && !empty($_SESSION['current_game_code'])) {
             $code = $_SESSION['current_game_code'];
         } else if($_SESSION['current_game_code'] != intval($code)) {
             $_SESSION['current_game_code'] = intval($code);
         }
-        echo $code;
 
         $isGame = $mySession->getGame($code);
         if(!$isGame) {
@@ -45,6 +39,14 @@ try {
             $formToDisplay = "join";
         } else {
             $formToDisplay = "nickname";
+            
+            //For users who just left a game and we still have all of their information except game_id
+            $mySession->switchGame($code);
+
+            if($mySession->isJoined()) {
+                header("Location: ../lobby/");
+            }
+            
             if(isset($_REQUEST['display-name'])) {
                 $name = $_REQUEST['display-name'];
                 $picture = $_REQUEST['picture'];
@@ -71,7 +73,6 @@ try {
                     }
                 }
             } else if(isset($_REQUEST['fb-login'])) {
-                echo 'fuck off';
                 $formToDisplay = "nickname";
                 try {
                     // Get the Facebook\GraphNodes\GraphUser object for the current user.
@@ -225,7 +226,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                 <div class="mdl-card__supporting-text">
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" id="joinForm">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="" required />
+                            <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="<?php echo $_REQUEST['last-game-code']; ?>" required />
                             <label class="mdl-textfield__label" for="unique-id">Game Code</label>
                             <span class="mdl-textfield__error">Please enter a valid code!</span>
                         </div>
