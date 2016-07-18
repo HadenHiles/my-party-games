@@ -28,10 +28,7 @@
             url: $chatMessageForm.attr('action'),
             data: { "message": $('#messageText').val() },
             success: function(response) {
-                $('#messageText').val("d");
-                setTimeout(function() {
-                    $('#messageText').val("");
-                }, 500);
+                $('#messageText').val("");
             },
             error: function(xhr, msg) {
                 console.log(msg);
@@ -70,4 +67,4 @@ function updateChat() {
     });
 }
 
-window.setInterval(updateChat, 2000);
+window.setInterval(updateChat, 20000000);

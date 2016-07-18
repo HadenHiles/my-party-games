@@ -4,25 +4,57 @@
     width: 100%;
     padding: 10px;
     min-height: 200px;
-    padding-bottom: 0 !important;
+    padding-bottom: 20px !important;
 
     .message {
       float: left;
-      width: 48%;
+      width: 62%;
       height: auto;
       padding: 10px;
       margin: 10px;
-      background: #f1f1f1;
+      background: #f9f9f9;
       .border-radius(10px, 10px, 10px, 10px) !important;
+
+      div.picture {
+        width: 60px;
+        height: 100%;
+        margin: 10px;
+        float: left;
+        img {
+          width: 100%;
+          height: auto;
+        }
+      }
+
+      span.date {
+        float: right;
+        font-style: italic;
+        font-size: 10px;
+        color: #888;
+      }
+
+      h6.name {
+        padding: 0;
+        margin: 6px 0 0 0;
+      }
 
       &.me {
         float: right;
         color: #fff;
         background: rgb(33,150,243);
+
+        span.date {
+          color: #f9f9f9;
+        }
       }
 
       pre {
+        float: left;
         font-family: "Roboto","Helvetica","Arial",sans-serif;
+        word-wrap: break-word; /* IE>=5.5 */
+        white-space: pre; /* IE>=6 */
+        white-space: -moz-pre-wrap; /* For Fx<=2 */
+        white-space: pre-wrap; /* Fx>3, Opera>8, Safari>3*/
       }
     }
   }
@@ -31,14 +63,19 @@
 .messageArea {
   position: relative;
   float: left;
+  padding: 10px 70px 10px 10px;
   width: 100% !important;
+  background: rgba(255, 255, 255, 0.3);
+  .border-radius(10px, 10px, 10px, 10px);
   textarea {
     width: 100% !important;
+    padding: 20px 0 0 10px;
+    resize: none;
   }
   .send {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -40px;
+    right: 10px;
     i {
       position: relative;
       top: -2px;

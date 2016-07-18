@@ -370,13 +370,14 @@ class GameSession {
     }
 
     public function addChatMessage($message, $owner) {
-        global $db;
+        global $db, $user;
 
-        $sql = "INSERT INTO messages (game_id, message, owner) VALUES(:code, :message, :owner)";
+        $sql = "INSERT INTO messages (game_id, message, owner, name) VALUES(:code, :message, :owner, :name)";
         $result = $db->prepare($sql);
         $result->bindValue(":code", $_SESSION['current_game_code']);
         $result->bindValue(":message", $message);
         $result->bindValue(":owner", $owner);
+        $result->bindValue(":name", $user->getName($owner));
 
         if ($result->execute() && $result->errorCode() == 0) {
             return true;

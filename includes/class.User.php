@@ -17,7 +17,7 @@ class User {
     private $fbtoken;
     private $fbuserid;
 
-    /*
+    /**
      * Inits the user class
      */
     public function  __construct($sessionid, $ip = 0, $name = null) {
@@ -56,6 +56,10 @@ class User {
         return false;
     }
 
+    /**
+     * @param $code
+     * @return bool
+     */
     public function findUser($code) {
 
         global $db;
@@ -88,6 +92,13 @@ class User {
         return false;
     }
 
+    /**
+     * @param $fbaccesstoken
+     * @param $fbuserid
+     * @param $picture
+     * @return bool
+     * @throws Exception
+     */
     public function addUser($fbaccesstoken, $fbuserid, $picture) {
         global $db;
 
@@ -127,6 +138,10 @@ class User {
         }
     }
 
+    /**
+     * @param $name
+     * @throws Exception
+     */
     public function setName($name) {
 
         if (!empty($name)) {
@@ -137,7 +152,7 @@ class User {
     }
 
 
-    /*
+    /**
      * Return the current user information
      * @returns array, user information
      */
@@ -154,6 +169,30 @@ class User {
         return false;
     }
 
+    /**
+     * @param $user_id
+     * @return bool
+     */
+    public function getPicture($user_id) {
+        global $db;
+
+        //select all users in current game
+        $sql = 'SELECT picture FROM users WHERE id = :user_id LIMIT 1';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":user_id", $user_id);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+            return $result['picture'];
+        }
+        return false;
+    }
+
+    /**
+     * @param $code
+     * @return array|bool
+     */
     public function getAll($code) {
         global $db;
 
@@ -174,6 +213,10 @@ class User {
         return false;
     }
 
+    /**
+     * @param $code
+     * @return bool
+     */
     public function deleteUsers($code) {
         global $db;
 
@@ -190,6 +233,10 @@ class User {
         return false;
     }
 
+    /**
+     * @param null $id
+     * @return bool|null
+     */
     public function getName($id = null) {
         global $db;
 

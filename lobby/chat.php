@@ -3,12 +3,14 @@
  * Created by handshiles on 2016-07-12.
  */
 require_once("../includes/class.GameSession.php");
+require_once("../includes/class.User.php");
 require_once("../includes/common.php");
 require_once("../includes/database.php");
 
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    $user = new User(SESSION_ID, DEVICE_IP);
 
     $user_session = $_SESSION['user'];
 
@@ -25,11 +27,25 @@ try {
                     if(!empty($message['message'])) {
                         if($message['owner'] == $user_session['userid']) {
                             ?>
-                            <div class="mdl-shadow--2dp message me"><pre><?php echo $message['message']; ?></pre></div>
+                            <div class="mdl-shadow--2dp message me">
+                                <div class="picture">
+                                    <img src="<?php echo $user->getPicture($message['owner']); ?>" alt="" />
+                                </div>
+                                <span class="date"><?php echo date('h:i', strtotime($message['time'])); ?></span>
+                                <h6 class="name"><?php echo $message['name'] ?></h6>
+                                <pre><?php echo $message['message']; ?></pre>
+                            </div>
                             <?php
                         } else {
                             ?>
-                            <div class="mdl-shadow--2dp message"><pre><?php echo $message['message']; ?></pre></div>
+                            <div class="mdl-shadow--2dp message">
+                                <div class="picture">
+                                    <img src="<?php echo $user->getPicture($message['owner']); ?>" alt="" />
+                                </div>
+                                <span class="date"><?php echo date('h:i', strtotime($message['time'])); ?></span>
+                                <h6 class="name"><?php echo $message['name'] ?></h6>
+                                <pre><?php echo $message['message']; ?></pre>
+                            </div>
                             <?php
                         }
                         ?>
