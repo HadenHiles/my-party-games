@@ -1,6 +1,6 @@
 .idea
 *.iml
 files
-includes/config.php
+includes/config*.php
 login/facebook/config.php
 *.css
