@@ -40,8 +40,37 @@ try {
                     <a href="<?php echo $_SERVER['PHP_SELF']; ?>?leave=true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><i class="fa fa-times" style="position: relative; left: -5px; top: -1px;"></i> Leave</a>
                 </div>
             </div>
-            <div style="color: #6ab344;">
-                <h2 style="float: left; font-size: 36px; text-transform: capitalize;"><?php echo str_replace("-", " ", $game['game_name']); ?></h2>
+            <div>
+                <h2 style="color: #6ab344; float: left; font-size: 36px; text-transform: capitalize;"><?php echo str_replace("-", " ", $game['game_name']); ?></h2>
+                <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; margin: 34px 10px 10px 10px; color: #777;">
+                    <i class="fa fa-question"></i>
+                </button>
+                <dialog class="mdl-dialog rules" style="width: 90%;">
+                    <div class="mdl-dialog__content">
+                        <?php require_once("../games/" . $game['game_name'] . "/rules.php"); ?>
+                    </div>
+                    <div class="mdl-dialog__actions">
+                        <button type="button" class="mdl-button close">CLOSE</button>
+                    </div>
+                </dialog>
+                <script>
+                    (function() {
+                        var rulesDialog = document.querySelector('dialog.rules');
+                        if(rulesDialog != null) {
+                            if (!rulesDialog.showModal) {
+                                dialogPolyfill.registerDialog(rulesDialog);
+                            }
+
+                            document.querySelector('#show-rules').addEventListener('click', function() {
+                                rulesDialog.showModal();
+                            });
+
+                            rulesDialog.querySelector('.close').addEventListener('click', function() {
+                                rulesDialog.close();
+                            });
+                        }
+                    })();
+                </script>
             </div>
             <div class="mdl-cell mdl-cell--5-col">
                 <div id="players"></div>

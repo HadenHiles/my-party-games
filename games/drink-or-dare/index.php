@@ -1,69 +1,37 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/common.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/database.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.GameSession.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.User.php');
-//require_once($_SERVER['DOCUMENT_ROOT'].'/header/header.php');
+/**
+ * Created by handshiles on 2016-08-01.
+ */
+$pageTitle = "Drink Or Dare";
 
-$game = 'drink-or-dare';
-
-try {
-    //init a new game session
-    $mySession = new GameSession(SESSION_ID, DEVICE_IP);
-    $user = new User(SESSION_ID, DEVICE_IP);
-    
-    $mySession->setup($game);
-
-    //check for form submission to join a game session
-    if (isset($_POST['start-game'])) {
-        $displayOnly = (isset($_POST['display']));
-
-        if ($displayOnly) {
-            header("Location: /lobby/?display=true");
-        } else {
-            header("Location: /join/?unique-id=".$mySession->getCode(SESSION_ID));
-        }
-    } else if (isset($_POST['new-code'])) {
-
-        //requested to make a new code for the current session
-        $mySession->newCode();
-        header("Location: index.php");
-    } else if (isset($_POST['new-session'])) {
-
-        //requested to make a new session
-        session_regenerate_id();
-        $mySession->removeSession(SESSION_ID);
-        header("Location: index.php");
-    }
-
-    //get the current game code
-    $code = $mySession->getCode(SESSION_ID);
-
-} catch (Exception $e) {
-    echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
-}
-
-//var_dump($code, SESSION_ID);
+require_once("../header.php");
 ?>
-
-<h2>Drink Or Dare</h2>
-<h4>Here is your game code: <?php echo $code; ?></h4>
-
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-
-    <label>Display Screen</label>
-    <input type="checkbox" name="display">
-
-    <label>Start Game</label>
-    <button type="submit" name="start-game">Start</button>
-
-    <br /><br />
-
-    <button type="submit" name="new-code">New Code</button>
-    <button type="submit" name="new-session">New Session</button>
-
-    <h4>Need to join a game?</h4>
-    <div class="mdl-cell mdl-cell--6-col mdl-cell--3-offset">
-        <a href="/join/">Join a Game</a>
+    <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
+        <header class="header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
+            <div class="mdl-layout__header-row">
+                <!-- Icon button -->
+                <button class="mdl-button mdl-js-button mdl-button--icon" onclick="window.history.back(); return false;">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+                <span class="mdl-layout-title"><?php echo $pageTitle; ?></span>
+                <div class="mdl-layout-spacer"></div>
+            </div>
+        </header>
+        <div class="ribbon"></div>
+        <main class="main mdl-layout__content">
+            <div class="container mdl-grid">
+                <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+                <div class="content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+                    <div class="crumbs mdl-color-text--grey-500">
+                        Games &gt; Drink Or Dare
+                    </div>
+                    <?php
+                    require_once("rules.php");
+                    ?>
+                </div>
+            </div>
+            <a href="create.php" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right create-button">Create Game</a>
+        </main>
     </div>
-</form>
+<?php
+require_once("../footer.php");
