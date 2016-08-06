@@ -15,15 +15,15 @@
                         <i class="material-icons">search</i>
                     </label>
                     <div class="mdl-textfield__expandable-holder">
-                        <input class="mdl-textfield__input" type="text" id="search-field">
+                        <input class="mdl-textfield__input" type="text" id="search-field" placeholder="Find A Game">
                     </div>
                 </div>
                 <!-- Navigation -->
-                <div class="android-navigation-container">
-                    <nav class="android-navigation mdl-navigation">
-                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/games">Games</a>
-                    </nav>
-                </div>
+<!--                <div class="android-navigation-container">-->
+<!--                    <nav class="android-navigation mdl-navigation">-->
+<!--                        <a class="mdl-navigation__link mdl-typography--text-uppercase" href="/games">Games</a>-->
+<!--                    </nav>-->
+<!--                </div>-->
                 <button class="android-more-button mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect" id="more-button">
                     <i class="material-icons">more_vert</i>
                 </button>
