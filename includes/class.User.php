@@ -285,5 +285,96 @@ class User {
         //noting found
         return false;
     }
+
+    /**
+     * @param $action - "get" or "set"
+     * @param $specificUser - either false or the specific user id
+     * @return bool
+     * Set or Get the isHost value for the user based on the requested action
+     */
+    public function isHost($action, $specificUser) {
+        global $db;
+
+        if($action == "set") {
+            $oldHostsSql = 'UPDATE users SET is_host = false WHERE game_id = :game_id';
+
+            $oldHostsResult = $db->prepare($oldHostsSql);
+            $oldHostsResult->bindParam(":game_id", $this->gameid);
+
+            $newHostSql = 'UPDATE users SET is_host = :is_host WHERE id = :id AND game_id = :game_id';
+
+            if($specificUser) {
+                $user_id = $specificUser;
+            } else {
+                $user_id = $this->userid;
+            }
+
+            $newHostResult = $db->prepare($newHostSql);
+            $newHostResult->bindParam(":is_host", $isHost);
+            $newHostResult->bindParam(":id", $user_id);
+            $newHostResult->bindParam(":game_id", $this->gameid);
+
+            if ($oldHostsResult->execute() && $oldHostsResult->errorCode() == 0 && $newHostResult->execute() && $newHostResult->errorCode() == 0) {
+                return true;
+            }
+            return false;
+        } else if ($action == "get") {
+            $sql = 'SELECT is_host FROM users WHERE id = :id';
+
+            $result = $db->prepare($sql);
+            $result->bindParam(":id", $this->userid);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    /**
+     * @param $action - "get" or "set"
+     * @param $specificUser - either false or the specific user id
+     * @return bool
+     * Set or Get the isDisplay value for the user based on the requested action
+     */
+    public function isDisplay($action, $specificUser) {
+        global $db;
+
+        if($action == "set") {
+            $oldHostsSql = 'UPDATE users SET is_display = false WHERE game_id = :game_id';
+
+            $oldHostsResult = $db->prepare($oldHostsSql);
+            $oldHostsResult->bindParam(":game_id", $this->gameid);
+
+            $newHostSql = 'UPDATE users SET is_display = :is_host WHERE id = :id AND game_id = :game_id';
+
+            if($specificUser) {
+                $user_id = $specificUser;
+            } else {
+                $user_id = $this->userid;
+            }
+            $newHostResult = $db->prepare($newHostSql);
+            $newHostResult->bindParam(":is_host", $isHost);
+            $newHostResult->bindParam(":id", $user_id);
+            $newHostResult->bindParam(":game_id", $this->gameid);
+
+            if ($oldHostsResult->execute() && $oldHostsResult->errorCode() == 0 && $newHostResult->execute() && $newHostResult->errorCode() == 0) {
+                return true;
+            }
+            return false;
+        } else if ($action == "get") {
+            $sql = 'SELECT is_display FROM users WHERE id = :id';
+
+            $result = $db->prepare($sql);
+            $result->bindParam(":id", $this->userid);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                $result = $result->fetch(PDO::FETCH_ASSOC);
+
+                return $result['is_display'];
+            }
+            return false;
+        }
+    }
 }
 ?>
