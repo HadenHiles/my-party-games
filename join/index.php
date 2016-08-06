@@ -17,6 +17,9 @@ $fb = new Facebook\Facebook([
     'default_graph_version' => 'v2.6'
 ]);
 
+//requests
+$isDisplay = $_REQUEST['display'];
+
 $formToDisplay = "joinGame";
 
 try {
@@ -64,6 +67,16 @@ try {
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
+                        //If user is a host
+                        if($_SESSION['isHost']) {
+                            $user->isHost("set", false);
+                            unset($_SESSION['isHost']);
+                        }
+
+                        //If user is a display
+                        if($isDisplay) {
+                            $user->isDisplay("set", false);
+                        }
 
                         $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
@@ -90,6 +103,17 @@ try {
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
+                        //If user is a host
+                        if($_SESSION['isHost']) {
+                            $user->isHost("set", false);
+                            unset($_SESSION['isHost']);
+                        }
+
+                        //If user is a display
+                        if($isDisplay) {
+                            $user->isDisplay("set", false);
+                        }
+
                         $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
                         exit();
@@ -98,6 +122,17 @@ try {
                         $result = $mySession->updateUser($me['name'], $code, $_SESSION['fb_access_token'], $me['id'], $picture);
                         
                         if ($result == true) {
+                            //If user is a host
+                            if($_SESSION['isHost']) {
+                                $user->isHost("set", false);
+                                unset($_SESSION['isHost']);
+                            }
+
+                            //If user is a display
+                            if($isDisplay) {
+                                $user->isDisplay("set", false);
+                            }
+
                             $_SESSION['user'] = $user->getUser();
                             header("Location: ../lobby/");
                             exit();
