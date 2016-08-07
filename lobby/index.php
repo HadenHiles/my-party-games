@@ -34,9 +34,9 @@ try {
     } else {
         //game was found
         ?>
-        <div class="mdl-layout mdl-js-layout mdl-color--grey-100" style="justify-content: initial;">
-            <div class="icon_bar">
-                <div class="mdl-cell mdl-cell--1-col left">
+        <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
+            <header class="header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
+                <div class="mdl-layout__header-row">
                     <?php
                     if(!$user->isDisplay("get", $thisUser['userid'])) {
                         ?>
@@ -44,83 +44,90 @@ try {
                         <?php
                     }
                     ?>
-                </div>
-                <div class="mdl-cell mdl-cell--1-col right" style="text-align: right;">
-                    <?php
-                    if($user->isHost("get", $thisUser['userid'])) {
-                        ?>
-                        <!-- Right aligned menu below button -->
-                        <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
-                            <i class="fa fa-cog fade"></i>
-                        </button>
-
-                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
-                            <li class="mdl-menu__item">Settings</li>
-                            <li class="mdl-menu__item" style="color: #CE0000">Delete Game</li>
-                        </ul>
+                    <span class="android-title mdl-layout-title" style="color: #757575;">
+                        <i class="fa fa-glass" aria-hidden="true" style="color: #8bc34a;"></i> Party Games
+                    </span>
+                    <div class="mdl-layout-spacer"></div>
+                    <div class="mdl-cell mdl-cell--1-col right" style="text-align: right;">
                         <?php
-                    }
-                    ?>
+                        if($user->isHost("get", $thisUser['userid'])) {
+                            ?>
+                            <!-- Right aligned menu below button -->
+                            <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
+                                <i class="fa fa-cog fade"></i>
+                            </button>
+
+                            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                                <li class="mdl-menu__item" id="show-settings">Settings</li>
+                                <li class="mdl-menu__item" id="delete-game" style="color: #CE0000">Delete Game</li>
+                            </ul>
+                            <?php
+                        }
+                        ?>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <h2 style="color: #6ab344; float: left; font-size: 36px; text-transform: capitalize; margin-bottom: 0;">
-                    <?php echo str_replace("-", " ", $game['game_name']); ?>
-                </h2>
+            </header>
+            <div class="ribbon"></div>
+            <main class="main mdl-layout__content">
+                <div class="container mdl-grid">
+                    <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+                    <div class="content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+                        <div class="crumbs mdl-color-text--grey-500" style="color: #6ab344; float: left; font-size: 30px; text-transform: capitalize; margin-bottom: 0;">
+                            <?php echo str_replace("-", " ", $game['game_name']); ?>
+                        </div>
+                        <?php
+                        if($user->isHost("get", $thisUser['userid'])) {
+                            ?>
+                            <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; color: #777; margin: -5px 0 0 5px;">
+                                <i class="fa fa-question"></i>
+                            </button>
+                            <div class="mdl-tooltip" for="show-rules">Rules</div>
+                            <?php
+                        }
+                        ?>
+                        <div class="clear"></div>
+                        <p class="fade" style="width: 100%; float: left; font-size: 20px; color: #000;">#<?php echo $game['unique_code']; ?></p>
+                        <?php
+                        $showRules = true;
+
+                        if($user->isDisplay("get", $thisUser['userid'])) {
+                            ?>
+                            <div id="players" style="margin-top: 25px;"></div>
+                            <?php
+                        } else {
+                            require_once("../games/" . $game['game_name'] . "/rules.php");
+                        }
+                        /*
+                        ?>
+                        <div id="chatMessages"></div>
+                        <?php
+                            if(!$user->isHost("get", $thisUser['userid'])) {
+                                ?>
+                                <form action="chat.php" id="chatMessageForm">
+                                    <div class="mdl-textfield mdl-js-textfield mdl-shadow--2dp messageArea">
+                                        <textarea class="mdl-textfield__input" type="text" rows="2" name="message" maxlength="500" id="messageText"></textarea>
+                                        <!--                        <label class="mdl-textfield__label" for="messageText">Enter a Message</label>-->
+                                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary send" id="sendMessage">
+                                            <i class="fa fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                                <?php
+                            }
+                        */
+                        ?>
+                    </div>
+                </div>
                 <?php
                 if($user->isHost("get", $thisUser['userid'])) {
                     ?>
-                    <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; margin: 34px 10px 10px 10px; color: #777;">
-                        <i class="fa fa-question"></i>
-                    </button>
-                    <div class="mdl-tooltip" for="show-rules">Rules</div>
+                    <a href="" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right start-button">Start Game</a>
                     <?php
                 }
                 ?>
-                <div class="clear"></div>
-                <p class="fade" style="width: 100%; float: left; font-size: 20px; color: #000; text-align: center;">(<?php echo $game['unique_code']; ?>)</p>
-                <?php
-                $showRules = true;
-                ?>
-            </div>
-            <div class="mdl-cell mdl-cell--5-col">
-                <?php
-                if($user->isDisplay("get", $thisUser['userid'])) {
-                    ?>
-                    <div id="players" style="margin-top: 25px;"></div>
-                    <?php
-                } else {
-                    require_once("../games/" . $game['game_name'] . "/rules.php");
-                }
-                ?>
-                <?php /*
-                <div id="chatMessages"></div>
-                <?php
-                    if(!$user->isHost("get", $thisUser['userid'])) {
-                        ?>
-                        <form action="chat.php" id="chatMessageForm">
-                            <div class="mdl-textfield mdl-js-textfield mdl-shadow--2dp messageArea">
-                                <textarea class="mdl-textfield__input" type="text" rows="2" name="message" maxlength="500" id="messageText"></textarea>
-                                <!--                        <label class="mdl-textfield__label" for="messageText">Enter a Message</label>-->
-                                <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary send" id="sendMessage">
-                                    <i class="fa fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </form>
-                        <?php
-                    }
-                ?>
-                */ ?>
-            </div>
+            </main>
         </div>
         <?php
-        if($user->isHost("get", $thisUser['userid'])) {
-            ?>
-            <main class="main mdl-layout__content">
-                <a href="" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right start-button">Start Game</a>
-            </main>
-            <?php
-        }
     }
 
 } catch (Exception $e) {
@@ -132,7 +139,7 @@ if(!empty($msg)) {
     <dialog class="mdl-dialog error">
         <h4 class="mdl-dialog__title">Oops!</h4>
         <div class="mdl-dialog__content">
-            <p style="color: #ccc; font-size: 8px;">You done did it.</p>
+            <p style="color: #ccc; font-size: 8px;">Something happened.</p>
             <p><?php echo $msg; ?></p>
         </div>
         <div class="mdl-dialog__actions">
@@ -172,6 +179,45 @@ if($showRules) {
     </script>
     <?php
 }
+?>
+<dialog class="mdl-dialog settings">
+    <div class="mdl-dialog__content">
+        <form>
+            <div id="settingsContent"></div>
+        </form>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button type="button" class="mdl-button mdl-color--primary save" style="color: #fff;">APPLY</button>
+        <button type="button" class="mdl-button close">CLOSE</button>
+    </div>
+</dialog>
+<script>
+    (function() {
+        var settingsDialog = document.querySelector('dialog.settings');
+        if(settingsDialog != null) {
+            if (!settingsDialog.showModal) {
+                dialogPolyfill.registerDialog(settingsDialog);
+            }
+
+            document.querySelector('#show-settings').addEventListener('click', function() {
+                $.get("settings.php", function(data) {
+                    $('#settingsContent').html(data);
+                });
+                settingsDialog.showModal();
+            });
+
+            settingsDialog.querySelector('.close').addEventListener('click', function() {
+                settingsDialog.close();
+            });
+
+            settingsDialog.querySelector('.save').addEventListener('click', function() {
+
+                settingsDialog.close();
+            });
+        }
+    })();
+</script>
+<?php
 
 require_once("footer.php");
 ?>
