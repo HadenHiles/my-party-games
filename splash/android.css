@@ -359,6 +359,29 @@ a img {
 .android-link-menu:hover {
   cursor: pointer;
 }
+.fade {
+  color: black;
+  opacity: .5;
+}
+#search-results {
+  background: white;
+  overflow: hidden;
+  width: 100%;
+  position: absolute;
+  margin: 18px 0 0 0;
+}
+#search-results ul {
+  margin: 0;
+}
+#search-results ul li {
+  border-top: 1px solid #eee;
+}
+#search-results ul li a {
+  text-decoration: none;
+}
+#search-results ul li a:hover {
+  opacity: .7!important;
+}
 /**** Mobile layout ****/
 @media (max-width: 900px) {
   .android-navigation-container {

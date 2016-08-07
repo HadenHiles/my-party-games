@@ -17,7 +17,10 @@
                     <div class="mdl-textfield__expandable-holder">
                         <input class="mdl-textfield__input" type="text" id="search-field" placeholder="Find A Game">
                     </div>
+                    <div id="search-results"></div>
                 </div>
+
+
                 <!-- Navigation -->
 <!--                <div class="android-navigation-container">-->
 <!--                    <nav class="android-navigation mdl-navigation">-->

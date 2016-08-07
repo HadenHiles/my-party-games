@@ -49,9 +49,11 @@ $(function() {
 
         var waitForMDL = setTimeout(function () {
 
+            console.log(typeof MaterialSnackbar);
             //set a timeout to wait for MDL to load
-            if (typeof MaterialSnackbar != "undefined") {
-
+            if (typeof MaterialSnackbar == "function") {
+                console.log(typeof MaterialSnackbar);
+                console.log("hit");
                 //loop through each server message
                 for (var message of srvmsg) {
 
@@ -70,7 +72,7 @@ $(function() {
             if (maxTries <= 0) {
                 clearTimeout(MaterialSnackbar);
             }
-        }, 50);
+        }, 100);
     }
 });
 
