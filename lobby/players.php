@@ -38,9 +38,11 @@ try {
             </div>
             <?php
             } else {
-                ?>
-                <p class="fade">Waiting for players...</p>
-                <?php
+                if(sizeof($game['users']) == 1) {
+                    ?>
+                    <p class="fade">Waiting for players...</p>
+                    <?php
+                }
             }
         }
     }

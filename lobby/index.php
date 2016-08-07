@@ -40,69 +40,81 @@ try {
                     <a href="<?php echo $_SERVER['PHP_SELF']; ?>?leave=true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><i class="fa fa-times" style="position: relative; left: -5px; top: -1px;"></i> Leave</a>
                 </div>
                 <div class="mdl-cell mdl-cell--1-col right" style="text-align: right;">
-                    <!-- Right aligned menu below button -->
-                    <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
-                        <i class="fa fa-cog fade"></i>
-                    </button>
+                    <?php
+                    if($user->isHost("get", $thisUser['userid'])) {
+                        ?>
+                        <!-- Right aligned menu below button -->
+                        <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
+                            <i class="fa fa-cog fade"></i>
+                        </button>
 
-                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
-                        <li class="mdl-menu__item">Settings</li>
-                        <li class="mdl-menu__item" style="color: #CE0000">Delete Game</li>
-                    </ul>
+                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                            <li class="mdl-menu__item">Settings</li>
+                            <li class="mdl-menu__item" style="color: #CE0000">Delete Game</li>
+                        </ul>
+                        <?php
+                    }
+                    ?>
                 </div>
             </div>
             <div>
                 <h2 style="color: #6ab344; float: left; font-size: 36px; text-transform: capitalize; margin-bottom: 0;">
                     <?php echo str_replace("-", " ", $game['game_name']); ?>
                 </h2>
-                <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; margin: 34px 10px 10px 10px; color: #777;">
-                    <i class="fa fa-question"></i>
-                </button>
-                <div class="mdl-tooltip" for="show-rules">Rules</div>
+                <?php
+                if($user->isHost("get", $thisUser['userid'])) {
+                    ?>
+                    <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; margin: 34px 10px 10px 10px; color: #777;">
+                        <i class="fa fa-question"></i>
+                    </button>
+                    <div class="mdl-tooltip" for="show-rules">Rules</div>
+                    <?php
+                }
+                ?>
                 <div class="clear"></div>
-                <p class="fade" style="font-size: 20px; color: #000; text-align: center; margin-top: -25px;">(<?php echo $game['unique_code']; ?>)</p>
-                <dialog class="mdl-dialog rules" style="width: 90%;">
-                    <div class="mdl-dialog__content">
-                        <?php require_once("../games/" . $game['game_name'] . "/rules.php"); ?>
-                    </div>
-                    <div class="mdl-dialog__actions">
-                        <button type="button" class="mdl-button close">CLOSE</button>
-                    </div>
-                </dialog>
-                <script>
-                    (function() {
-                        var rulesDialog = document.querySelector('dialog.rules');
-                        if(rulesDialog != null) {
-                            if (!rulesDialog.showModal) {
-                                dialogPolyfill.registerDialog(rulesDialog);
-                            }
-
-                            document.querySelector('#show-rules').addEventListener('click', function() {
-                                rulesDialog.showModal();
-                            });
-
-                            rulesDialog.querySelector('.close').addEventListener('click', function() {
-                                rulesDialog.close();
-                            });
-                        }
-                    })();
-                </script>
+                <p class="fade" style="width: 100%; float: left; font-size: 20px; color: #000; text-align: center;">(<?php echo $game['unique_code']; ?>)</p>
+                <?php
+                $showRules = true;
+                ?>
             </div>
             <div class="mdl-cell mdl-cell--5-col">
-                <div id="players"></div>
+                <?php
+                if($user->isDisplay("get", $thisUser['userid'])) {
+                    ?>
+                    <div id="players" style="margin-top: 25px;"></div>
+                    <?php
+                } else {
+                    require_once("../games/" . $game['game_name'] . "/rules.php");
+                }
+                ?>
+                <?php /*
                 <div id="chatMessages"></div>
-                <form action="chat.php" id="chatMessageForm">
-                    <div class="mdl-textfield mdl-js-textfield mdl-shadow--2dp messageArea">
-                        <textarea class="mdl-textfield__input" type="text" rows="2" name="message" maxlength="500" id="messageText"></textarea>
-<!--                        <label class="mdl-textfield__label" for="messageText">Enter a Message</label>-->
-                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary send" id="sendMessage">
-                            <i class="fa fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </form>
+                <?php
+                    if(!$user->isHost("get", $thisUser['userid'])) {
+                        ?>
+                        <form action="chat.php" id="chatMessageForm">
+                            <div class="mdl-textfield mdl-js-textfield mdl-shadow--2dp messageArea">
+                                <textarea class="mdl-textfield__input" type="text" rows="2" name="message" maxlength="500" id="messageText"></textarea>
+                                <!--                        <label class="mdl-textfield__label" for="messageText">Enter a Message</label>-->
+                                <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary send" id="sendMessage">
+                                    <i class="fa fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <?php
+                    }
+                ?>
+                */ ?>
             </div>
         </div>
         <?php
+        if($user->isHost("get", $thisUser['userid'])) {
+            ?>
+            <main class="main mdl-layout__content">
+                <a href="" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right start-button">Start Game</a>
+            </main>
+            <?php
+        }
     }
 
 } catch (Exception $e) {
@@ -121,6 +133,37 @@ if(!empty($msg)) {
             <button type="button" class="mdl-button close">OK</button>
         </div>
     </dialog>
+    <?php
+}
+
+if($showRules) {
+    ?>
+    <dialog class="mdl-dialog rules" style="width: 90%;">
+        <div class="mdl-dialog__content">
+            <?php require_once("../games/" . $game['game_name'] . "/rules.php"); ?>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button close">CLOSE</button>
+        </div>
+    </dialog>
+    <script>
+        (function() {
+            var rulesDialog = document.querySelector('dialog.rules');
+            if(rulesDialog != null) {
+                if (!rulesDialog.showModal) {
+                    dialogPolyfill.registerDialog(rulesDialog);
+                }
+
+                document.querySelector('#show-rules').addEventListener('click', function() {
+                    rulesDialog.showModal();
+                });
+
+                rulesDialog.querySelector('.close').addEventListener('click', function() {
+                    rulesDialog.close();
+                });
+            }
+        })();
+    </script>
     <?php
 }
 

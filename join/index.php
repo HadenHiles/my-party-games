@@ -67,17 +67,6 @@ try {
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
-                        //If user is a host
-                        if($_SESSION['isHost']) {
-                            $user->isHost("set", false);
-                            unset($_SESSION['isHost']);
-                        }
-
-                        //If user is a display
-                        if($isDisplay) {
-                            $user->isDisplay("set", false);
-                        }
-
                         $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
                     } else if ($result == "user-exists") {
@@ -101,16 +90,6 @@ try {
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
-                        //If user is a host
-                        if($_SESSION['isHost']) {
-                            $user->isHost("set", false);
-                            unset($_SESSION['isHost']);
-                        }
-
-                        //If user is a display
-                        if($isDisplay) {
-                            $user->isDisplay("set", false);
-                        }
 
                         $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
@@ -120,12 +99,6 @@ try {
                         $result = $mySession->updateUser($me['name'], $code, $_SESSION['fb_access_token'], $me['id'], $picture);
                         
                         if ($result == true) {
-                            //If user is a host
-                            if($_SESSION['isHost']) {
-                                $user->isHost("set", false);
-                                unset($_SESSION['isHost']);
-                            }
-
                             $_SESSION['user'] = $user->getUser();
                             header("Location: ../lobby/");
                             exit();
@@ -162,13 +135,14 @@ try {
 
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
+                        $_SESSION['user'] = $user->getUser();
+
                         //If user is a host
                         if($_SESSION['isHost']) {
-                            $user->isHost("set", false);
+                            $user->isHost("set",$_SESSION['user']['userid']);
                             unset($_SESSION['isHost']);
                         }
-                        $_SESSION['user'] = $user->getUser();
-                        $user->isDisplay("set", false);
+                        $user->isDisplay("set", $_SESSION['user']['userid']);
                         header("Location: ../lobby/");
                     } else if ($result == "user-exists") {
                         $msg = "That name is already in use!";

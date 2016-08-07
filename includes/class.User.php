@@ -288,11 +288,11 @@ class User {
 
     /**
      * @param $action - "get" or "set"
-     * @param $specificUser - either false or the specific user id
+     * @param $userId - user id to target
      * @return bool
      * Set or Get the isHost value for the user based on the requested action
      */
-    public function isHost($action, $specificUser) {
+    public function isHost($action, $userId) {
         global $db;
 
         if($action == "set") {
@@ -303,14 +303,8 @@ class User {
 
             $newHostSql = 'UPDATE users SET is_host = true WHERE id = :id AND game_id = :game_id';
 
-            if($specificUser) {
-                $user_id = $specificUser;
-            } else {
-                $user_id = $this->userid;
-            }
-
             $newHostResult = $db->prepare($newHostSql);
-            $newHostResult->bindParam(":id", $user_id);
+            $newHostResult->bindParam(":id", $userId);
             $newHostResult->bindParam(":game_id", $this->gameid);
 
             if ($oldHostsResult->execute() && $oldHostsResult->errorCode() == 0 && $newHostResult->execute() && $newHostResult->errorCode() == 0) {
@@ -318,12 +312,12 @@ class User {
             }
             return false;
         } else if ($action == "get") {
-            $sql = 'SELECT is_host FROM users WHERE id = :id';
+            $sql = 'SELECT is_host FROM users WHERE id = :id AND is_host = true';
 
             $result = $db->prepare($sql);
-            $result->bindParam(":id", $this->userid);
+            $result->bindParam(":id", $userId);
 
-            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() == 1) {
                 return true;
             }
             return false;
@@ -332,11 +326,11 @@ class User {
 
     /**
      * @param $action - "get" or "set"
-     * @param $specificUser - either false or the specific user id
+     * @param $userId - user id to target
      * @return bool
      * Set or Get the isDisplay value for the user based on the requested action
      */
-    public function isDisplay($action, $specificUser) {
+    public function isDisplay($action, $userId) {
         global $db;
 
         if($action == "set") {
@@ -347,13 +341,8 @@ class User {
 
             $newHostSql = 'UPDATE users SET is_display = true WHERE id = :id AND game_id = :game_id';
 
-            if($specificUser) {
-                $user_id = $specificUser;
-            } else {
-                $user_id = $this->userid;
-            }
             $newHostResult = $db->prepare($newHostSql);
-            $newHostResult->bindParam(":id", $user_id);
+            $newHostResult->bindParam(":id", $userId);
             $newHostResult->bindParam(":game_id", $this->gameid);
 
             if ($oldHostsResult->execute() && $oldHostsResult->errorCode() == 0 && $newHostResult->execute() && $newHostResult->errorCode() == 0) {
@@ -361,10 +350,10 @@ class User {
             }
             return false;
         } else if ($action == "get") {
-            $sql = 'SELECT is_display FROM users WHERE id = :id';
+            $sql = 'SELECT is_display FROM users WHERE id = :id AND is_display = true';
 
             $result = $db->prepare($sql);
-            $result->bindParam(":id", $this->userid);
+            $result->bindParam(":id", $userId);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
                 $result = $result->fetch(PDO::FETCH_ASSOC);
