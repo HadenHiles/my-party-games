@@ -301,7 +301,7 @@ class User {
             $oldHostsResult = $db->prepare($oldHostsSql);
             $oldHostsResult->bindParam(":game_id", $this->gameid);
 
-            $newHostSql = 'UPDATE users SET is_host = :is_host WHERE id = :id AND game_id = :game_id';
+            $newHostSql = 'UPDATE users SET is_host = true WHERE id = :id AND game_id = :game_id';
 
             if($specificUser) {
                 $user_id = $specificUser;
@@ -310,7 +310,6 @@ class User {
             }
 
             $newHostResult = $db->prepare($newHostSql);
-            $newHostResult->bindParam(":is_host", $isHost);
             $newHostResult->bindParam(":id", $user_id);
             $newHostResult->bindParam(":game_id", $this->gameid);
 
@@ -346,7 +345,7 @@ class User {
             $oldHostsResult = $db->prepare($oldHostsSql);
             $oldHostsResult->bindParam(":game_id", $this->gameid);
 
-            $newHostSql = 'UPDATE users SET is_display = :is_host WHERE id = :id AND game_id = :game_id';
+            $newHostSql = 'UPDATE users SET is_display = true WHERE id = :id AND game_id = :game_id';
 
             if($specificUser) {
                 $user_id = $specificUser;
@@ -354,7 +353,6 @@ class User {
                 $user_id = $this->userid;
             }
             $newHostResult = $db->prepare($newHostSql);
-            $newHostResult->bindParam(":is_host", $isHost);
             $newHostResult->bindParam(":id", $user_id);
             $newHostResult->bindParam(":game_id", $this->gameid);
 

@@ -28,7 +28,7 @@ try {
     $user = new User(SESSION_ID, DEVICE_IP);
 
     //check for form submission to join a game session
-    if (!empty($_REQUEST['unique-id']) || !empty($_SESSION['current_game_code'])) {
+    if ((!empty($_REQUEST['unique-id']) || !empty($_SESSION['current_game_code']))) {
         //vars
         $code = $_REQUEST['unique-id'];
         
@@ -80,7 +80,6 @@ try {
 
                         $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
-
                     } else if ($result == "user-exists") {
                         $msg = "Someone is already using that name!";
                     } else {
@@ -88,7 +87,6 @@ try {
                     }
                 }
             } else if(isset($_REQUEST['fb-login'])) {
-
                 $formToDisplay = "nickname";
                 try {
                     // Get the Facebook\GraphNodes\GraphUser object for the current user.
@@ -128,11 +126,6 @@ try {
                                 unset($_SESSION['isHost']);
                             }
 
-                            //If user is a display
-                            if($isDisplay) {
-                                $user->isDisplay("set", false);
-                            }
-
                             $_SESSION['user'] = $user->getUser();
                             header("Location: ../lobby/");
                             exit();
@@ -150,10 +143,47 @@ try {
                     // When validation fails or other local issues
                     $msg = 'Facebook SDK returned an error: ' . $e->getMessage();
                 }
+            } else if($isDisplay) {
+                $formToDisplay = "display";
+
+                $name = $_REQUEST['screen-name'];
+                $picture = '';
+                $fbToken = '';
+                $fbUserId = '';
+
+                //basic error handling
+                if (empty($name)) {
+                    if(!isset($_SESSION['isHost'])) {
+                        $msg = "Please enter a name for the display!";
+                    }
+                } else {
+                    //request to join a session
+                    $result = $mySession->join($name, $fbToken, $fbUserId, $picture);
+
+                    //check result and if true then save user in session and redirect to lobby
+                    if ($result == true && intval($result)) {
+                        //If user is a host
+                        if($_SESSION['isHost']) {
+                            $user->isHost("set", false);
+                            unset($_SESSION['isHost']);
+                        }
+                        $_SESSION['user'] = $user->getUser();
+                        $user->isDisplay("set", false);
+                        header("Location: ../lobby/");
+                    } else if ($result == "user-exists") {
+                        $msg = "That name is already in use!";
+                    } else {
+                        $msg = "Game cannot be found!";
+                    }
+                }
             }
         }
     } else {
-        $formToDisplay = "join";
+        if(!$isDisplay) {
+            $formToDisplay = "join";
+        } else {
+            $formToDisplay = "display";
+        }
     }
 } catch (Exception $e) {
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
@@ -274,6 +304,37 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                 </div>
                 <div class="mdl-card__actions" style="text-align: center;">
                     <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="$('#joinForm').submit();" style="width: 100%;">Join</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <?php
+} else if($formToDisplay == "display") {
+    require_once('header.php');
+    ?>
+    <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+        <main class="mdl-layout__content main-form">
+            <div style="color: #cccccc;">
+                <h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4>
+            </div>
+            <div class="mdl-card mdl-shadow--6dp">
+                <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+                    <h2 class="mdl-card__title-text">Display Settings</h2>
+                </div>
+                </br>
+                <div class="mdl-card__supporting-text">
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" id="displayForm">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" name="screen-name" id="screen-name" />
+                            <label class="mdl-textfield__label" for="screen-name">Name</label>
+                            <span class="mdl-textfield__error">Please enter a name for the display!</span>
+                        </div>
+                        <input type="hidden" name="unique-id" value="<?php echo $_REQUEST['unique-id']; ?>" />
+                        <input type="hidden" name="display" value="true" />
+                    </form>
+                </div>
+                <div class="mdl-card__actions" style="text-align: center;">
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="$('#displayForm').submit();" style="width: 100%;">Continue</button>
                 </div>
             </div>
         </main>

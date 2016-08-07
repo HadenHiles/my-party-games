@@ -45,6 +45,7 @@ try {
                 <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; margin: 34px 10px 10px 10px; color: #777;">
                     <i class="fa fa-question"></i>
                 </button>
+                <div class="mdl-tooltip" for="show-rules">Rules</div>
                 <dialog class="mdl-dialog rules" style="width: 90%;">
                     <div class="mdl-dialog__content">
                         <?php require_once("../games/" . $game['game_name'] . "/rules.php"); ?>

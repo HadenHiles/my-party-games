@@ -20,7 +20,7 @@ try {
 
         if ($displayOnly) {
             $_SESSION['isHost'] = true;
-            header("Location: /join/?display=true");
+            header("Location: /join/?display=true&unique-id=".$mySession->getCode(SESSION_ID));
         } else {
             $_SESSION['isHost'] = true;
             header("Location: /join/?unique-id=".$mySession->getCode(SESSION_ID));
