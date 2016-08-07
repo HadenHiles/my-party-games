@@ -44,7 +44,7 @@ try {
                         <?php
                     }
                     ?>
-                    <span class="android-title mdl-layout-title" style="color: #757575;">
+                    <span class="android-title mdl-layout-title" style="color: #757575; margin-left: 15px;">
                         <i class="fa fa-glass" aria-hidden="true" style="color: #8bc34a;"></i> Party Games
                     </span>
                     <div class="mdl-layout-spacer"></div>
@@ -61,6 +61,10 @@ try {
                                 <li class="mdl-menu__item" id="show-settings">Settings</li>
                                 <li class="mdl-menu__item" id="delete-game" style="color: #CE0000">Delete Game</li>
                             </ul>
+                            <?php
+                        } else {
+                            ?>
+                            <p class="fade" style="width: 175px; margin: 4px 0 0 -100px;">Waiting for game to start...</p>
                             <?php
                         }
                         ?>
