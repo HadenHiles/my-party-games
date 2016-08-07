@@ -37,7 +37,13 @@ try {
         <div class="mdl-layout mdl-js-layout mdl-color--grey-100" style="justify-content: initial;">
             <div class="icon_bar">
                 <div class="mdl-cell mdl-cell--1-col left">
-                    <a href="<?php echo $_SERVER['PHP_SELF']; ?>?leave=true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><i class="fa fa-times" style="position: relative; left: -5px; top: -1px;"></i> Leave</a>
+                    <?php
+                    if(!$user->isDisplay("get", $thisUser['userid'])) {
+                        ?>
+                        <a href="<?php echo $_SERVER['PHP_SELF']; ?>?leave=true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><i class="fa fa-times" style="position: relative; left: -5px; top: -1px;"></i> Leave</a>
+                        <?php
+                    }
+                    ?>
                 </div>
                 <div class="mdl-cell mdl-cell--1-col right" style="text-align: right;">
                     <?php
