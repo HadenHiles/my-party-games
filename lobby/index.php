@@ -39,13 +39,28 @@ try {
                 <div class="mdl-cell mdl-cell--1-col left">
                     <a href="<?php echo $_SERVER['PHP_SELF']; ?>?leave=true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><i class="fa fa-times" style="position: relative; left: -5px; top: -1px;"></i> Leave</a>
                 </div>
+                <div class="mdl-cell mdl-cell--1-col right" style="text-align: right;">
+                    <!-- Right aligned menu below button -->
+                    <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
+                        <i class="fa fa-cog fade"></i>
+                    </button>
+
+                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                        <li class="mdl-menu__item">Settings</li>
+                        <li class="mdl-menu__item" style="color: #CE0000">Delete Game</li>
+                    </ul>
+                </div>
             </div>
             <div>
-                <h2 style="color: #6ab344; float: left; font-size: 36px; text-transform: capitalize;"><?php echo str_replace("-", " ", $game['game_name']); ?></h2>
+                <h2 style="color: #6ab344; float: left; font-size: 36px; text-transform: capitalize; margin-bottom: 0;">
+                    <?php echo str_replace("-", " ", $game['game_name']); ?>
+                </h2>
                 <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; margin: 34px 10px 10px 10px; color: #777;">
                     <i class="fa fa-question"></i>
                 </button>
                 <div class="mdl-tooltip" for="show-rules">Rules</div>
+                <div class="clear"></div>
+                <p class="fade" style="font-size: 20px; color: #000; text-align: center; margin-top: -25px;">(<?php echo $game['unique_code']; ?>)</p>
                 <dialog class="mdl-dialog rules" style="width: 90%;">
                     <div class="mdl-dialog__content">
                         <?php require_once("../games/" . $game['game_name'] . "/rules.php"); ?>

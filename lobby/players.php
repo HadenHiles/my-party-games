@@ -20,7 +20,8 @@ try {
     } else {
         //game was found
         foreach($game['users'] as $user) {
-            if($user['id'] == $user_session['userid']) {
+            if(!$user['is_display']) {
+                if($user['id'] == $user_session['userid']) {
                 ?>
                 <div class="mdl-card mdl-shadow--6dp player me">
                 <?php
@@ -36,6 +37,11 @@ try {
                 </div>
             </div>
             <?php
+            } else {
+                ?>
+                <p class="fade">Waiting for players...</p>
+                <?php
+            }
         }
     }
 
