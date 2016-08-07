@@ -57,10 +57,28 @@
                     </div>
                 </div>
             </div>
-            <footer class="android-footer mdl-mega-footer">
-                <div class="mdl-mega-footer--middle-section">
-                    <p class="mdl-typography--font-light">Copyright © <?=date("Y")?> Haden & Justin</p>
-                    <p class="mdl-typography--font-light">We truly believe that your drink is not empty enough.</p>
+            <footer class="mdl-mini-footer">
+                <div class="md-mini-footer_left-section">
+                    <h4 class="mdl-logo" style="margin: 0 0 15px 0;" style="text-align: right;">
+                        <i class="fa fa-glass" aria-hidden="true" style="font-size: 20px; color: #8bc34a; position: relative; top: -2px;"></i> Party Games
+                    </h4>
+                    <div class="clear"></div>
+                    <a href="join/" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
+                        Join A Game
+                    </a>
+<!--                    <ul class="mdl-mini-footer__link-list" style="text-align: right;">-->
+<!--                        <li><a href="games/">All Games</a></li>-->
+<!--                    </ul>-->
+                </div>
+                <div class="mdl-mini-footer__right-section" style="text-align: left;">
+                    <div class="clear"></div>
+                    <br>
+                    <div class="mdl-logo" style="float: right;">We truly believe that your drink is not empty enough.</div>
+                    <div class="clear"></div>
+                    <br>
+                    <ul class="mdl-mini-footer__link-list" style="float: right; width: 100%;">
+                        <li class="mdl-typography--font-light">Copyright © <?=date("Y")?> Haden & Justin</li>
+                    </ul>
                 </div>
             </footer>
         </div>

@@ -47,11 +47,16 @@
 .banner .banner-content p {
   font-size: 18px;
 }
-.banner .banner-content a.mdl-button {
+a.mdl-button {
   text-shadow: none;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1) !important;
 }
-.banner .banner-content a.mdl-button:hover,
-.banner .banner-content a.mdl-button:focus {
-  background: #6ab344;
+a.mdl-button:hover,
+a.mdl-button:focus {
+  background: #6ab344 !important;
+}
+@media screen and (max-width: 556px) {
+  .mdl-mini-footer {
+    text-align: center !important;
+  }
 }
