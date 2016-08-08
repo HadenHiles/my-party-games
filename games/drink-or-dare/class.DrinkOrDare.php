@@ -21,69 +21,115 @@ class DrinkOrDare {
         $this->drinksToWin = $drinksToWin;
     }
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
     public function start() {
 
         global $db;
 
         if (!empty($this->gameid)) {
+            if (!$this->isStarted($this->gameid)) {
+                //game doesnt exist
+                $sql = 'INSERT INTO drink_or_dare
+                        (game_id, state, total_rounds, current_round, drinks_to_win) 
+                        VALUES
+                        (:gameid, :state, :total_rounds, :current_round, :drinks_to_win)';
 
-            $sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
+                $result = $db->prepare($sql);
+                $result->bindParam(":gameid", $this->gameid);
+                $result->bindParam(":state", $this->state);
+                $result->bindParam(":total_rounds", $this->total_rounds);
+                $result->bindParam(":current_round", $this->current_round);
+                $result->bindParam(":drinks_to_win", $this->drinksToWin);
 
-            $result = $db->prepare($sql);
-            $result->bindParam(":gameid", $this->gameid);
-
-            if ($result->execute() && $result->errorCode() == 0) {
-
-                if ($result->rowCount() <= 0) {
-                    //game doesnt exist
-                    $sql = 'INSERT INTO drink_or_dare
-                            (game_id, state, total_rounds, current_round, drinks_to_win) 
-                            VALUES
-                            (:gameid, :state, :total_rounds, :current_round, :drinks_to_win)';
-
-                    $result = $db->prepare($sql);
-                    $result->bindParam(":gameid", $this->gameid);
-                    $result->bindParam(":state", $this->state);
-                    $result->bindParam(":total_rounds", $this->total_rounds);
-                    $result->bindParam(":current_round", $this->current_round);
-                    $result->bindParam(":drinks_to_win", $this->drinksToWin);
-
-                    if ($result->execute() && $result->errorCode() == 0) {
-                        return true;
-                    }
-                } else {
-                    //game exists
-                    $result = $result->fetch(PDO::FETCH_ASSOC);
-                    
-                    $this->state = $result['state'];
-                    $this->total_rounds = $result['total_rounds'];
-                    $this->current_round = $result['current_round'];
-                    $this->drinksToWin = $result['drinks_to_win'];
-
-                    //get user dare state
-                    if (!empty($this->gameid)) {
-
-                        $sql = 'SELECT * FROM drink_or_dare_user_dares 
-                                WHERE user_id = :userid 
-                                AND round_number = :round_number';
-
-                        $result = $db->prepare($sql);
-                        $result->bindParam(":userid", $this->userid);
-                        $result->bindParam(":round_number", $this->current_round);
-
-                        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-
-                            $this->hasCurrentDare = true;
-                        }
-                    }
-
+                if ($result->execute() && $result->errorCode() == 0) {
                     return true;
                 }
+            } else {
+                //game exists
+                $result = $result->fetch(PDO::FETCH_ASSOC);
+
+                $this->state = $result['state'];
+                $this->total_rounds = $result['total_rounds'];
+                $this->current_round = $result['current_round'];
+                $this->drinksToWin = $result['drinks_to_win'];
+
+                //get user dare state
+                if (!empty($this->gameid)) {
+
+                    $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                            WHERE user_id = :userid 
+                            AND round_number = :round_number';
+
+                    $result = $db->prepare($sql);
+                    $result->bindParam(":userid", $this->userid);
+                    $result->bindParam(":round_number", $this->current_round);
+
+                    if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                        $this->hasCurrentDare = true;
+                    }
+                }
+
+                return true;
             }
         } else {
             throw new Exception("Cannot load game without game id.");
         }
 
+        return false;
+    }
+
+    /**
+     * @param $gameId
+     * @return bool
+     */
+    public function isStarted($gameId) {
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
+
+        $result = $db->prepare($sql);
+        $result->bindParam(":gameid", $gameId);
+
+        if ($result->execute() && $result->errorCode() == 0) {
+            if ($result->rowCount() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param $gameId
+     * @param $state
+     * @param $totalRounds
+     * @param $currentRound
+     * @param $drinksToWin
+     * @return bool
+     */
+    public function update($gameId, $state, $totalRounds, $currentRound, $drinksToWin) {
+        global $db;
+
+        $sql = 'UPDATE drink_or_dare SET 
+                  state = :state, 
+                  total_rounds = :total_rounds, 
+                  current_round = :current_round, 
+                  drinks_to_win = :drinks_to_win
+                WHERE game_id = :gameid';
+
+        $result = $db->prepare($sql);
+        $result->bindParam(":gameid", $gameId);
+        $result->bindParam(":state", $state);
+        $result->bindParam(":total_rounds", $totalRounds);
+        $result->bindParam(":current_round", $currentRound);
+        $result->bindParam(":drinks_to_win", $drinksToWin);
+
+        if ($result->execute() && $result->errorCode() == 0) {
+            return true;
+        }
         return false;
     }
 
