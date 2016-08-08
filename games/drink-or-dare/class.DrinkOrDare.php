@@ -10,7 +10,7 @@ class DrinkOrDare {
     private $hasCurrentDare;
     private $drinksToWin;
 
-    public function __construct($game_id = 0, $userid = 0, $total_rounds = 5, $current_round = 1, $drinksToWin = 3) {
+    public function __construct($game_id = 0, $userid = 0, $total_rounds = 3, $current_round = 1, $drinksToWin = 10) {
 
         $this->gameid = $game_id;
         $this->state = 1;
@@ -19,6 +19,25 @@ class DrinkOrDare {
         $this->userid = $userid;
         $this->hasCurrentDare = false;
         $this->drinksToWin = $drinksToWin;
+    }
+
+    /**
+     * @return array|bool
+     */
+    public function getDrinkOrDare() {
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
+
+        $result = $db->prepare($sql);
+        $result->bindParam(":gameid", $this->gameid);
+
+        if ($result->execute() && $result->errorCode() == 0) {
+            if ($result->rowCount() > 0) {
+                return $result->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }
+        return false;
     }
 
     /**
@@ -49,31 +68,40 @@ class DrinkOrDare {
                 }
             } else {
                 //game exists
-                $result = $result->fetch(PDO::FETCH_ASSOC);
+                $sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
 
-                $this->state = $result['state'];
-                $this->total_rounds = $result['total_rounds'];
-                $this->current_round = $result['current_round'];
-                $this->drinksToWin = $result['drinks_to_win'];
+                $result = $db->prepare($sql);
+                $result->bindParam(":gameid", $gameId);
 
-                //get user dare state
-                if (!empty($this->gameid)) {
+                if ($result->execute() && $result->errorCode() == 0) {
+                    if ($result->rowCount() > 0) {
+                        $result = $result->fetch(PDO::FETCH_ASSOC);
 
-                    $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                        $this->state = $result['state'];
+                        $this->total_rounds = $result['total_rounds'];
+                        $this->current_round = $result['current_round'];
+                        $this->drinksToWin = $result['drinks_to_win'];
+
+                        //get user dare state
+                        if (!empty($this->gameid)) {
+
+                            $sql = 'SELECT * FROM drink_or_dare_user_dares 
                             WHERE user_id = :userid 
                             AND round_number = :round_number';
 
-                    $result = $db->prepare($sql);
-                    $result->bindParam(":userid", $this->userid);
-                    $result->bindParam(":round_number", $this->current_round);
+                            $result = $db->prepare($sql);
+                            $result->bindParam(":userid", $this->userid);
+                            $result->bindParam(":round_number", $this->current_round);
 
-                    if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-                        $this->hasCurrentDare = true;
+                                $this->hasCurrentDare = true;
+                            }
+                        }
+
+                        return true;
                     }
                 }
-
-                return true;
             }
         } else {
             throw new Exception("Cannot load game without game id.");
