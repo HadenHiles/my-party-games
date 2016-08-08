@@ -39,13 +39,20 @@ try {
             }
             $displays = $_POST['displays'];
             $host = $_POST['host'];
-
             foreach($displays as $userDisplay) {
                 $user->isDisplay("set", $userDisplay, 1);
             }
-
             $user->isHost("set", $host);
-            header("location: ./");
+
+            $game_fields = explode(",", $_POST['fields']);
+
+            $key_value_array = array();
+            foreach($game_fields as $field) {
+                $key_value_array[$field] = $_POST[$field];
+            }
+            $_SESSION['game_field_values'] = $key_value_array;
+
+            header("location: ../games/" . $game['game_name'] . "/submitSetup.php");
         }
         ?>
         <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
@@ -85,7 +92,11 @@ try {
                     </div>
                 </div>
             </header>
-            <div class="ribbon"></div>
+            <div class="ribbon">
+                <div class="game_code" style="text-align: center; margin-top: 5vh;">
+                    <p class="fade" style="width: 100%; float: left; font-size: 36px; color: #fff;">#<?php echo $game['unique_code']; ?></p>
+                </div>
+            </div>
             <main class="main mdl-layout__content">
                 <div class="container mdl-grid">
                     <div class="mdl-cell mdl-cell--4-col">
@@ -162,6 +173,7 @@ if(!empty($msg)) {
     <?php
 }
 
+/*
 if($showRules) {
     ?>
     <dialog class="mdl-dialog rules" style="width: 90%;">
@@ -192,11 +204,26 @@ if($showRules) {
     </script>
     <?php
 }
+*/
 ?>
 <dialog class="mdl-dialog settings">
     <div class="mdl-dialog__content">
         <form id="settingsForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-            <div id="settingsContent"></div>
+            <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+                <div class="mdl-tabs__tab-bar">
+                    <a href="#game-setup-panel" class="mdl-tabs__tab is-active">Setup</a>
+                    <a href="#advanced-settings-panel" class="mdl-tabs__tab">Advanced Settings</a>
+                </div>
+                <div class="clear" style="margin-bottom: 10px;"></div>
+                <div class="mdl-tabs__panel is-active" id="game-setup-panel">
+                    <?php
+                    require_once("../games/" . $game['game_name'] . "/settings.php");
+                    ?>
+                </div>
+                <div class="mdl-tabs__panel" id="advanced-settings-panel">
+                    <div id="settingsContent"></div>
+                </div>
+            </div>
             <input type="hidden" name="settings" value="true" />
         </form>
     </div>
@@ -205,33 +232,46 @@ if($showRules) {
         <button type="button" class="mdl-button close">CLOSE</button>
     </div>
 </dialog>
-<script>
-    (function() {
-        var settingsDialog = document.querySelector('dialog.settings');
-        if(settingsDialog != null) {
-            if (!settingsDialog.showModal) {
-                dialogPolyfill.registerDialog(settingsDialog);
-            }
-
-            document.querySelector('#show-settings').addEventListener('click', function() {
-                $.get("settings.php", function(data) {
-                    $('#settingsContent').html(data);
-                });
-                settingsDialog.showModal();
-            });
-
-            settingsDialog.querySelector('.close').addEventListener('click', function() {
-                settingsDialog.close();
-            });
-
-            settingsDialog.querySelector('.save').addEventListener('click', function() {
-                settingsDialog.close();
-                $('#settingsForm').submit();
-            });
-        }
-    })();
-</script>
 <?php
+if($user->isHost("get", $thisUser['userid'])) {
+    ?>
+    <script>
+        $(function() {
+            $.get("settings.php", function(data) {
+                $('#settingsContent').html(data);
+            });
+
+            if(dialogPolyfill !== undefined) {
+                var settingsDialog = document.querySelector('dialog.settings');
+                if(settingsDialog != null) {
+                    if (!settingsDialog.showModal) {
+                        dialogPolyfill.registerDialog(settingsDialog);
+                    }
+
+                    document.querySelector('#show-settings').addEventListener('click', function() {
+                        $.get("settings.php", function(data) {
+                            $('#settingsContent').html(data);
+                        });
+                        $('dialog.settings').css({"display": "block"});
+                        settingsDialog.showModal();
+                    });
+
+                    settingsDialog.querySelector('.close').addEventListener('click', function() {
+                        settingsDialog.close();
+                        $('dialog.settings').css({"display": "none"});
+                    });
+
+                    settingsDialog.querySelector('.save').addEventListener('click', function() {
+                        settingsDialog.close();
+                        $('dialog.settings').css({"display": "none"});
+                        $('#settingsForm').submit();
+                    });
+                }
+            }
+        });
+    </script>
+    <?php
+}
 
 require_once("footer.php");
 ?>
