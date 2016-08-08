@@ -19,8 +19,10 @@ try {
         //game was not found
     } else {
         //game was found
+        $displayCount = 0;
         foreach($game['users'] as $user) {
-            if($user['id'] == $user_session['userid']) {
+            if(!$user['is_display']) {
+                if($user['id'] == $user_session['userid']) {
                 ?>
                 <div class="mdl-card mdl-shadow--6dp player me">
                 <?php
@@ -35,6 +37,14 @@ try {
                     <h5><?php echo $user['display_name']; ?></h5>
                 </div>
             </div>
+            <?php
+            } else {
+                $displayCount++;
+            }
+        }
+        if(count($game['users']) == $displayCount) {
+            ?>
+            <p class="fade">Waiting for players...</p>
             <?php
         }
     }

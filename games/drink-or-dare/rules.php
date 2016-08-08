@@ -1,4 +1,4 @@
-<h3>How to play Drink Or Dare</h3>
+<h3>How To Play</h3>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae porttitor quam. Vivamus quis risus et lectus maximus sodales in in magna. Sed lobortis nisi purus, ut tristique risus convallis feugiat. Phasellus pellentesque viverra libero ut varius. Sed ultrices erat libero, et consectetur velit gravida sed. Pellentesque leo tellus, aliquet sit amet tempus et, tempor et nulla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed arcu tellus, tempor at tempor id, imperdiet ut mi. Praesent lorem arcu, sodales vel nisi et, fermentum tempor turpis.</p>
 

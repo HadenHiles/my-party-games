@@ -33,13 +33,19 @@
     p {
       font-size: 18px;
     }
-    a.mdl-button {
-      text-shadow: none;
-      background: rgba(255, 255, 255, 0.1);
+  }
+}
+a.mdl-button {
+  text-shadow: none;
+  background: rgba(255, 255, 255, 0.1) !important;
 
-      &:hover, &:focus {
-        background: #6ab344;
-      }
-    }
+  &:hover, &:focus {
+    background: #6ab344 !important;
+  }
+}
+
+@media screen and (max-width: 556px) {
+  .mdl-mini-footer {
+    text-align: center !important;
   }
 }

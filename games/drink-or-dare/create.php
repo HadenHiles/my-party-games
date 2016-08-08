@@ -19,8 +19,10 @@ try {
         $displayOnly = (isset($_POST['display']));
 
         if ($displayOnly) {
-            header("Location: /lobby/?display=true");
+            $_SESSION['isHost'] = true;
+            header("Location: /join/?display=true&unique-id=".$mySession->getCode(SESSION_ID));
         } else {
+            $_SESSION['isHost'] = true;
             header("Location: /join/?unique-id=".$mySession->getCode(SESSION_ID));
         }
     } else if (isset($_POST['new-code'])) {

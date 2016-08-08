@@ -29,7 +29,17 @@ try {
                             ?>
                             <div class="mdl-shadow--2dp message me">
                                 <div class="picture">
-                                    <img src="<?php echo $user->getPicture($message['owner']); ?>" alt="" />
+                                    <?php
+                                    if(!empty($user->getPicture($message['owner']))) {
+                                        ?>
+                                        <img src="<?php echo $user->getPicture($message['owner']); ?>" alt="" />
+                                        <?php
+                                    } else {
+                                        ?>
+                                        <img src="/join/pictures/person.png" alt="" />
+                                        <?php
+                                    }
+                                    ?>
                                 </div>
                                 <span class="date"><?php echo date('h:i', strtotime($message['time'])); ?></span>
                                 <h6 class="name"><?php echo $message['name'] ?></h6>
