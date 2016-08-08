@@ -47,7 +47,7 @@ $(function() {
         srvmsg = JSON.parse(srvmsg);
         var maxTries = 20;
 
-        var waitForMDL = setTimeout(function () {
+        var waitForMDL = setInterval(function () {
 
             console.log(typeof MaterialSnackbar);
             //set a timeout to wait for MDL to load
