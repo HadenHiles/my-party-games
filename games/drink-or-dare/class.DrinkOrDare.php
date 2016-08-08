@@ -39,7 +39,7 @@ class DrinkOrDare {
                     $sql = 'INSERT INTO drink_or_dare
                             (game_id, state, total_rounds, current_round, drinks_to_win) 
                             VALUES
-                            (:gameid, :state, :total_rounds, :current_round)';
+                            (:gameid, :state, :total_rounds, :current_round, :drinks_to_win)';
 
                     $result = $db->prepare($sql);
                     $result->bindParam(":gameid", $this->gameid);
