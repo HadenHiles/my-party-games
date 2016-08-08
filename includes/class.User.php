@@ -20,7 +20,7 @@ class User {
     /**
      * Inits the user class
      */
-    public function  __construct($sessionid, $ip = 0, $name = null) {
+    public function  __construct($sessionid, $ip = 0, $name = null, $game_id = 0) {
 
         if (!empty($sessionid)) {
 
@@ -28,6 +28,7 @@ class User {
             $this->uniquecode = 0;
             $this->hostip = $ip;
             $this->game = '';
+            $this->gameid = $game_id;
 
             if (!empty($name)) {
                 $this->displayname = $name;
@@ -296,26 +297,28 @@ class User {
         global $db;
 
         if($action == "set") {
-            $oldHostsSql = 'UPDATE users SET is_host = false WHERE game_id = :game_id';
+            $oldHostsSql = 'UPDATE users SET is_host = 0 WHERE game_id = :game_id';
 
             $oldHostsResult = $db->prepare($oldHostsSql);
-            $oldHostsResult->bindParam(":game_id", $this->gameid);
+            $oldHostsResult->bindParam(":game_id", $this->gameid, PDO::PARAM_INT);
 
-            $newHostSql = 'UPDATE users SET is_host = true WHERE id = :id AND game_id = :game_id';
+            $newHostSql = 'UPDATE users SET is_host = 1 WHERE id = :id AND game_id = :game_id';
 
             $newHostResult = $db->prepare($newHostSql);
-            $newHostResult->bindParam(":id", $userId);
-            $newHostResult->bindParam(":game_id", $this->gameid);
+            $newHostResult->bindParam(":id", $userId, PDO::PARAM_INT);
+            $newHostResult->bindParam(":game_id", $this->gameid, PDO::PARAM_INT);
 
-            if ($oldHostsResult->execute() && $oldHostsResult->errorCode() == 0 && $newHostResult->execute() && $newHostResult->errorCode() == 0) {
-                return true;
+            if ($oldHostsResult->execute() && $oldHostsResult->errorCode() == 0) {
+                if($newHostResult->execute() && $newHostResult->errorCode() == 0) {
+                    return true;
+                }
             }
             return false;
         } else if ($action == "get") {
-            $sql = 'SELECT is_host FROM users WHERE id = :id AND is_host = true';
+            $sql = 'SELECT is_host FROM users WHERE id = :id AND is_host = 1';
 
             $result = $db->prepare($sql);
-            $result->bindParam(":id", $userId);
+            $result->bindParam(":id", $userId, PDO::PARAM_INT);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() == 1) {
                 return true;
@@ -327,25 +330,22 @@ class User {
     /**
      * @param $action - "get" or "set"
      * @param $userId - user id to target
+     * @param $isDisplay - true or false
      * @return bool
      * Set or Get the isDisplay value for the user based on the requested action
      */
-    public function isDisplay($action, $userId) {
+    public function isDisplay($action, $userId, $isDisplay) {
         global $db;
 
         if($action == "set") {
-            $oldHostsSql = 'UPDATE users SET is_display = false WHERE game_id = :game_id';
-
-            $oldHostsResult = $db->prepare($oldHostsSql);
-            $oldHostsResult->bindParam(":game_id", $this->gameid);
-
-            $newHostSql = 'UPDATE users SET is_display = true WHERE id = :id AND game_id = :game_id';
+            $newHostSql = 'UPDATE users SET is_display = :is_display WHERE id = :id AND game_id = :game_id';
 
             $newHostResult = $db->prepare($newHostSql);
-            $newHostResult->bindParam(":id", $userId);
-            $newHostResult->bindParam(":game_id", $this->gameid);
+            $newHostResult->bindParam(":id", $userId, PDO::PARAM_INT);
+            $newHostResult->bindParam(":is_display", $isDisplay, PDO::PARAM_INT);
+            $newHostResult->bindParam(":game_id", $this->gameid, PDO::PARAM_INT);
 
-            if ($oldHostsResult->execute() && $oldHostsResult->errorCode() == 0 && $newHostResult->execute() && $newHostResult->errorCode() == 0) {
+            if ($newHostResult->execute() && $newHostResult->errorCode() == 0) {
                 return true;
             }
             return false;

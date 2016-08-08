@@ -16,7 +16,7 @@ try {
 
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
-    $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
+    $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name'], $thisUser['code']);
     
     if($_REQUEST['leave'] == true) {
         if($mySession->leave()) {
@@ -33,12 +33,26 @@ try {
         $msg = "Sorry your game was deleted";
     } else {
         //game was found
+        if(isset($_POST['settings']) && $_POST['settings']) {
+            foreach($game['users'] as $gameUser) {
+                $user->isDisplay("set", $gameUser['id'], 0);
+            }
+            $displays = $_POST['displays'];
+            $host = $_POST['host'];
+
+            foreach($displays as $userDisplay) {
+                $user->isDisplay("set", $userDisplay, 1);
+            }
+
+            $user->isHost("set", $host);
+            header("location: ./");
+        }
         ?>
         <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
             <header class="header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
                 <div class="mdl-layout__header-row">
                     <?php
-                    if(!$user->isDisplay("get", $thisUser['userid'])) {
+                    if(!$user->isDisplay("get", $thisUser['userid'], 1)) {
                         ?>
                         <a href="<?php echo $_SERVER['PHP_SELF']; ?>?leave=true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><i class="fa fa-times" style="position: relative; left: -5px; top: -1px;"></i> Leave</a>
                         <?php
@@ -74,18 +88,20 @@ try {
             <div class="ribbon"></div>
             <main class="main mdl-layout__content">
                 <div class="container mdl-grid">
-                    <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+                    <div class="mdl-cell mdl-cell--4-col">
+                        <div id="players"></div>
+                    </div>
                     <div class="content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
                         <div class="crumbs mdl-color-text--grey-500" style="color: #6ab344; float: left; font-size: 30px; text-transform: capitalize; margin-bottom: 0;">
                             <?php echo str_replace("-", " ", $game['game_name']); ?>
                         </div>
                         <?php
-                        if($user->isHost("get", $thisUser['userid'])) {
+                        if($user->isDisplay("get", $thisUser['userid'], 1)) {
                             ?>
-                            <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; color: #777; margin: -5px 0 0 5px;">
-                                <i class="fa fa-question"></i>
-                            </button>
-                            <div class="mdl-tooltip" for="show-rules">Rules</div>
+<!--                            <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; color: #777; margin: -5px 0 0 5px;">-->
+<!--                                <i class="fa fa-question"></i>-->
+<!--                            </button>-->
+<!--                            <div class="mdl-tooltip" for="show-rules">Rules</div>-->
                             <?php
                         }
                         ?>
@@ -93,14 +109,7 @@ try {
                         <p class="fade" style="width: 100%; float: left; font-size: 20px; color: #000;">#<?php echo $game['unique_code']; ?></p>
                         <?php
                         $showRules = true;
-
-                        if($user->isDisplay("get", $thisUser['userid'])) {
-                            ?>
-                            <div id="players" style="margin-top: 25px;"></div>
-                            <?php
-                        } else {
-                            require_once("../games/" . $game['game_name'] . "/rules.php");
-                        }
+                        require_once("../games/" . $game['game_name'] . "/rules.php");
                         /*
                         ?>
                         <div id="chatMessages"></div>
@@ -186,8 +195,9 @@ if($showRules) {
 ?>
 <dialog class="mdl-dialog settings">
     <div class="mdl-dialog__content">
-        <form>
+        <form id="settingsForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
             <div id="settingsContent"></div>
+            <input type="hidden" name="settings" value="true" />
         </form>
     </div>
     <div class="mdl-dialog__actions">
@@ -215,8 +225,8 @@ if($showRules) {
             });
 
             settingsDialog.querySelector('.save').addEventListener('click', function() {
-
                 settingsDialog.close();
+                $('#settingsForm').submit();
             });
         }
     })();

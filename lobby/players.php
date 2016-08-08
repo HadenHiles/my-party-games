@@ -19,6 +19,7 @@ try {
         //game was not found
     } else {
         //game was found
+        $displayCount = 0;
         foreach($game['users'] as $user) {
             if(!$user['is_display']) {
                 if($user['id'] == $user_session['userid']) {
@@ -38,12 +39,13 @@ try {
             </div>
             <?php
             } else {
-                if(sizeof($game['users']) == 1) {
-                    ?>
-                    <p class="fade">Waiting for players...</p>
-                    <?php
-                }
+                $displayCount++;
             }
+        }
+        if(count($game['users']) == $displayCount) {
+            ?>
+            <p class="fade">Waiting for players...</p>
+            <?php
         }
     }
 

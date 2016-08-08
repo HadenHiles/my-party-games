@@ -19,16 +19,16 @@ if(!$game = $mySession->loadUsers($thisUser['code'])) {
     foreach($game['users'] as $user) {
         if($user['is_display']) {
             ?>
-            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="display<?php echo $user['userid']; ?>">
-                <input type="checkbox" name="displays[]" id="display<?php echo $user['userid']; ?>" class="mdl-checkbox__input" checked>
+            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="display<?php echo $user['id']; ?>">
+                <input type="checkbox" name="displays[]" id="display<?php echo $user['id']; ?>" value="<?php echo $user['id']; ?>" class="mdl-checkbox__input" checked>
                 <span class="mdl-checkbox__label"><?php echo $user['display_name']; ?></span>
             </label>
             <div class="clear"></div>
             <?php
         } else {
             ?>
-            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="display<?php echo $user['userid']; ?>">
-                <input type="checkbox" name="displays[]" id="display<?php echo $user['userid']; ?>" class="mdl-checkbox__input">
+            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="display<?php echo $user['id']; ?>">
+                <input type="checkbox" name="displays[]" id="display<?php echo $user['id']; ?>" value="<?php echo $user['id']; ?>" class="mdl-checkbox__input">
                 <span class="mdl-checkbox__label"><?php echo $user['display_name']; ?></span>
             </label>
             <div class="clear"></div>
@@ -42,16 +42,16 @@ if(!$game = $mySession->loadUsers($thisUser['code'])) {
     foreach($game['users'] as $user) {
         if($user['is_host']) {
             ?>
-            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="host<?php echo $user['userid']; ?>">
-                <input type="radio" id="host<?php echo $user['userid']; ?>" class="mdl-radio__button" name="host" value="<?php echo $user['userid']; ?>" checked />
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="host<?php echo $user['id']; ?>">
+                <input type="radio" id="host<?php echo $user['id']; ?>" class="mdl-radio__button" name="host" value="<?php echo $user['id']; ?>" checked />
                 <span class="mdl-radio__label"><?php echo $user['display_name']; ?></span>
             </label>
             <div class="clear"></div>
             <?php
         } else {
             ?>
-            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="host<?php echo $user['userid']; ?>">
-                <input type="radio" id="host<?php echo $user['userid']; ?>" class="mdl-radio__button" name="host" value="<?php echo $user['userid']; ?>" />
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="host<?php echo $user['id']; ?>">
+                <input type="radio" id="host<?php echo $user['id']; ?>" class="mdl-radio__button" name="host" value="<?php echo $user['id']; ?>" />
                 <span class="mdl-radio__label"><?php echo $user['display_name']; ?></span>
             </label>
             <div class="clear"></div>
