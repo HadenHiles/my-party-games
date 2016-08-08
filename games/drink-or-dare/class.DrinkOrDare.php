@@ -8,8 +8,9 @@ class DrinkOrDare {
     private $current_round;
     private $userid;
     private $hasCurrentDare;
+    private $drinksToWin;
 
-    public function __construct($game_id = 0, $userid = 0, $total_rounds = 5, $current_round = 1) {
+    public function __construct($game_id = 0, $userid = 0, $total_rounds = 5, $current_round = 1, $drinksToWin = 3) {
 
         $this->gameid = $game_id;
         $this->state = 1;
@@ -17,6 +18,7 @@ class DrinkOrDare {
         $this->current_round = $current_round;
         $this->userid = $userid;
         $this->hasCurrentDare = false;
+        $this->drinksToWin = $drinksToWin;
     }
 
     public function start() {
@@ -35,7 +37,7 @@ class DrinkOrDare {
                 if ($result->rowCount() <= 0) {
                     //game doesnt exist
                     $sql = 'INSERT INTO drink_or_dare
-                            (game_id, state, total_rounds, current_round) 
+                            (game_id, state, total_rounds, current_round, drinks_to_win) 
                             VALUES
                             (:gameid, :state, :total_rounds, :current_round)';
 
@@ -44,6 +46,7 @@ class DrinkOrDare {
                     $result->bindParam(":state", $this->state);
                     $result->bindParam(":total_rounds", $this->total_rounds);
                     $result->bindParam(":current_round", $this->current_round);
+                    $result->bindParam(":drinks_to_win", $this->drinksToWin);
 
                     if ($result->execute() && $result->errorCode() == 0) {
                         return true;
@@ -55,6 +58,7 @@ class DrinkOrDare {
                     $this->state = $result['state'];
                     $this->total_rounds = $result['total_rounds'];
                     $this->current_round = $result['current_round'];
+                    $this->drinksToWin = $result['drinks_to_win'];
 
                     //get user dare state
                     if (!empty($this->gameid)) {
@@ -158,6 +162,16 @@ class DrinkOrDare {
     public function getHasCurrentDare() {
 
         return $this->hasCurrentDare;
+    }
+
+    public function getTotalRounds() {
+
+        return $this->total_rounds;
+    }
+
+    public function getDrinksToWin() {
+
+        return $this->drinksToWin;
     }
 }
 ?>
