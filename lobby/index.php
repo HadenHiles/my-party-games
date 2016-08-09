@@ -31,6 +31,7 @@ try {
     if (!$game = $mySession->loadUsers($thisUser['code'])) {
         //game was not found
         $msg = "Sorry your game was deleted";
+        $msg_code = 1;
     } else {
         //game was found
         if(isset($_POST['settings']) && $_POST['settings']) {
@@ -160,7 +161,7 @@ try {
 }
 if(!empty($msg)) {
     ?>
-    <dialog class="mdl-dialog error">
+    <dialog class="mdl-dialog error" code="<?php echo $msg_code; ?>">
         <h4 class="mdl-dialog__title">Oops!</h4>
         <div class="mdl-dialog__content">
             <p style="color: #ccc; font-size: 8px;">Something happened.</p>
