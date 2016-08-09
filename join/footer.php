@@ -10,6 +10,9 @@
                     dialog.showModal();
                     dialog.querySelector('.close').addEventListener('click', function() {
                         dialog.close();
+                        if(dialog.code == 1) {
+                            location.reload();
+                        }
                     });
                 }
 

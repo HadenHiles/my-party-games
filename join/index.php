@@ -67,6 +67,12 @@ try {
                     //check result and if true then save user in session and redirect to lobby
                     if ($result == true && intval($result)) {
                         $_SESSION['user'] = $user->getUser();
+
+                        if($_SESSION['isHost']) {
+                            $user->isHost("set", $_SESSION['user']['userid']);
+                            unset($_SESSION['isHost']);
+                        }
+
                         header("Location: ../lobby/");
                         exit();
                     } else if ($result == "user-exists") {
@@ -92,6 +98,12 @@ try {
                     if ($result == true && intval($result)) {
 
                         $_SESSION['user'] = $user->getUser();
+
+                        if($_SESSION['isHost']) {
+                            $user->isHost("set", $_SESSION['user']['userid']);
+                            unset($_SESSION['isHost']);
+                        }
+
                         header("Location: ../lobby/");
                         exit();
                     } else if ($result == "user-exists") {
@@ -100,6 +112,12 @@ try {
                         
                         if ($result == true) {
                             $_SESSION['user'] = $user->getUser();
+
+                            if($_SESSION['isHost']) {
+                                $user->isHost("set", $_SESSION['user']['userid']);
+                                unset($_SESSION['isHost']);
+                            }
+
                             header("Location: ../lobby/");
                             exit();
                         } else if (intval($result)) {
@@ -142,12 +160,13 @@ try {
                             $user->isHost("set",$_SESSION['user']['userid']);
                             unset($_SESSION['isHost']);
                         }
-                        $user->isDisplay("set", $_SESSION['user']['userid']);
+                        $user->isDisplay("set", $_SESSION['user']['userid'], 1);
                         header("Location: ../lobby/");
                     } else if ($result == "user-exists") {
                         $msg = "That name is already in use!";
                     } else {
                         $msg = "Game cannot be found!";
+                        $msg_code = 1;
                     }
                 }
             }
@@ -318,7 +337,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
 
 if(!empty($msg)) {
     ?>
-    <dialog class="mdl-dialog error">
+    <dialog class="mdl-dialog error" code="<?php echo $msg_code; ?>">
         <h4 class="mdl-dialog__title">Oops!</h4>
         <div class="mdl-dialog__content">
             <p style="color: #ccc; font-size: 8px;">You done did it.</p>
