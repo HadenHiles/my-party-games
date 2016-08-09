@@ -337,7 +337,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
 
 if(!empty($msg)) {
     ?>
-    <dialog class="mdl-dialog error">
+    <dialog class="mdl-dialog error" code="<?php echo $msg_code; ?>">
         <h4 class="mdl-dialog__title">Oops!</h4>
         <div class="mdl-dialog__content">
             <p style="color: #ccc; font-size: 8px;">You done did it.</p>
