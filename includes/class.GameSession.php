@@ -90,6 +90,32 @@ class GameSession {
         return false;
     }
 
+    /**
+     * @param $code
+     * @return bool
+     */
+    public function destroy($code) {
+        global $db;
+
+        $sql = 'DELETE FROM game_connections WHERE unique_code = :unique_code';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":unique_code", $code);
+
+        $sqlUsers = 'UPDATE users SET game_id = 0 WHERE game_id = :unique_code';
+
+        $resultUsers = $db->prepare($sqlUsers);
+        $resultUsers->bindValue(":unique_code", $code);
+
+        if ($result->execute() && $result->errorCode()) {
+            if($resultUsers->execute() && $resultUsers->errorCode()) {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
     /*
      * Fetches a new random code and updates the reference in the database
      * @returns boolean, true/false

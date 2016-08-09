@@ -10,7 +10,7 @@ if (empty($_SESSION['user'])) {
 } else {
     require_once("header.php");
 }
-
+$msg_title = "Oops!";
 try {
     $thisUser = $_SESSION['user'];
 
@@ -26,12 +26,19 @@ try {
         }
         $msg = "You can't leave!";
     }
+    
+    if($_POST['delete-game']) {
+        $mySession->destroy($thisUser['code']);
+    }
 
     //load the current game details
     if (!$game = $mySession->loadUsers($thisUser['code'])) {
         //game was not found
-        $msg = "Sorry your game was deleted";
-        $msg_code = 1;
+        if($user->isHost("get", $thisUser['userid'])) {
+            header("location: /");
+        } else {
+            header("location: /join");
+        }
     } else {
         //game was found
         if(isset($_POST['settings']) && $_POST['settings']) {
@@ -67,8 +74,8 @@ try {
                     }
                     ?>
                     <span class="android-title mdl-layout-title" style="color: #757575; margin-left: 15px;">
-                        <i class="fa fa-glass" aria-hidden="true" style="color: #8bc34a;"></i> Party Games
-                    </span>
+                    <i class="fa fa-glass" aria-hidden="true" style="color: #8bc34a;"></i> Party Games
+                </span>
                     <div class="mdl-layout-spacer"></div>
                     <div class="mdl-cell mdl-cell--1-col right" style="text-align: right;">
                         <?php
@@ -81,8 +88,11 @@ try {
 
                             <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
                                 <li class="mdl-menu__item" id="show-settings">Settings</li>
-                                <li class="mdl-menu__item" id="delete-game" style="color: #CE0000">Delete Game</li>
+                                <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="$('#delete-game-form').submit();">Delete Game</li>
                             </ul>
+                            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" id="delete-game-form">
+                                <input type="hidden" name="delete-game" value="true" />
+                            </form>
                             <?php
                         } else {
                             ?>
@@ -110,10 +120,10 @@ try {
                         <?php
                         if($user->isDisplay("get", $thisUser['userid'], 1)) {
                             ?>
-<!--                            <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; color: #777; margin: -5px 0 0 5px;">-->
-<!--                                <i class="fa fa-question"></i>-->
-<!--                            </button>-->
-<!--                            <div class="mdl-tooltip" for="show-rules">Rules</div>-->
+                            <!--                            <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; color: #777; margin: -5px 0 0 5px;">-->
+                            <!--                                <i class="fa fa-question"></i>-->
+                            <!--                            </button>-->
+                            <!--                            <div class="mdl-tooltip" for="show-rules">Rules</div>-->
                             <?php
                         }
                         ?>
@@ -161,8 +171,8 @@ try {
 }
 if(!empty($msg)) {
     ?>
-    <dialog class="mdl-dialog error" code="<?php echo $msg_code; ?>">
-        <h4 class="mdl-dialog__title">Oops!</h4>
+    <dialog class="mdl-dialog error">
+        <h4 class="mdl-dialog__title"><?php echo $msg_title; ?></h4>
         <div class="mdl-dialog__content">
             <p style="color: #ccc; font-size: 8px;">Something happened.</p>
             <p><?php echo $msg; ?></p>
@@ -171,6 +181,20 @@ if(!empty($msg)) {
             <button type="button" class="mdl-button close">OK</button>
         </div>
     </dialog>
+    <script>
+        (function() {
+            var dialog = document.querySelector('dialog.error');
+            if (dialog != null) {
+                if (!dialog.showModal) {
+                    dialogPolyfill.registerDialog(dialog);
+                }
+                dialog.showModal();
+                dialog.querySelector('.close').addEventListener('click', function () {
+                    dialog.close();
+                });
+            }
+        })();
+    </script>
     <?php
 }
 
