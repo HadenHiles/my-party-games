@@ -100,6 +100,13 @@ class User {
     public function addUser($fbaccesstoken, $fbuserid, $picture) {
         global $db;
 
+        $check = 'DELETE FROM users WHERE session_id = :session_id AND display_name = :name';
+
+        $checkResult = $db->prepare($check);
+        $checkResult->bindParam(":name", $this->displayname, PDO::PARAM_STR, 25);
+        $checkResult->bindParam(":session_id", $this->sessionid, PDO::PARAM_STR, 150);
+        $checkResult->execute();
+
         //create user reference in database
         $sql = 'INSERT INTO users (game_id, ip_address, session_id, display_name, fb_access_token, fb_user_id, picture, last_active_date)
                 VALUES (:code, :ip, :session_id, :name, :fbaccesstoken, :fbuserid, :picture, NOW())';
