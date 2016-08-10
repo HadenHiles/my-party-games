@@ -100,5 +100,9 @@
     }
 </script>
 
+<?php
+require_once("../../../includes/message.php");
+?>
+
 </body>
 </html>
