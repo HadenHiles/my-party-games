@@ -37,7 +37,7 @@ class DrinkOrDare {
 
             $this->total_rounds = $result['total_rounds'];
             $this->current_round = $result['current_round'];
-            $this->drinkToWin = $result['drinks_to_win'];
+            $this->drinksToWin = $result['drinks_to_win'];
             $this->state = $result['state'];
             $this->gameid = $result['game_id'];
 
