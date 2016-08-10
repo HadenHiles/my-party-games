@@ -193,7 +193,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
         <main class="mdl-layout__content main-form">
             <div style="color: #cccccc;">
-                <h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4>
+                <a href="/" class="party-games-title" style="color: #ccc;"><h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4></a>
             </div>
             <div class="mdl-card mdl-shadow--6dp">
                 <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
@@ -278,7 +278,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
         <main class="mdl-layout__content main-form">
             <div style="color: #cccccc;">
-                <h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4>
+                <a href="/" class="party-games-title" style="color: #ccc;"><h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4></a>
             </div>
             <div class="mdl-card mdl-shadow--6dp">
                 <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
@@ -307,7 +307,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
         <main class="mdl-layout__content main-form">
             <div style="color: #cccccc;">
-                <h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4>
+                <a href="/" class="party-games-title" style="color: #ccc;"><h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4></a>
             </div>
             <div class="mdl-card mdl-shadow--6dp">
                 <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
