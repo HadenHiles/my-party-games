@@ -164,7 +164,7 @@ try {
                 <?php
                 if($user->isHost("get", $thisUser['userid'])) {
                     ?>
-                    <a href="" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right start-button">Start Game</a>
+                    <a href="/games/<?php echo $game['game_name']; ?>/play" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right start-button">Start Game</a>
                     <?php
                 }
                 ?>
