@@ -35,7 +35,7 @@ class GameSession {
      * Creates a new game session and saves a reference in the database
      * @returns boolean, true/false
      */
-    public function setup($game) {
+    public function setup($gameName = '') {
 
         global $db;
 
@@ -48,7 +48,7 @@ class GameSession {
             $result->bindValue(":sessionid", $this->sessionid);
 
             //query database for current session
-            if ($result->execute() && $result->errorCode()) {
+            if ($result->execute() && $result->errorCode() == 0) {
 
                 if ($result->rowCount() > 0) {
 
@@ -57,11 +57,11 @@ class GameSession {
                     $this->uniquecode = $result['unique_code'];
                     $this->game = $result['game_name'];
 
-                } else if (!empty($game)) {
+                } else if (!empty($gameName)) {
 
                     //insert new session into database
-                    $this->uniquecode = self::setCode();
-                    $this->game = $game;
+                    $this->uniquecode = self::getRandomCode();
+                    $this->game = $gameName;
 
                     $sql = 'INSERT INTO game_connections (session_id, unique_code, host_ip_address, date, game_active, game_name)
                             VALUES (:sessionid, :uniquecode, :hostip, NOW(), 1, :game)';
@@ -73,12 +73,12 @@ class GameSession {
                     $result->bindValue(":game", $this->game);
 
                     //check to see if game session was created
-                    if ($result->execute() && $result->errorCode()) {
+                    if ($result->execute() && $result->errorCode() == 0) {
                         return true;
                     } else {
                         throw new Exception ("New session could not be created.");
                     }
-                } else if (empty($game)) {
+                } else if (empty($gameName)) {
                     throw new Exception ("You need to specify a game name");
                 }
             } else {
@@ -98,24 +98,28 @@ class GameSession {
 
         global $db;
 
-        $this->uniquecode = self::setCode();
+        if (!empty($this->sessionid)) {
+            $this->uniquecode = self::getRandomCode();
 
-        $sql = 'UPDATE game_connections 
-                SET unique_code = :uniquecode,
-                date = NOW(),
-                game_active = 1,
-                game_name = :game
-                WHERE session_id = :sessionid';
+            $sql = 'UPDATE game_connections 
+                    SET unique_code = :uniquecode,
+                    date = NOW(),
+                    game_active = 1,
+                    game_name = :game
+                    WHERE session_id = :sessionid';
 
-        $result = $db->prepare($sql);
-        $result->bindValue(":uniquecode", $this->uniquecode);
-        $result->bindValue(":sessionid", $this->sessionid);
-        $result->bindValue(":game", $this->game);
+            $result = $db->prepare($sql);
+            $result->bindValue(":uniquecode", $this->uniquecode);
+            $result->bindValue(":sessionid", $this->sessionid);
+            $result->bindValue(":game", $this->game);
 
-        if ($result->execute() && $result->errorCode()) {
-            return true;
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            } else {
+                throw new Error ("Session could not be updated.");
+            }
         } else {
-            throw new Error ("Session could not be updated.");
+            throw new Exception("You need a sessionid");
         }
         return false;
     }
@@ -142,7 +146,7 @@ class GameSession {
         if ($result->execute() && $result->errorCode() == 0) {
             return true;
         } else {
-            throw new Exception ("Session could not be updated.");
+            throw new Exception ("Session could not be deleted.");
         }
         return false;
     }
@@ -399,23 +403,6 @@ class GameSession {
         return false;
     }
 
-    /**
-     * Determine if the user is in a game already
-     * @return bool
-     */
-    public function isJoined() {
-        global $db;
-
-        $sql = "SELECT session_id FROM users WHERE session_id = :session_id AND game_id != 0";
-        $result = $db->prepare($sql);
-        $result->bindValue(":session_id", $this->sessionid);
-
-        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() == 1) {
-            return true;
-        }
-        return false;
-    }
-
     /*
      * Load a game session based on a game code
      * @param int, code
@@ -433,7 +420,7 @@ class GameSession {
 
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-            $game = $result->fetch();
+            $game = $result->fetch(PDO::FETCH_ASSOC);
 
             if ($users = $user->getAll($code)) {
                 $game['users'] = $users;
@@ -467,7 +454,7 @@ class GameSession {
      * Generates a random 4 digit code between 1000-9999
      * @returns int
      */
-    public function setCode() {
+    public function getRandomCode() {
         list($usec, $sec) = explode(' ', microtime());
         $seed = (float) $sec + ((float) $usec * 100000);
         srand($seed);

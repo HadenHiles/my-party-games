@@ -5,24 +5,23 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.GameSession.php');
 require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.User.php');
 //require_once($_SERVER['DOCUMENT_ROOT'].'/header/header.php');
 
-$game = 'drink-or-dare';
+$gameName = 'drink-or-dare';
 
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
     $user = new User(SESSION_ID, DEVICE_IP);
     
-    $mySession->setup($game);
+    $mySession->setup($gameName);
 
     //check for form submission to join a game session
     if (isset($_POST['start-game'])) {
         $displayOnly = (isset($_POST['display']));
+        $_SESSION['isHost'] = true;
 
         if ($displayOnly) {
-            $_SESSION['isHost'] = true;
             header("Location: /join/?display=true&unique-id=".$mySession->getCode(SESSION_ID));
         } else {
-            $_SESSION['isHost'] = true;
             header("Location: /join/?unique-id=".$mySession->getCode(SESSION_ID));
         }
     } else if (isset($_POST['new-code'])) {
@@ -30,6 +29,7 @@ try {
         //requested to make a new code for the current session
         $mySession->newCode();
         header("Location: create.php");
+        exit();
     } else if (isset($_POST['new-session'])) {
 
         //requested to make a new session

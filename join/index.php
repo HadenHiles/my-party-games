@@ -19,7 +19,6 @@ $fb = new Facebook\Facebook([
 
 //requests
 $isDisplay = $_REQUEST['display'];
-
 $formToDisplay = "joinGame";
 
 try {
@@ -38,8 +37,7 @@ try {
             $_SESSION['current_game_code'] = intval($code);
         }
 
-        $isGame = $mySession->getGame($code);
-        if(!$isGame) {
+        if(!$mySession->getGame($code)) {
             $msg = "Game could not be found.";
             $formToDisplay = "join";
         } else {
@@ -48,8 +46,9 @@ try {
             //For users who just left a game and we still have all of their information except game_id
             $mySession->switchGame($code);
 
-            if($mySession->isJoined()) {
+            if($user->isJoined(true)) {
                 header("Location: ../lobby/");
+                exit();
             }
             
             if(isset($_REQUEST['display-name'])) {
@@ -69,6 +68,7 @@ try {
                     if ($result == true && intval($result)) {
                         $_SESSION['user'] = $user->getUser();
                         header("Location: ../lobby/");
+                        exit();
                     } else if ($result == "user-exists") {
                         $msg = "Someone is already using that name!";
                     } else {

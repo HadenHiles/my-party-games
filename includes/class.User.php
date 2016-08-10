@@ -12,6 +12,7 @@ class User {
     private $hostip;
     private $sessionid;
     private $displayname;
+    private $isJoined;
     private $verifieduser;
     private $lastactivedate;
     private $fbtoken;
@@ -29,10 +30,9 @@ class User {
             $this->hostip = $ip;
             $this->game = '';
             $this->gameid = $game_id;
+            $this->isJoined = false;
 
-            if (!empty($name)) {
-                $this->displayname = $name;
-            }
+            $this->displayname =  (!empty($name) ? $name : '');
 
         } else {
             throw new Exception ("You need to specify the sessionid and game!");
@@ -44,17 +44,21 @@ class User {
      * Determine if the user is in a game already
      * @return bool
      */
-    public function isJoined() {
+    public function isJoined($check = false) {
         global $db;
 
-        $sql = "SELECT session_id FROM users WHERE session_id = :session_id AND game_id != 0";
-        $result = $db->prepare($sql);
-        $result->bindValue(":session_id", $this->sessionid);
+        if ($check) {
 
-        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() == 1) {
-            return true;
+            $sql = "SELECT session_id FROM users WHERE session_id = :session_id AND game_id != 0";
+            $result = $db->prepare($sql);
+            $result->bindValue(":session_id", $this->sessionid);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                $this->isJoined = true;
+            }
         }
-        return false;
+
+        return $this->isJoined;
     }
 
     /**
@@ -78,15 +82,8 @@ class User {
             $result->bindValue(":name", $this->displayname);
             $result->bindValue(":code", $this->gameid);
 
-            if ($result->execute() && $result->errorCode() == 0) {
-
-                //user alerady exists if rowcount greater than 0
-                if ($result->rowCount() > 0) {
-                    return true;
-                } else {
-                    //user found in game and doesnt exist
-                    return false;
-                }
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                return true;
             }
         }
         //user not found in game
@@ -183,11 +180,16 @@ class User {
                 $this->name = $result['displayname'];
                 $this->gameid = $result['gameid'];
 
+                if (!empty($this->code)) {
+                    $this->isJoined = true;
+                }
+
                 return array(
                     'userid' => $this->userid,
                     'code' => $this->gameid,
                     'gameid' => $this->gameid,
-                    'name' => $this->displayname
+                    'name' => $this->displayname,
+                    'isjoined' => $this->isJoined
                 );
             }
         }
@@ -240,21 +242,23 @@ class User {
     }
 
     /**
+     * if this works, great! if not oh well users will be deleted when un active anyway
      * @param $code
      * @return bool
      */
     public function deleteUsers($code) {
         global $db;
 
-        //delete non verified users from this game session
-        $sql = 'DELETE FROM users WHERE game_id = :gameid';
+        if (!empty($code)) {
+            //delete non verified users from this game session
+            $sql = 'DELETE FROM users WHERE game_id = :gameid AND verified_user = 0';
 
-        $result = $db->prepare($sql);
-        $result->bindValue(":gameid", $this->uniquecode);
+            $result = $db->prepare($sql);
+            $result->bindValue(":gameid", $code);
 
-        if ($result->execute() && $result->errorCode()) {
-            //if this works, great! if not oh well users will be deleted when un active anyway
-            return true;
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
         }
         return false;
     }
