@@ -51,9 +51,8 @@ $(function() {
 
             console.log(typeof MaterialSnackbar);
             //set a timeout to wait for MDL to load
-            if (typeof MaterialSnackbar == "function") {
-                console.log(typeof MaterialSnackbar);
-                console.log("hit");
+            if (typeof MaterialSnackbar != "undefined") {
+
                 //loop through each server message
                 for (var message of srvmsg) {
 
@@ -64,13 +63,13 @@ $(function() {
                 }
 
                 //clear the timeout
-                clearTimeout(MaterialSnackbar);
+                clearInterval(waitForMDL);
             }
 
             //if MDL hasnt loaded in 20 tries, clean interval
             maxTries--;
             if (maxTries <= 0) {
-                clearTimeout(MaterialSnackbar);
+                clearInterval(waitForMDL);
             }
         }, 100);
     }

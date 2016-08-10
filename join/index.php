@@ -19,7 +19,6 @@ $fb = new Facebook\Facebook([
 
 //requests
 $isDisplay = $_REQUEST['display'];
-
 $formToDisplay = "joinGame";
 
 try {
@@ -38,17 +37,18 @@ try {
             $_SESSION['current_game_code'] = intval($code);
         }
 
-        $isGame = $mySession->getGame($code);
-        if(!$isGame) {
+        if(!$mySession->getGame($code)) {
             $msg = "Game could not be found.";
             $formToDisplay = "join";
         } else {
             $formToDisplay = "nickname";
+            
+            //For users who just left a game and we still have all of their information except game_id
+            $mySession->switchGame($code);
 
-            if($mySession->isJoined()) {
-                //For users who just left a game and we still have all of their information except game_id
-                $mySession->switchGame($code);
+            if($user->isJoined(true)) {
                 header("Location: ../lobby/");
+                exit();
             }
             
             if(isset($_REQUEST['display-name'])) {
@@ -74,6 +74,7 @@ try {
                         }
 
                         header("Location: ../lobby/");
+                        exit();
                     } else if ($result == "user-exists") {
                         $msg = "Someone is already using that name!";
                     } else {
@@ -336,7 +337,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
 
 if(!empty($msg)) {
     ?>
-    <dialog class="mdl-dialog error" code="<?php echo $msg_code; ?>">
+    <dialog class="mdl-dialog error">
         <h4 class="mdl-dialog__title">Oops!</h4>
         <div class="mdl-dialog__content">
             <p style="color: #ccc; font-size: 8px;">You done did it.</p>
