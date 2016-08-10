@@ -333,21 +333,6 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     </div>
     <?php
 }
-//
-//if(!empty($msg)) {
-//    ?>
-<!--    <dialog class="mdl-dialog error" code="--><?php //echo $msg_code; ?><!--">-->
-<!--        <h4 class="mdl-dialog__title">Oops!</h4>-->
-<!--        <div class="mdl-dialog__content">-->
-<!--            <p style="color: #ccc; font-size: 8px;">You done did it.</p>-->
-<!--            <p>--><?php //echo $msg; ?><!--</p>-->
-<!--        </div>-->
-<!--        <div class="mdl-dialog__actions">-->
-<!--            <button type="button" class="mdl-button close">OK</button>-->
-<!--        </div>-->
-<!--    </dialog>-->
-<!--    --><?php
-//}
 
 require_once('footer.php');
 ?>
