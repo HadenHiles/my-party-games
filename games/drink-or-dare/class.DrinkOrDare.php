@@ -32,10 +32,16 @@ class DrinkOrDare {
         $result = $db->prepare($sql);
         $result->bindParam(":gameid", $this->gameid);
 
-        if ($result->execute() && $result->errorCode() == 0) {
-            if ($result->rowCount() > 0) {
-                return $result->fetchAll(PDO::FETCH_ASSOC);
-            }
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+
+            $this->total_rounds = $result['total_rounds'];
+            $this->current_round = $result['current_round'];
+            $this->drinkToWin = $result['drinks_to_win'];
+            $this->state = $result['state'];
+            $this->gameid = $result['game_id'];
+
+            return $result;
         }
         return false;
     }

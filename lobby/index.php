@@ -10,7 +10,7 @@ if (empty($_SESSION['user'])) {
 } else {
     require_once("header.php");
 }
-$msg_title = "Oops!";
+
 try {
     $thisUser = $_SESSION['user'];
 
@@ -167,7 +167,8 @@ try {
 
 } catch (Exception $e) {
     //show any errors
-    $msg = "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
+    $msg =
+    $msg[] = array("msg" => "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile());
 }
 if(!empty($msg)) {
     ?>

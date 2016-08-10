@@ -1,31 +1,9 @@
 //list of all messages and icons for website
 var messages = {
-    "account-passwords-notmet":"Password requirements have not been met!",
-    "account-passwords-check1":"Passwords Match",
-    "account-passwords-check2":"8 Or More Characters",
-    "account-passwords-check3":"Contains Numbers And Letters",
-    "account-passwords-dontmatch":"Passwords Don't Match",
-    "account-email-notmet":"An email is required!",
-    "account-creation-failed":"Account creation failed. Please try again later.",
-    "account-login-failed":"Username and Password do not match.",
-    "account-limited-level":"Your account is currently limited until approved by an admin.",
-    "account-not-verified":"Your account is currently limited until your email has been verified.",
-    "account-reset":"You're account has been reset back to the defaults.",
-    "account-update":"You're account has been successfully updated.",
-    "account-already-exists":"Accout with that username already exists.",
-    "movie-needs-title":"This movie needs a title!",
-    "control-case-need-name":"You need a case name to create a case!",
-    "control-case-need-range":"You need to enter a range to create a case!",
-    "control-case-created":"Case created successfully",
-    "control-case-failed":"Case could not be created",
-    "control-case-exists":"A case with that name already exists.",
-    "control-case-edited":"The case has been updated!",
-    "control-case-edited-failed":"The case could not be updated!",
-    "control-case-edited-notexists":"No case with that name exists.",
-    "wishlist-need-priority":"You need to select a priority",
-    "wishlist-add-failed":"The movie could not be added to your wish list at this time.",
-    "general-notmet":"Please fill out all the required fields.",
-    "direct-known-error-images":"I know images and some other information is missing / broken on this page. Fixing soon. Dont worry."
+    "game-deleted":"Sorry, your game was deleted",
+    "game-name-in-use":"Someone is already using that name!",
+    "game-not-found":"Game could not be found, do you have the right code?",
+    "game-empty-name":"Please enter a name"
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',
@@ -58,7 +36,7 @@ $(function() {
 
                     //send the message request
                     if (message.msg != "") {
-                        msg(message.popup, message.ele, message.msg, message.type, false, (message.hide == false ? false : true), message.delay);
+                        msg(message.popup, message.ele, message.msg, message.title, message.type, message.icon, (message.hide == false ? false : true), message.delay);
                     }
                 }
 
@@ -76,26 +54,32 @@ $(function() {
 });
 
 //display an error on the webpage
-function msg(popup, ele, msgid, type, icon, hide, delay) {
+function msg(popup, ele, msgid, title, type, icon, hide, delay) {
 
     //check for type
-    if (type != "warning" && type != "info" && type != "danger" && type != "success") {
-        type = "info";
-    }
+    // if (type != "warning" && type != "info" && type != "danger" && type != "success") {
+    //     type = "info";
+    // }
 
     //check for undefined parameters
     delay = (parseInt(delay) ? delay : 5000);
-    hide = !(hide == false);
+    //hide = !(hide == false);
     popup = (popup == "snackbar" || popup == "dialog" ? popup : "snackbar");
 
     //default element example: #info-msg
-    ele = (ele == false || ele === "undefined" ? type+'-msg' : ele);
+    ele = (ele == false || typeof ele == "undefined" ? 'snackbar-message' : ele);
 
     console.log("Message request - Popup: " + popup + ", Ele: " + ele + ", Msgid: " + msgid + ", Type: " + type + ", Icon: " + icon + ", Hide: " + hide);
 
     //if (ele = document.getElementById(ele)) {
         //check for empty message
-        if (msgid != "" && messages[msgid]) {
+        if (msgid != "") {
+
+            if (messages[msgid]) {
+                var message = messages[msgid];
+            } else {
+                var message = msgid;
+            }
 
             if (popup == "snackbar") {
 
@@ -111,7 +95,7 @@ function msg(popup, ele, msgid, type, icon, hide, delay) {
                     // showSnackbarButton.style.backgroundColor = '#' +
                     //     Math.floor(Math.random() * 0xFFFFFF).toString(16);
                     var data = {
-                        message: messages[msgid],
+                        message: message,
                         timeout: delay,
                         //actionHandler: handler,
                         //actionText: 'Undo'
@@ -121,14 +105,20 @@ function msg(popup, ele, msgid, type, icon, hide, delay) {
 
             } else if (popup == "dialog") {
 
-                var dialog = document.querySelector(ele);
+                var dialog = document.querySelector('dialog');
                 //var showDialogButton = document.querySelector('#show-dialog');
                 if (! dialog.showModal) {
                     dialogPolyfill.registerDialog(dialog);
                 }
+
+                if (typeof title != "undefined") {
+                    document.getElementById('dialog-title').innerHTML = title;
+                }
+                document.getElementById('dialog-text').innerHTML = message;
                 //showDialogButton.addEventListener('click', function() {
                     dialog.showModal();
                // });
+
                 dialog.querySelector('.close').addEventListener('click', function() {
                     dialog.close();
                 });

@@ -38,7 +38,7 @@ try {
         }
 
         if(!$mySession->getGame($code)) {
-            $msg = "Game could not be found.";
+            $msg[] = array("msg" => "game-not-found");
             $formToDisplay = "join";
         } else {
             $formToDisplay = "nickname";
@@ -76,9 +76,9 @@ try {
                         header("Location: ../lobby/");
                         exit();
                     } else if ($result == "user-exists") {
-                        $msg = "Someone is already using that name!";
+                        $msg[] = array("msg" => "game-name-in-use");
                     } else {
-                        $msg = "Game cannot be found!";
+                        $msg[] = array("msg" => "game-not-found");
                     }
                 }
             } else if(isset($_REQUEST['fb-login'])) {
@@ -122,10 +122,10 @@ try {
                             exit();
                         } else if (intval($result)) {
                         } else {
-                            $msg = "Game cannot be found!";
+                            $msg[] = array("msg" => "game-not-found");
                         }
                     } else {
-                        $msg = "Game cannot be found!";
+                        $msg[] = array("msg" => "game-not-found");
                     }
                 } catch(Facebook\Exceptions\FacebookResponseException $e) {
                     // When Graph returns an error
@@ -145,7 +145,7 @@ try {
                 //basic error handling
                 if (empty($name)) {
                     if(!isset($_SESSION['isHost'])) {
-                        $msg = "Please enter a name for the display!";
+                        $msg[] = array("msg" => "game-empty-name");
                     }
                 } else {
                     //request to join a session
@@ -163,10 +163,9 @@ try {
                         $user->isDisplay("set", $_SESSION['user']['userid'], 1);
                         header("Location: ../lobby/");
                     } else if ($result == "user-exists") {
-                        $msg = "That name is already in use!";
+                        $msg[] = array("msg" => "game-name-in-use");
                     } else {
-                        $msg = "Game cannot be found!";
-                        $msg_code = 1;
+                        $msg[] = array("msg" => "game-not-found");
                     }
                 }
             }
@@ -334,21 +333,21 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     </div>
     <?php
 }
-
-if(!empty($msg)) {
-    ?>
-    <dialog class="mdl-dialog error" code="<?php echo $msg_code; ?>">
-        <h4 class="mdl-dialog__title">Oops!</h4>
-        <div class="mdl-dialog__content">
-            <p style="color: #ccc; font-size: 8px;">You done did it.</p>
-            <p><?php echo $msg; ?></p>
-        </div>
-        <div class="mdl-dialog__actions">
-            <button type="button" class="mdl-button close">OK</button>
-        </div>
-    </dialog>
-    <?php
-}
+//
+//if(!empty($msg)) {
+//    ?>
+<!--    <dialog class="mdl-dialog error" code="--><?php //echo $msg_code; ?><!--">-->
+<!--        <h4 class="mdl-dialog__title">Oops!</h4>-->
+<!--        <div class="mdl-dialog__content">-->
+<!--            <p style="color: #ccc; font-size: 8px;">You done did it.</p>-->
+<!--            <p>--><?php //echo $msg; ?><!--</p>-->
+<!--        </div>-->
+<!--        <div class="mdl-dialog__actions">-->
+<!--            <button type="button" class="mdl-button close">OK</button>-->
+<!--        </div>-->
+<!--    </dialog>-->
+<!--    --><?php
+//}
 
 require_once('footer.php');
 ?>

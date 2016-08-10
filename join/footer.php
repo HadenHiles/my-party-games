@@ -2,19 +2,19 @@
         <script defer src="../bower_components/material-design-lite/material.min.js"></script>
         <script>
             (function() {
-                var dialog = document.querySelector('dialog.error');
-                if(dialog != null) {
-                    if (!dialog.showModal) {
-                        dialogPolyfill.registerDialog(dialog);
-                    }
-                    dialog.showModal();
-                    dialog.querySelector('.close').addEventListener('click', function() {
-                        dialog.close();
-                        if(dialog.code == 1) {
-                            location.reload();
-                        }
-                    });
-                }
+//                var dialog = document.querySelector('dialog.error');
+//                if(dialog != null) {
+//                    if (!dialog.showModal) {
+//                        dialogPolyfill.registerDialog(dialog);
+//                    }
+//                    dialog.showModal();
+//                    dialog.querySelector('.close').addEventListener('click', function() {
+//                        dialog.close();
+//                        if(dialog.code == 1) {
+//                            location.reload();
+//                        }
+//                    });
+//                }
 
                 var avatars = document.querySelector('dialog.avatars');
                 var showAvatarButton = document.querySelector('#show-avatars');
@@ -54,5 +54,10 @@
                 }
             })();
         </script>
+
+        <?php
+        require_once('../includes/message.php');
+        ?>
+
     </body>
 </html>

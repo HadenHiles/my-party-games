@@ -3,13 +3,10 @@
     <script src="3rd-party/imagefill/imagesLoaded.js"></script>
     <script src="3rd-party/imagefill/jquery-imagefill.js"></script>
 
-
-    <script type="text/javascript">
-        var srvmsg = '<?php echo (!empty($msg) && is_array($msg) ? json_encode($msg) : ''); ?>';
-    </script>
-    <script src="/includes/message.js"></script>
-
-
     <script src="splash/main.js"></script>
+
+    <?php
+    require_once('/includes/message.php');
+    ?>
     </body>
 </html>

@@ -48,27 +48,3 @@
         <link rel="stylesheet" href="splash/splash.css" />
     </head>
     <body>
-
-    <!--<button id="demo-show-snackbar" class="mdl-button mdl-js-button mdl-button--raised" type="button">Show Snackbar</button>-->
-    <div id="demo-snackbar-example" class="mdl-js-snackbar mdl-snackbar">
-        <div class="mdl-snackbar__text"></div>
-        <button class="mdl-snackbar__action" type="button"></button>
-    </div>
-
-    <dialog class="mdl-dialog">
-        <h4 class="mdl-dialog__title">Allow data collection?</h4>
-        <div class="mdl-dialog__content">
-            <p>
-                Allowing us to collect data will let us get you the information you want faster.
-            </p>
-        </div>
-        <div class="mdl-dialog__actions">
-            <button type="button" class="mdl-button">Agree</button>
-            <button type="button" class="mdl-button close">Disagree</button>
-        </div>
-    </dialog>
-
-    <?php
-    $msg[] = array("popup" => "snackbar", "ele" => "demo-snackbar-example", "hide" => true, "delay" => 5000, "msg" => "wishlist-add-failed");
-    //$msg[] = array("popup" => "dialog", "ele" => "dialog", "hide" => true, "delay" => 5000, "msg" => "wishlist-add-failed");
-    ?>

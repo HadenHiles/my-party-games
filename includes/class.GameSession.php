@@ -236,6 +236,8 @@ class GameSession {
                     return true;
                 }
             }
+        } else {
+            throw new Exception ("Cannot join a game without a code");
         }
 
         //something went wrong if this function returns false
