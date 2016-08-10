@@ -42,11 +42,11 @@ try {
             $formToDisplay = "join";
         } else {
             $formToDisplay = "nickname";
-            
-            //For users who just left a game and we still have all of their information except game_id
-            $mySession->switchGame($code);
 
             if($user->isJoined(true)) {
+                //For users who just left a game and we still have all of their information except game_id
+                $mySession->switchGame($code);
+
                 header("Location: ../lobby/");
                 exit();
             }

@@ -19,6 +19,9 @@ try {
     $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name'], $thisUser['code']);
     
     if($_REQUEST['leave'] == true) {
+        if($user->isHost("get", $thisUser['userid'])) {
+            $mySession->destroy($thisUser['code']);
+        }
         if($mySession->leave()) {
             $code = $_SESSION['current_game_code'];
             unset($_SESSION['current_game_code']);
@@ -61,6 +64,11 @@ try {
             $_SESSION['game_field_values'] = $key_value_array;
 
             header("location: ../games/" . $game['game_name'] . "/submitSetup.php");
+        }
+        if($game = $mySession->loadUsers($thisUser['code'])) {
+            if(count($game['users']) == 1) {
+                $user->isHost("set", $thisUser['userid']);
+            }
         }
         ?>
         <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">

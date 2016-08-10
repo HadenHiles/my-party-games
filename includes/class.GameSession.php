@@ -374,7 +374,7 @@ class GameSession {
     public function leave() {
         global $db;
 
-        $sql = "UPDATE users SET game_id = 0 WHERE session_id = :session_id";
+        $sql = "UPDATE users SET game_id = 0, is_host = 0, is_display = 0 WHERE session_id = :session_id";
         $result = $db->prepare($sql);
         $result->bindValue(":session_id", $this->sessionid);
 

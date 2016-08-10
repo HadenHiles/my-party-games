@@ -17,6 +17,8 @@ class User {
     private $lastactivedate;
     private $fbtoken;
     private $fbuserid;
+    public $isHost;
+    public $isDisplay;
 
     /**
      * Inits the user class
@@ -31,6 +33,8 @@ class User {
             $this->game = '';
             $this->gameid = $game_id;
             $this->isJoined = false;
+            $this->isHost = false;
+            $this->isDisplay = false;
 
             $this->displayname =  (!empty($name) ? $name : '');
 
@@ -186,6 +190,8 @@ class User {
                 $this->code = $result['gameid'];
                 $this->name = $result['displayname'];
                 $this->gameid = $result['gameid'];
+                $this->isHost = $result['is_host'];
+                $this->isDisplay = $result['is_display'];
 
                 if (!empty($this->code)) {
                     $this->isJoined = true;

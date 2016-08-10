@@ -234,21 +234,33 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @return int
+     */
     public function getState() {
 
         return $this->state;
     }
 
+    /**
+     * @return bool
+     */
     public function getHasCurrentDare() {
 
         return $this->hasCurrentDare;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalRounds() {
 
         return $this->total_rounds;
     }
 
+    /**
+     * @return int
+     */
     public function getDrinksToWin() {
 
         return $this->drinksToWin;
