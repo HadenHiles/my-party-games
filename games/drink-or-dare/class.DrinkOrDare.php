@@ -34,7 +34,7 @@ class DrinkOrDare {
 
         if ($result->execute() && $result->errorCode() == 0) {
             if ($result->rowCount() > 0) {
-                return $result->fetchAll(PDO::FETCH_ASSOC);
+                return $result->fetch(PDO::FETCH_ASSOC);
             }
         }
         return false;
@@ -228,21 +228,33 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @return int
+     */
     public function getState() {
 
         return $this->state;
     }
 
+    /**
+     * @return bool
+     */
     public function getHasCurrentDare() {
 
         return $this->hasCurrentDare;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalRounds() {
 
         return $this->total_rounds;
     }
 
+    /**
+     * @return int
+     */
     public function getDrinksToWin() {
 
         return $this->drinksToWin;
