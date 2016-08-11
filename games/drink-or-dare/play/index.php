@@ -109,7 +109,7 @@ try {
                 <button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="setDare();" style="width: 100%;">Done</button>
             </div>
         </div>
-        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1-waiting">
+        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 1 && $dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1-waiting">
             <div class="mdl-card__supporting-text">
                 <p>Waiting for other players to enter dares..</p>
             </div>
