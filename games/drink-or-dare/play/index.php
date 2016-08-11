@@ -119,9 +119,7 @@ try {
             foreach($game['users'] as $key => $user) {
                 $key = $key + 1;
                 ?>
-                <div class="mdl-card mdl-shadow--6dp square paper dare" onclick="pickCard(<?php echo $key; ?>);">
-                    <div class="mdl-card__supporting-text content">
-                    </div>
+                <div class="mdl-card mdl-shadow--6dp square paper dare pickCard" data-cardnum="<?php echo $key; ?>">
                 </div>
                 <?php
             }

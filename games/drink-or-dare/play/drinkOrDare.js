@@ -62,6 +62,15 @@ $(function(){
 
             } //end of parse json object if
         }); //end of ajax call
+
+        $('.pickCard').click(function() {
+            var num = $(this).data("cardnum");
+            console.log("pickCard num: " + num);
+            if(pickCard(num)) {
+                $(this).addClass("chosen");
+            }
+        });
+
     }, 1000); //end of interval
 
 }); //end of document load
@@ -110,8 +119,13 @@ function pickCard(number) {
                     msg(false, false, "game-drink-or-dare-chosen-dare");
 //                        document.getElementById('game-stage-1').style.display = "none";
 //                        document.getElementById('game-stage-1-waiting').style.display = "block";
+                    return true;
+                } else if (result.status == "already-picked") {
+                    msg(false, false, "game-drink-or-dare-already-picked-card");
+                    return false;
                 } else {
                     msg(false, false, 'game-drink-or-dare-stolen');
+                    return false;
                 }
             }
         });
