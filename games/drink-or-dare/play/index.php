@@ -89,6 +89,30 @@ try {
 }
 ?>
 <div class="mdl-layout mdl-js-layout" id="game-content">
+    <header class="mdl-layout__header mdl-layout__header--transparent">
+        <div class="mdl-layout__header-row">
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+            <!-- Navigation -->
+            <nav class="mdl-navigation">
+                <h6 style="margin: 0 5px;"><?php echo $thisUser['code']; ?></h6>
+                <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="fa fa-cog fade"></i>
+                </button>
+
+                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                    <li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>
+                    <?php
+                    if($user->isHost("get", $thisUser['userid'])) {
+                        ?>
+                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){window.location.href = '../stop.php'}">Stop Game</li>
+                        <?php
+                    }
+                    ?>
+                </ul>
+            </nav>
+        </div>
+    </header>
     <?php
     require_once("../../../leaderboard/leaderboard.php");
     ?>
@@ -125,34 +149,60 @@ try {
             }
             ?>
         </div>
-        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> id="game-stage-3">
+        <div class="mdl-cell mdl-cell--3-col mdl-cell--6-col-tablet mdl-cell--8-col-phone center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> style="min-width: 300px;" id="game-stage-3">
             <?php
             if ($state == 3) {
                 //show players screen because it's their turn
                 if ($dod->getWhoseTurn()) {
-
-                    echo '<div class="mdl-card mdl-shadow--6dp square paper dare showCard" id="myCard">';
-
-                        echo ($dod->checkHasPeeked() ? $dod->getDare() : "hidden");
-
-                    echo '</div>';
-                    echo '<div>';
-                        echo '<input type="button" value="Skip">';
-                        echo '<input type="button" disabled value="Done">';
-                    echo '</div>';
-
+                    ?>
+                    <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="myCard">
+                        <?php
+                        echo $dod->checkHasPeeked() ? $dod->getDare() : "";
+                        ?>
+                    </div>
+                    <div class="mdl-cell mdl-cell--12-col actions center">
+                        <button id="only-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored left">
+                            <i class="fa fa-fast-forward"></i>
+                        </button>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="only-skip">
+                            Use a Free Pass
+                        </div>
+                        <button id="give-drink" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right">
+                            <i class="fa fa-check"></i>
+                        </button>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="give-drink">
+                            I'm done the dare!
+                        </div>
+                    </div>
+                    <?php
                 } else {
-                    //show waiters screen because its not their turn
-                    echo '<div class="mdl-card mdl-shadow--6dp square paper dare" id="activeDare">';
-
-                        echo ($dod->checkHasPeeked(true) ? $dod->getDare(true) : "hidden");
-
-                    echo '</div>';
-                    echo '<div>';
-                        echo '<input type="button" onclick="castVote(1);"value="Drink">';
-                        echo '<input type="button" onclick="castVote(2);"value="Skip">';
-                        echo '<input type="button" onclick="castVote(3);" value="Give Drinks">';
-                    echo '</div>';
+                    ?>
+                    <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="myCard">
+                        <?php
+                        echo $dod->checkHasPeeked(true) ? $dod->getDare() : "";
+                        ?>
+                    </div>
+                    <div class="mdl-cell mdl-cell--12-col actions center">
+                        <button id="drink" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--red mdl-button--colored left">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="drink">
+                            Dare execution not worthy!
+                        </div>
+                        <button id="free-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect middle" onclick="alert('click');">
+                            <i class="fa fa-fast-forward"></i>
+                        </button>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="free-skip">
+                            That dare is unreasonable.
+                        </div>
+                        <button id="give-drink" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right">
+                            <i class="fa fa-check"></i>
+                        </button>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="give-drink">
+                            Well done Jackson!
+                        </div>
+                    </div>
+                    <?php
                 }
             }
             ?>

@@ -2,8 +2,15 @@ body {
   background: url('images/background.jpg') no-repeat;
   background-size: cover;
 }
+.layout-transparent {
+  background: none;
+}
+.layout-transparent .mdl-layout__header,
+.layout-transparent .mdl-layout__drawer-button {
+  color: white;
+}
 .mdl-layout__content {
-  padding: 24px;
+  padding: 60px 24px 24px 24px;
 
   .mdl-card__supporting-text {
     .mdl-textfield {
@@ -23,6 +30,18 @@ body {
 }
 .paper {
   background: url('images/paper2.jpg') 100% 100% no-repeat;
+  background-size: 100% 100%;
+}
+.actions {
+  width: 100%;
+  float: left;
+  padding: 25px 0 !important;
+  .mdl-button--colored {
+    color: #fff !important;
+  }
+  .right, .left {
+    margin: 0;
+  }
 }
 @media screen and (max-width: 1200px) {
   .dare {
@@ -96,6 +115,9 @@ body {
 }
 .square {
   .aspect-ratio(1, 1);
+}
+.full-width {
+  width: 100% !important;
 }
 
 /* Mixins */
