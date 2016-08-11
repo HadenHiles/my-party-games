@@ -391,51 +391,56 @@ class DrinkOrDare {
         global $db;
 
         $sql = 'SELECT * FROM drink_or_dare_user_dares 
-                WHERE game_id = :game_id AND assign_to_id = 0';
+                WHERE game_id = :game_id 
+                AND round_number = :roundnumber';
 
         $result = $db->prepare($sql);
         $result->bindValue(":game_id", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
 
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
             $results = $result->fetchAll(PDO::FETCH_ASSOC);
 
-            $sql = 'UPDATE drink_or_dare_user_dares 
-                    SET assign_to_id = :userid,
-                    card_picked = :cardpicked
-                    WHERE id = :randomid';
+            if ($results[$number-1]['assign_to_id'] == 0) {
 
-            $result = $db->prepare($sql);
-            $result->bindValue(":userid", $this->userid);
-            $result->bindValue(":randomid", $results[$number-1]['id']);
-            $result->bindValue(":cardpicked", $number);
-
-            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-
-                $sql = 'SELECT * FROM drink_or_dare_order WHERE game_id = :gameid AND user_id = :userid';
+                $sql = 'UPDATE drink_or_dare_user_dares 
+                        SET assign_to_id = :userid,
+                        card_picked = :cardpicked
+                        WHERE id = :randomid';
 
                 $result = $db->prepare($sql);
-                $result->bindValue(":gameid", $this->gameid);
                 $result->bindValue(":userid", $this->userid);
+                $result->bindValue(":randomid", $results[$number - 1]['id']);
+                $result->bindValue(":cardpicked", $number);
 
-                if ($result->execute() && $result->errorCode() == 0) {
+                if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-                    if ($result->rowCount() == 0) {
+                    $sql = 'SELECT * FROM drink_or_dare_order WHERE game_id = :gameid AND user_id = :userid';
 
-                        $sql = 'INSERT INTO drink_or_dare_order (game_id, user_id)
-                                VALUES (:gameid, :userid)';
+                    $result = $db->prepare($sql);
+                    $result->bindValue(":gameid", $this->gameid);
+                    $result->bindValue(":userid", $this->userid);
 
-                        $result = $db->prepare($sql);
-                        $result->bindValue(":gameid", $this->gameid);
-                        $result->bindValue(":userid", $this->userid);
+                    if ($result->execute() && $result->errorCode() == 0) {
 
-                        if ($result->execute() && $result->errorCode() == 0) {
+                        if ($result->rowCount() == 0) {
 
+                            $sql = 'INSERT INTO drink_or_dare_order (game_id, user_id)
+                                    VALUES (:gameid, :userid)';
+
+                            $result = $db->prepare($sql);
+                            $result->bindValue(":gameid", $this->gameid);
+                            $result->bindValue(":userid", $this->userid);
+
+                            if ($result->execute() && $result->errorCode() == 0) {
+
+                            }
                         }
                     }
-                }
 
-                return true;
+                    return true;
+                }
             }
         }
 
