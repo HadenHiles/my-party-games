@@ -1,0 +1,77 @@
+body {
+  background: url('images/background.jpg') no-repeat;
+  background-size: cover;
+}
+.mdl-layout {
+  align-items: center;
+  justify-content: center;
+}
+.mdl-layout__content {
+  padding: 24px;
+  flex: none;
+
+  .mdl-card__supporting-text {
+    .mdl-textfield {
+      width: 100%;
+      textarea {
+        resize: none;
+      }
+    }
+  }
+
+  &.main-form {
+    margin-top: -150px;
+  }
+}
+
+.leaderboard {
+  .mdl-layout-title {
+    background: #fff;
+    margin: 0 0 -5px 0;
+  }
+  .mdl-card.player {
+    width: 100%;
+    min-height: 60px;
+    margin: 5px 0;
+    //border: 2px solid rgba(33, 150, 243, 1);
+
+    &.me {
+      border-color: rgba(106, 179, 68, 1) !important;
+    }
+
+    h5.place {
+      margin: 0 10px 0 -20px;
+    }
+
+    .mdl-card__supporting-text {
+      img {
+        background: none !important;
+        float: left;
+        width: 40px;
+        margin-top: 10px !important;
+        height: auto;
+      }
+      h5 {
+        float: left;
+        font-size: 18px;
+        margin-top: 20px;
+        padding: 0 0 0 15px;
+      }
+    }
+  }
+}
+
+/* Extras */
+.clear {
+  clear: both;
+}
+.off-screen {
+  position: fixed;
+  left: -9999px;
+}
+.responsive {
+  max-width: 100%;
+}
+.fade {
+  opacity: 0.5;
+}
