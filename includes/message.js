@@ -4,7 +4,10 @@ var messages = {
     "game-name-in-use":"Someone is already using that name!",
     "game-not-found":"Game could not be found, do you have the right code?",
     "game-empty-name":"Please enter a name",
-    "game-drink-or-dare-empty-dare":"Dare cannot be empty"
+    "game-drink-or-dare-empty-dare":"Dare cannot be empty",
+    "game-drink-or-dare-stolen":"Someone stole your dare! Pick another",
+    "game-drink-or-dare-submitted-dare":"Dare created successfully!",
+    "game-drink-or-dare-chosen-dare":"You have chosen your dare. Face the concequences."
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',

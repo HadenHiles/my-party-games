@@ -213,17 +213,19 @@ class DrinkOrDare {
 
             $userids = array();
 
+            //get an array of the userids playing in the current game
             for ($i = 0; $i < $this->numPlayers; $i++) {
 
                 $userids[] = $game['users'][$i]['id'];
-
             }
 
-            $sql = 'SELECT * FROM drink_or_dare_user_dares WHERE user_id IN ('.implode(",", $userids).')';
+            $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                    WHERE user_id IN ('.implode(",", $userids).') 
+                    AND round_number = :round_number';
 
             $result = $db->prepare($sql);
+            $result->bindValue(":round_number", $this->current_round);
 
-            
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() >= $this->numPlayers) {
                 
                 return true;
@@ -233,7 +235,48 @@ class DrinkOrDare {
         return false;
     }
 
-    public function pickCard() {
+    public function checkCardsPickedComplete() {
+
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                WHERE game_id = :game_id AND assign_to_id != 0 AND round_number = :roundnumber';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":game_id", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function checkHasPeeked() {
+
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                WHERE game_id = :game_id 
+                AND assign_to_id != 0 
+                AND round_number = :roundnumber
+                AND has_peeked = 1';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":game_id", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function pickCard($number) {
 
         global $db;
 
@@ -247,16 +290,17 @@ class DrinkOrDare {
 
             $results = $result->fetchAll(PDO::FETCH_ASSOC);
 
-            $random = rand(1, count($results));
-
-            $sql = 'UPDATE drink_or_dare_user_dares SET assign_to_id = :userid 
-                    WHERE user_id = :userid AND id = :randomid';
+            $sql = 'UPDATE drink_or_dare_user_dares 
+                    SET assign_to_id = :userid,
+                    card_picked = :cardpicked
+                    WHERE id = :randomid';
 
             $result = $db->prepare($sql);
             $result->bindValue(":userid", $this->userid);
-            $result->bindValue(":randomid", $results[$random-1]['id']);
+            $result->bindValue(":randomid", $results[$number-1]['id']);
+            $result->bindValue(":cardpicked", $number);
 
-            if ($result->execute() && $result->errorCode() == 0) {
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
                 $sql = 'SELECT * FROM drink_or_dare_order WHERE game_id = :gameid AND user_id = :userid';
 
@@ -276,34 +320,43 @@ class DrinkOrDare {
                         $result->bindValue(":userid", $this->userid);
 
                         if ($result->execute() && $result->errorCode() == 0) {
-                            return true;
+
                         }
                     }
                 }
+
+                return true;
             }
         }
 
         return false;
     }
 
-    public function nextState() {
+    public function checkNextState() {
 
         global $db;
 
         if (!empty($this->state)) {
 
-            if ($this->state == 1) {
+            $previous = $this->state;
+
+            if ($this->state == 1 && self::checkDaresComplete()) {
                 $this->state = 2;
+            } else if ($this->state == 2 && self::checkCardsPickedComplete()) {
+                $this->state = 3;
             }
 
-            $sql = 'UPDATE drink_or_dare SET state = :state WHERE game_id = :game_id';
+            if ($previous != $this->state) {
 
-            $result = $db->prepare($sql);
-            $result->bindParam(":game_id", $this->gameid);
-            $result->bindParam(":state", $this->state);
+                $sql = 'UPDATE drink_or_dare SET state = :state WHERE game_id = :game_id';
 
-            if ($result->execute() && $result->errorCode() == 0) {
-                return true;
+                $result = $db->prepare($sql);
+                $result->bindParam(":game_id", $this->gameid);
+                $result->bindParam(":state", $this->state);
+
+                if ($result->execute() && $result->errorCode() == 0) {
+                    return true;
+                }
             }
         }
         return false;
