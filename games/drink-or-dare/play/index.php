@@ -17,8 +17,12 @@ $thisUser = $_SESSION['user'];
 
 //init the new game session
 $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
+$dod->start();
+
 $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
+
+//$dod->getDrinkOrDare();
 
 require_once("header.php");
 ?>
@@ -41,7 +45,8 @@ try {
 
     //get game state
     $state =  $dod->getState();
-
+    echo $state . '<Br />';
+   // var_dump($dod->getHasCurrentDare());
 //    echo "Playing as: " . $thisUser['name'];
 //    echo "<br />";
 //    echo "starting status: " . $dod->start();
@@ -54,7 +59,7 @@ try {
 
         case 1:
             //users are picking dares
-            echo "state: users creating dares";
+            //echo "state: users creating dares";
             break;
 
         case 2:
