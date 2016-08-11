@@ -94,7 +94,7 @@ function setDare() {
 }
 
 function pickCard(number) {
-
+    console.log("number: " + number);
     if (number > 0) {
         //ajax call to set dare
         $.ajax({
