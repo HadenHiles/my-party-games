@@ -92,12 +92,12 @@ try {
     <?php
     require_once("../../../leaderboard/leaderboard.php");
     ?>
-    <main class="mdl-layout__content main-form">
-        <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 1 && !$dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1">
+    <main class="mdl-layout__content">
+        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 1 && !$dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1">
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text">What's Your Dare?</h2>
             </div>
-            <div class="mdl-card__supporting-text select-avatar">
+            <div class="mdl-card__supporting-text">
                 <form action="" method="post">
                     <div class="mdl-textfield mdl-js-textfield">
                         <textarea class="mdl-textfield__input" type="text" rows= "6" id="dare-text"></textarea>
@@ -109,31 +109,37 @@ try {
                 <button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="setDare();" style="width: 100%;">Done</button>
             </div>
         </div>
-        <div class="mdl-card mdl-shadow--6dp" <?php echo ($dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1-waiting">
-            <div class="mdl-card__supporting-text select-avatar">
+        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1-waiting">
+            <div class="mdl-card__supporting-text">
                 <p>Waiting for other players to enter dares..</p>
             </div>
         </div>
-        <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 2 ? : 'style="display:none"'); ?> id="game-stage-2">
-            <div class="mdl-card__supporting-text select-avatar">
-                <h1>Choose a Card</h1>
-                <input type="button" onclick="pickCard(1);" value="pick 1">
+        <div class="mdl-cell mdl-cell--8-col dares center" id="game-stage-2" <?php echo ($state == 2 ? : 'style="display:none"'); ?>>
+            <?php
+            foreach($game['users'] as $key => $user) {
+                ?>
+                <div class="mdl-card mdl-shadow--6dp square paper dare" onclick="pickCard(<?php echo ++$key; ?>);">
+                    <div class="mdl-card__supporting-text content">
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
+        </div>
+        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> id="game-stage-3">
+            <div class="mdl-card__supporting-text">
             </div>
         </div>
-        <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 3 ? : 'style="display:none"'); ?> id="game-stage-3">
-            <div class="mdl-card__supporting-text select-avatar">
+        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 4 ? : 'style="display:none"'); ?> id="game-stage-4">
+            <div class="mdl-card__supporting-text">
             </div>
         </div>
-        <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 4 ? : 'style="display:none"'); ?> id="game-stage-4">
-            <div class="mdl-card__supporting-text select-avatar">
+        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 5 ? : 'style="display:none"'); ?> id="game-stage-5">
+            <div class="mdl-card__supporting-text">
             </div>
         </div>
-        <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 5 ? : 'style="display:none"'); ?> id="game-stage-5">
-            <div class="mdl-card__supporting-text select-avatar">
-            </div>
-        </div>
-        <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 6 ? : 'style="display:none"'); ?> id="game-stage-6">
-            <div class="mdl-card__supporting-text select-avatar">
+        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 6 ? : 'style="display:none"'); ?> id="game-stage-6">
+            <div class="mdl-card__supporting-text">
             </div>
         </div>
     </main>
