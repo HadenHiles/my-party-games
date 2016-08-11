@@ -8,7 +8,7 @@
         $user_session = $_SESSION['user'];
 
         //load the current game details
-        if (!$game = $mySession->loadUsers($user_session['code'])) {
+        if (!$game = $mySession->loadUsers($user_session['code'], true)) {
             //game was not found
         } else {
             //game was found
@@ -28,7 +28,7 @@
                     }
                         ?>
                         <div class="mdl-card__supporting-text">
-                            <h5 class="place"><?php echo $place; ?>.</h5>
+                            <h5 class="place"><?php echo $user['points']; ?>.</h5>
                             <img src="<?php echo $user['picture']; ?>" border="0" alt="" />
                             <h5><?php echo $user['display_name']; ?></h5>
                         </div>
@@ -41,7 +41,7 @@
 
             if(count($game['users']) == $displayCount) {
                 ?>
-                <p class="fade">Waiting for players...</p>
+                <p class="fade">No players...</p>
                 <?php
             }
         }

@@ -20,6 +20,18 @@
     </div>
 </dialog>
 
+<dialog class="mdl-dialog confirm">
+    <h4 class="mdl-dialog__title" id="confirm-dialog-title">Oops!</h4>
+    <div class="mdl-dialog__content">
+        <p id="confirm-dialog-text">
+        </p>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button type="button" class="mdl-button yes">Yes</button>
+        <button type="button" class="mdl-button no">No</button>
+    </div>
+</dialog>
+
 <script type="text/javascript">
     var srvmsg = '<?php echo (!empty($msg) && is_array($msg) ? json_encode($msg) : ''); ?>';
 </script>

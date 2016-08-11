@@ -88,7 +88,30 @@ try {
     $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
 }
 ?>
-<div class="mdl-layout mdl-js-layout" id="game-content">
+<div class="layout-transparent mdl-layout mdl-js-layout" id="game-content">
+    <header class="mdl-layout__header mdl-layout__header--transparent">
+        <div class="mdl-layout__header-row">
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+            <!-- Navigation -->
+            <nav class="mdl-navigation">
+                <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="fa fa-cog fade"></i>
+                </button>
+
+                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                    <li class="mdl-menu__item" id="leave-game" onclick="if(confirmMsg('Leave Game?', 'Are you sure you want to leave the game?')){window.location.href = '../../lobby/leave.php'}">Leave Game</li>
+                    <?php
+                    if($user->isHost("get", $thisUser['userid'])) {
+                        ?>
+                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirmMsg('Stop Game?', 'Are you sure you want to stop the game?')){window.location.href = '../stop.php'}">Stop Game</li>
+                        <?php
+                    }
+                    ?>
+                </ul>
+            </nav>
+        </div>
+    </header>
     <?php
     require_once("../../../leaderboard/leaderboard.php");
     ?>

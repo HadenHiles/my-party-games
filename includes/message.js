@@ -196,3 +196,28 @@ function msgHide(ele) {
         }
     }
 }
+
+function confirmMsg(title, message) {
+    var dialog = document.querySelector('dialog.confirm');
+    //var showDialogButton = document.querySelector('#show-dialog');
+    if (! dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+    }
+
+    if (typeof title != "undefined") {
+        document.getElementById('confirm-dialog-title').innerHTML = title;
+    }
+    document.getElementById('confirm-dialog-text').innerHTML = message;
+    //showDialogButton.addEventListener('click', function() {
+    dialog.showModal();
+    // });
+
+    dialog.querySelector('.yes').addEventListener('click', function() {
+        dialog.close();
+        return true;
+    });
+    dialog.querySelector('.no').addEventListener('click', function() {
+        dialog.close();
+        return false;
+    });
+}

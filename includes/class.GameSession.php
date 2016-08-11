@@ -431,12 +431,13 @@ class GameSession {
         return false;
     }
 
-    /*
+    /**
      * Load a game session based on a game code
-     * @param int, code
-     * @returns array, array of all users in current game session
+     * @param $code
+     * @param $orderByPoints
+     * @return bool|mixed
      */
-    public function loadUsers($code) {
+    public function loadUsers($code, $orderByPoints) {
 
         global $db, $user;
 
@@ -450,7 +451,7 @@ class GameSession {
 
             $game = $result->fetch(PDO::FETCH_ASSOC);
 
-            if ($users = $user->getAll($code)) {
+            if ($users = $user->getAll($code, $orderByPoints)) {
                 $game['users'] = $users;
                 //return associative array for the game
                 return $game;

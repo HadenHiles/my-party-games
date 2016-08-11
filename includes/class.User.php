@@ -232,14 +232,18 @@ class User {
 
     /**
      * @param $code
+     * @param $orderByPoints
      * @return array|bool
      */
-    public function getAll($code) {
+    public function getAll($code, $orderByPoints) {
         global $db;
 
         if (!empty($code)) {
             //select all users in current game
             $sql = 'SELECT * FROM users WHERE game_id = :code';
+            if($orderByPoints) {
+                $sql .= ' ORDER BY points DESC';
+            }
 
             $result = $db->prepare($sql);
             $result->bindValue(":code", $code);
