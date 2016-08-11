@@ -21,7 +21,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="description" content="Introducing Party Games, a fun new way to get drunk.">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scaleable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
         <title>Party Games</title>
 
         <link rel="apple-touch-icon" href="/apple-touch-icon-57x57.png" sizes="57x57" />

@@ -134,8 +134,10 @@ function pickCard(number) {
     }
 }
 
-function hideAll(except = 0) {
-
+function hideAll(except) {
+    if(typeof except == "undefined") {
+        except = 0;
+    }
     //console.log("hiding all but : " + except);
 
     if (except != 1) {
