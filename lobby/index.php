@@ -17,6 +17,17 @@ try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
     $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name'], $thisUser['code']);
+
+    // Redirect user to specific game based on game name
+    if($game = $mySession->loadUsers($thisUser['code'])) {
+       if($game['game_name'] == "drink-or-dare") {
+           require_once("../games/drink-or-dare/class.DrinkOrDare.php");
+           $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
+           if($dod->isStarted($thisUser['code'])) {
+               header('location: ../games/drink-or-dare/play');
+            }
+       }
+    }
     
     if($_REQUEST['leave'] == true) {
         if($user->isHost("get", $thisUser['userid'])) {
