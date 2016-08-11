@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="/bower_components/dialog-polyfill/dialog-polyfill.css" />
     <link rel="stylesheet" href="../../android.css" />
     <link rel="stylesheet" href="../../baseline.css" />
-    <link rel="stylesheet" href="../../info.css" />
+    <link rel="stylesheet" href="play.css" />
     <link rel="stylesheet" href="/3rd-party/bootstrap-social/bootstrap-social.css" />
 </head>
 <body>

@@ -21,15 +21,6 @@ $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
 
 require_once("header.php");
-?>
-
-<style>
-#game-content {
-    background:#eee;
-}
-</style>
-
-<?php
 
 try {
     if (!$game = $mySession->loadUsers($thisUser['code'])) {
@@ -54,7 +45,6 @@ try {
 
         case 1:
             //users are picking dares
-            echo "state: users creating dares";
             break;
 
         case 2:
@@ -90,28 +80,28 @@ try {
 } catch (Exception $e) {
     //show any errors
     $msg = "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
-    echo $msg;
+    $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
 }
 ?>
-<div class="mdl-layout mdl-js-layout mdl-color--grey-100" id="game-content">
+<div class="mdl-layout mdl-js-layout" id="game-content">
+    <?php
+    require_once("../../../leaderboard/leaderboard.php");
+    ?>
     <main class="mdl-layout__content main-form">
-        <div style="color: #cccccc;">
-            <a href="/" class="party-games-title" style="color: #ccc;"><h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4></a>
-        </div>
         <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 1 && !$dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1">
-            <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
-                <h2 class="mdl-card__title-text">Write Your Dare</h2>
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">What's Your Dare?</h2>
             </div>
             <div class="mdl-card__supporting-text select-avatar">
                 <form action="" method="post">
                     <div class="mdl-textfield mdl-js-textfield">
-                        <textarea class="mdl-textfield__input" type="text" rows= "3" id="dare-text"></textarea>
-                        <label class="mdl-textfield__label" for="dare-text">Dare</label>
+                        <textarea class="mdl-textfield__input" type="text" rows= "6" id="dare-text"></textarea>
+                        <label class="mdl-textfield__label" for="dare-text">Enter it here..</label>
                     </div>
                 </form>
             </div>
             <div class="mdl-card__actions" style="text-align: center; margin-top: -25px;">
-                <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="setDare();" style="width: 100%;">Done</button>
+                <button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="setDare();" style="width: 100%;">Done</button>
             </div>
         </div>
         <div class="mdl-card mdl-shadow--6dp" <?php echo ($dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1-waiting">
