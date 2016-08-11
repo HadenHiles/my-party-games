@@ -1,4 +1,3 @@
-
 $(function(){
     var parent = document.getElementById('game-content');
 
@@ -24,16 +23,17 @@ $(function(){
 
                     case 1:
                         //users are creating dares
-
                         break;
 
                     case 2:
                         //shuffling and assigning dares
+                        hideAll(2);
                         document.getElementById('game-stage-2').style.display = "block";
                         break;
 
                     case 3:
                         //looping users carrying out dares
+                        hideAll(3);
                         document.getElementById('game-stage-3').style.display = "block";
                         break;
 
@@ -61,16 +61,15 @@ $(function(){
 
             } //end of parse json object if
         }); //end of ajax call
-
-        $('.pickCard').click(function() {
-            var num = $(this).data("cardnum");
-            console.log("pickCard num: " + num);
-            if(pickCard(num)) {
-                $(this).addClass("chosen");
-            }
-        });
-
     }, 1000); //end of interval
+
+    $('.pickCard').click(function() {
+        var num = $(this).data("cardnum");
+        //console.log("pickCard num: " + num);
+        if (pickCard(num)) {
+            $(this).addClass("chosen");
+        }
+    });
 
 }); //end of document load
 
@@ -89,7 +88,7 @@ function setDare() {
 
             if (result = JSON.parse(result)) {
                 
-                hideAll(result.state);
+                //hideAll(result.state);
 
                 if (result.status == true) {
                     msg(false, false, "game-drink-or-dare-submitted-dare");
@@ -106,6 +105,7 @@ function setDare() {
 function pickCard(number) {
     //console.log("number: " + number);
     if (number > 0) {
+
         //ajax call to set dare
         $.ajax({
             url:"pick-card.php",
