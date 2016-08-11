@@ -14,6 +14,7 @@ $(function(){
                 //check for error messages
                 if (result.error != "" && typeof result.error != "undefined") {
                     msg("dialog", false, result.error);
+                    clearInterval(updateIneterval);
                 }
 
                 var state = parseInt(result.state);
@@ -35,6 +36,10 @@ $(function(){
                         //looping users carrying out dares
                         hideAll(3);
                         document.getElementById('game-stage-3').style.display = "block";
+
+                        if (result.turn) {
+
+                        }
                         break;
 
                     case 4:
@@ -69,6 +74,11 @@ $(function(){
         if (pickCard(num)) {
             $(this).addClass("chosen");
         }
+    });
+
+    $('.showCard').click(function() {
+
+        showCard();
     });
 
 }); //end of document load
@@ -118,7 +128,6 @@ function pickCard(number) {
 
                 if (result.status == true) {
                     msg(false, false, "game-drink-or-dare-chosen-dare");
-                    document.getElementById('game-stage-2').style.display = "block";
                     return true;
                 } else if (result.status == "already-picked") {
                     msg(false, false, "game-drink-or-dare-already-picked-card");
@@ -132,6 +141,25 @@ function pickCard(number) {
     } else {
         msg(false, false, 'game-drink-or-dare-empty-dare');
     }
+}
+
+function showCard() {
+
+    //ajax call to set dare
+    $.ajax({
+        url:"get-dare.php",
+        method:"POST"
+    }).done(function(result) {
+        console.log(result);
+
+        if (result = JSON.parse(result)) {
+
+            if (typeof result.dare != "undefined") {
+                //msg(false, false, "game-drink-or-dare-chosen-dare");
+               document.getElementById('myCard').innerHTML = result.dare;
+            }
+        }
+    });
 }
 
 function hideAll(except = 0) {

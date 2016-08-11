@@ -24,26 +24,9 @@ try {
     $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
     $dod->start();
 
-    //check for entered dares to be completed
-    $dod->checkNextState();
-
-    //store the state in JSON return object
-    $state = $dod->getState();
-
-    //some use cases for state 3: using the cards
-    if ($state == 3) {
-        //check to see if user has looked at their dare or not
-        if ($dod->checkHasPeeked()) {
-            $gameState["dare"] = $dod->getDare();
-        } else {
-            $gameState["dare"] = "hidden";
-        }
-
-        //check to see if it's their turn
-        $gameState["turn"] = $dod->getWhoseTurn();
-    }
-
-    $gameState["state"] = $state;
+    $gameState["dare"] = $dod->getDare();
+    
+    $gameState["state"] = $dod->getState();
 
 } catch (Exception $e) {
     //show any errors

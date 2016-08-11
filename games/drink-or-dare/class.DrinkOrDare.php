@@ -254,6 +254,63 @@ class DrinkOrDare {
         return false;
     }
 
+    public function getWhoseTurn() {
+        global $db;
+        
+        $sql = 'SELECT * FROM drink_or_dare_order AS dodo
+                LEFT JOIN drink_or_dare_user_dares AS dodud ON dodo.user_id = dodud.user_id
+                WHERE dodo.game_id = :gameid
+                AND dodud.completed = 0
+                AND dodud.round_number = :roundnumber
+                ORDER BY dodo.id
+                LIMIT 1';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":gameid", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+
+            if ($result['user_id'] == $this->userid) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getDare() {
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                WHERE assign_to_id = :userid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":userid", $this->userid);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            $dare = $result->fetch(PDO::FETCH_ASSOC);
+
+            $sql = 'UPDATE drink_or_dare_user_dares 
+                    SET has_peeked = 1 WHERE id = :dareid';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":dareid", $dare['id']);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+
+            }
+
+            return $dare['dare'];
+        }
+
+        return false;
+    }
+
     public function getOwner($getInformation = false, $cardId = 0) {
         global $db;
 
@@ -313,11 +370,13 @@ class DrinkOrDare {
                 WHERE game_id = :game_id 
                 AND assign_to_id != 0 
                 AND round_number = :roundnumber
-                AND has_peeked = 1';
+                AND has_peeked = 1
+                AND user_id = :userid';
 
         $result = $db->prepare($sql);
         $result->bindValue(":game_id", $this->gameid);
         $result->bindValue(":roundnumber", $this->current_round);
+        $result->bindValue(":userid", $this->userid);
 
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 

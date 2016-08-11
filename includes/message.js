@@ -67,7 +67,7 @@ function msg(popup, ele, msgid, title, type, icon, hide, delay) {
     // }
 
     //check for undefined parameters
-    delay = (parseInt(delay) ? delay : 5000);
+    delay = (parseInt(delay) ? delay : 3000);
     //hide = !(hide == false);
     popup = (popup == "snackbar" || popup == "dialog" ? popup : "snackbar");
 

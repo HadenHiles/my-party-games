@@ -126,7 +126,16 @@ try {
             ?>
         </div>
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> id="game-stage-3">
-            <div class="mdl-card__supporting-text">
+            <div class="mdl-card mdl-shadow--6dp square paper dare showCard" id="myCard">
+                <?php
+                if ($state == 3) {
+                    if ($dod->checkHasPeeked()) {
+                        echo $dod->getDare();
+                    } else {
+                        echo "hidden";
+                    }
+                }
+                ?>
             </div>
         </div>
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 4 ? : 'style="display:none"'); ?> id="game-stage-4">
