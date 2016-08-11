@@ -95,16 +95,17 @@ try {
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation -->
             <nav class="mdl-navigation">
+                <h6 style="margin: 0 5px;"><?php echo $mySession->getCode(SESSION_ID); ?></h6>
                 <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
                     <i class="fa fa-cog fade"></i>
                 </button>
 
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
-                    <li class="mdl-menu__item" id="leave-game" onclick="if(confirmMsg('Leave Game?', 'Are you sure you want to leave the game?')){window.location.href = '../../lobby/leave.php'}">Leave Game</li>
+                    <li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>
                     <?php
                     if($user->isHost("get", $thisUser['userid'])) {
                         ?>
-                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirmMsg('Stop Game?', 'Are you sure you want to stop the game?')){window.location.href = '../stop.php'}">Stop Game</li>
+                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){window.location.href = '../stop.php'}">Stop Game</li>
                         <?php
                     }
                     ?>
