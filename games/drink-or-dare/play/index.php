@@ -36,7 +36,6 @@ try {
 
     //get game state
     $state =  $dod->getState();
-    echo $state . '<Br />';
    // var_dump($dod->getHasCurrentDare());
 //    echo "Playing as: " . $thisUser['name'];
 //    echo "<br />";
