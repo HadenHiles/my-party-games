@@ -25,15 +25,6 @@ $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
 //$dod->getDrinkOrDare();
 
 require_once("header.php");
-?>
-
-<style>
-#game-content {
-    background:#eee;
-}
-</style>
-
-<?php
 
 try {
     if (!$game = $mySession->loadUsers($thisUser['code'])) {
