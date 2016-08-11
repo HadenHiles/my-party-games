@@ -10,7 +10,16 @@ class DrinkOrDare {
     private $hasCurrentDare;
     private $drinksToWin;
     private $numPlayers;
+    private $activePlayer;
 
+    /**
+     * DrinkOrDare constructor.
+     * @param int $game_id
+     * @param int $userid
+     * @param int $total_rounds
+     * @param int $current_round
+     * @param int $drinksToWin
+     */
     public function __construct($game_id = 0, $userid = 0, $total_rounds = 3, $current_round = 1, $drinksToWin = 10) {
 
         $this->gameid = $game_id;
@@ -21,6 +30,7 @@ class DrinkOrDare {
         $this->hasCurrentDare = false;
         $this->drinksToWin = $drinksToWin;
         $this->numPlayers = 0;
+        $this->activetPlayer = 0;
     }
 
     /**
@@ -163,6 +173,11 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @param $text
+     * @return bool
+     * @throws Exception
+     */
     public function setDare($text) {
 
         global $db;
@@ -206,6 +221,9 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function checkDaresComplete() {
         global $db, $game;
 
@@ -235,6 +253,9 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function checkCardsPickedComplete() {
 
         global $db;
@@ -254,6 +275,9 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function getWhoseTurn() {
         global $db;
         
@@ -282,27 +306,53 @@ class DrinkOrDare {
         return false;
     }
 
-    public function getDare() {
+    /**
+     * @param bool $activePlayer
+     * @return bool
+     */
+    public function getDare($activePlayer = false, $fullDetails = false) {
         global $db;
 
         $sql = 'SELECT * FROM drink_or_dare_user_dares 
                 WHERE assign_to_id = :userid';
 
         $result = $db->prepare($sql);
-        $result->bindValue(":userid", $this->userid);
 
+        if ($activePlayer) {
+
+            if (empty($this->activePlayer)) {
+
+                self::setActivePlayer();
+            }
+
+            $result->bindValue(":userid", $this->activePlayer);
+
+        } else {
+
+            $result->bindValue(":userid", $this->userid);
+        }
+
+        //query
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
             $dare = $result->fetch(PDO::FETCH_ASSOC);
 
-            $sql = 'UPDATE drink_or_dare_user_dares 
-                    SET has_peeked = 1 WHERE id = :dareid';
+            if (!$activePlayer) {
 
-            $result = $db->prepare($sql);
-            $result->bindValue(":dareid", $dare['id']);
+                $sql = 'UPDATE drink_or_dare_user_dares
+                        SET has_peeked = 1 WHERE id = :dareid';
 
-            if ($result->execute() && $result->errorCode() == 0) {
+                $result = $db->prepare($sql);
+                $result->bindValue(":dareid", $dare['id']);
 
+                if ($result->execute() && $result->errorCode() == 0) {
+
+                }
+            }
+
+            if ($fullDetails) {
+
+                return $dare;
             }
 
             return $dare['dare'];
@@ -311,6 +361,11 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @param bool $getInformation
+     * @param int $cardId
+     * @return bool|mixed|PDOStatement
+     */
     public function getOwner($getInformation = false, $cardId = 0) {
         global $db;
 
@@ -340,14 +395,16 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function checkHasPickedCard() {
         global $db;
 
         $sql = 'SELECT * FROM drink_or_dare_user_dares 
                 WHERE game_id = :game_id 
-                AND assign_to_id != 0 
-                AND round_number = :roundnumber
-                AND user_id = :userid';
+                AND assign_to_id = :userid
+                AND round_number = :roundnumber';
 
         $result = $db->prepare($sql);
         $result->bindValue(":game_id", $this->gameid);
@@ -362,21 +419,66 @@ class DrinkOrDare {
         return false;
     }
 
-    public function checkHasPeeked() {
+    /**
+     * @return bool
+     */
+    public function setActivePlayer() {
+
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_order AS dodo
+                        LEFT JOIN drink_or_dare_user_dares AS dodud ON dodo.user_id = dodud.user_id
+                        WHERE dodo.game_id = :gameid
+                        AND dodud.completed = 0
+                        AND dodud.round_number = :roundnumber
+                        ORDER BY dodo.id
+                        LIMIT 1';
+
+        $order = $db->prepare($sql);
+        $order->bindValue(":gameid", $this->gameid);
+        $order->bindValue(":roundnumber", $this->current_round);
+
+        if ($order->execute() && $order->errorCode() == 0 && $order->rowCount() > 0) {
+
+            $order = $order->fetch(PDO::FETCH_ASSOC);
+            $this->activePlayer = $order['user_id'];
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param bool $activePlayer
+     * @return bool
+     */
+    public function checkHasPeeked($activePlayer = false) {
 
         global $db;
 
         $sql = 'SELECT * FROM drink_or_dare_user_dares 
                 WHERE game_id = :game_id 
-                AND assign_to_id != 0 
+                AND assign_to_id = :userid 
                 AND round_number = :roundnumber
-                AND has_peeked = 1
-                AND user_id = :userid';
+                AND has_peeked = 1';
 
         $result = $db->prepare($sql);
-        $result->bindValue(":game_id", $this->gameid);
         $result->bindValue(":roundnumber", $this->current_round);
-        $result->bindValue(":userid", $this->userid);
+        $result->bindValue(":game_id", $this->gameid);
+
+        if ($activePlayer) {
+
+            if (empty($this->activePlayer)) {
+
+                self::setActivePlayer();
+            }
+
+            $result->bindValue(":userid", $this->activePlayer);
+
+        } else {
+
+            $result->bindValue(":userid", $this->userid);
+        }
 
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
@@ -386,6 +488,124 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @param $vote
+     * @return bool
+     */
+    public function castVote($vote) {
+
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_votes AS dodv
+                LEFT JOIN drink_or_dare_user_dares AS dodud ON dodud.id = dodv.dare_id
+                WHERE dodud.game_id = :game_id
+                AND dodud.round_number = :roundnumber
+                AND dodv.user_id = :userid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":game_id", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
+        $result->bindValue(":userid", $this->userid);
+
+        if ($result->execute() && $result->errorCode() == 0) {
+
+            $dare = self::getDare(true, true);
+
+            if ($result->rowCount() > 0) {
+
+                //changing dare
+                $sql = 'UPDATE drink_or_dare_votes 
+                        SET vote = :vote
+                        WHERE dare_id = :dareid
+                        AND user_id = :userid';
+
+                $result = $db->prepare($sql);
+                $result->bindValue(":dareid", $dare['id']);
+                $result->bindValue(":vote", $vote);
+                $result->bindValue(":userid", $this->userid);
+
+                if ($result->execute() && $result->errorCode() == 0) {
+
+                    return "changed";
+                }
+
+            } else {
+
+                //inserting dare
+                $sql = 'INSERT INTO drink_or_dare_votes (dare_id, vote, user_id)
+                        VALUES (:dareid, :vote, :userid)';
+
+                $result = $db->prepare($sql);
+                $result->bindValue(":dareid", $dare['id']);
+                $result->bindValue(":vote", $vote);
+                $result->bindValue(":userid", $this->userid);
+
+                if ($result->execute() && $result->errorCode() == 0) {
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function checkAllVotesCast() {
+        global $db;
+
+        $dare = self::getDare(true, true);
+
+        $sql = 'SELECT * FROM drink_or_dare_votes AS dodv               
+                WHERE dare_id = :dareid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":dareid", $dare['id']);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() >= ($this->numPlayers - 1)) {
+
+           return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array|bool|PDOStatement
+     */
+    public function getVotes() {
+
+        global $db;
+
+        $dare = self::getDare(true, true);
+
+        $sql = 'SELECT vote FROM drink_or_dare_votes AS dodv
+                LEFT JOIN drink_or_dare_user_dares AS dodud ON dodud.id = dodv.dare_id
+                WHERE dodud.game_id = :game_id
+                AND dodud.round_number = :roundnumber
+                AND dare_id = :dareid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":game_id", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
+        $result->bindValue(":dareid", $dare['id']);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            $result = $result->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $number
+     * @return bool
+     */
     public function pickCard($number) {
 
         global $db;
@@ -447,6 +667,9 @@ class DrinkOrDare {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function checkNextState() {
 
         global $db;

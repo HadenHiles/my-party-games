@@ -126,17 +126,36 @@ try {
             ?>
         </div>
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> id="game-stage-3">
-            <div class="mdl-card mdl-shadow--6dp square paper dare showCard" id="myCard">
-                <?php
-                if ($state == 3) {
-                    if ($dod->checkHasPeeked()) {
-                        echo $dod->getDare();
-                    } else {
-                        echo "hidden";
-                    }
+            <?php
+            if ($state == 3) {
+                //show players screen because it's their turn
+                if ($dod->getWhoseTurn()) {
+
+                    echo '<div class="mdl-card mdl-shadow--6dp square paper dare showCard" id="myCard">';
+
+                        echo ($dod->checkHasPeeked() ? $dod->getDare() : "hidden");
+
+                    echo '</div>';
+                    echo '<div>';
+                        echo '<input type="button" value="Skip">';
+                        echo '<input type="button" disabled value="Done">';
+                    echo '</div>';
+
+                } else {
+                    //show waiters screen because its not their turn
+                    echo '<div class="mdl-card mdl-shadow--6dp square paper dare" id="activeDare">';
+
+                        echo ($dod->checkHasPeeked(true) ? $dod->getDare(true) : "hidden");
+
+                    echo '</div>';
+                    echo '<div>';
+                        echo '<input type="button" onclick="castVote(1);"value="Drink">';
+                        echo '<input type="button" onclick="castVote(2);"value="Skip">';
+                        echo '<input type="button" onclick="castVote(3);" value="Give Drinks">';
+                    echo '</div>';
                 }
-                ?>
-            </div>
+            }
+            ?>
         </div>
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 4 ? : 'style="display:none"'); ?> id="game-stage-4">
             <div class="mdl-card__supporting-text">

@@ -39,6 +39,31 @@ $(function(){
 
                         if (result.turn) {
 
+                        } else {
+                            document.getElementById('activeDare').innerHTML = result.dare;
+                        }
+
+                        //get voting stats
+                        if (result.votes.length > 0) {
+
+                            var bad = 0;
+                            var good = 0;
+                            var skip = 0;
+
+                            for (var i = 0; i < result.votes.length; i++) {
+                                if (result.votes[i].vote == 3) {
+                                    good++;
+                                } else if (result.votes[i].vote == 2) {
+                                    skip++;
+                                } else if (result.votes[i].vote == 1) {
+                                    bad++;
+                                }
+                            }
+                            console.log("Votes: good=" + good + ", bad="+bad + ", skip="+skip);
+                        }
+
+                        if (result.allVotesCast) {
+                            //$('#').removeAttr('disabled');
                         }
                         break;
 
@@ -161,6 +186,33 @@ function showCard() {
         }
     });
 }
+
+function castVote(vote) {
+
+    if (vote > 0) {
+        //ajax call to set dare
+        $.ajax({
+            url: "cast-vote.php",
+            method: "POST",
+            data:{"vote":vote}
+        }).done(function (result) {
+            console.log(result);
+
+            if (result = JSON.parse(result)) {
+
+                if (result.status == true) {
+                    msg(false, false, "game-drink-or-dare-vote-cast-success");
+                } else if (result.status == "changed") {
+                    msg(false, false, "game-drink-or-dare-vote-cast-change");
+                } else {
+                    msg(false, false, "game-drink-or-dare-vote-cast-failure");
+                }
+            }
+        });
+    }
+
+}
+
 
 function hideAll(except = 0) {
 

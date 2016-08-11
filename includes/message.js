@@ -8,7 +8,10 @@ var messages = {
     "game-drink-or-dare-stolen":"Someone stole your dare! Pick another",
     "game-drink-or-dare-submitted-dare":"Dare created successfully!",
     "game-drink-or-dare-chosen-dare":"You have chosen your dare. Face the concequences.",
-    "game-drink-or-dare-already-picked-card":"You have already chosen a card. Please wait."
+    "game-drink-or-dare-already-picked-card":"You have already chosen a card. Please wait.",
+    "game-drink-or-dare-vote-cast-success":"Your vote has been sent",
+    "game-drink-or-dare-vote-cast-change":"Your vote has been changed",
+    "game-drink-or-dare-vote-cast-failure":"Your vote could not be cast. Something went wrong."
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',
