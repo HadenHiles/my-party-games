@@ -28,7 +28,7 @@
                     }
                         ?>
                         <div class="mdl-card__supporting-text">
-                            <h5 class="place"><?php echo $user['points']; ?>.</h5>
+                            <h5 class="place"><?php echo $user['points']; ?></h5>
                             <img src="<?php echo $user['picture']; ?>" border="0" alt="" />
                             <h5><?php echo $user['display_name']; ?></h5>
                         </div>
