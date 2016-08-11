@@ -88,7 +88,7 @@ try {
     $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
 }
 ?>
-<div class="layout-transparent mdl-layout mdl-js-layout" id="game-content">
+<div class="mdl-layout mdl-js-layout" id="game-content">
     <header class="mdl-layout__header mdl-layout__header--transparent">
         <div class="mdl-layout__header-row">
             <!-- Add spacer, to align navigation to the right -->
@@ -150,8 +150,36 @@ try {
             ?>
         </div>
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> id="game-stage-3">
-            <div class="mdl-card__supporting-text">
-            </div>
+            <?php
+            if ($state == 3) {
+                //show players screen because it's their turn
+                if ($dod->getWhoseTurn()) {
+
+                    echo '<div class="mdl-card mdl-shadow--6dp square paper dare showCard" id="myCard">';
+
+                        echo ($dod->checkHasPeeked() ? $dod->getDare() : "hidden");
+
+                    echo '</div>';
+                    echo '<div>';
+                        echo '<input type="button" value="Skip">';
+                        echo '<input type="button" disabled value="Done">';
+                    echo '</div>';
+
+                } else {
+                    //show waiters screen because its not their turn
+                    echo '<div class="mdl-card mdl-shadow--6dp square paper dare showCard" id="myCard">';
+
+                        echo ($dod->checkHasPeeked(true) ? $dod->getDare(true) : "hidden");
+
+                    echo '</div>';
+                    echo '<div>';
+                        echo '<input type="button" value="Drink">';
+                        echo '<input type="button" value="Skip">';
+                        echo '<input type="button" disabled value="Give Drinks">';
+                    echo '</div>';
+                }
+            }
+            ?>
         </div>
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 4 ? : 'style="display:none"'); ?> id="game-stage-4">
             <div class="mdl-card__supporting-text">

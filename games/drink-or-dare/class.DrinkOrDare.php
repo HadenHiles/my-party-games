@@ -10,6 +10,7 @@ class DrinkOrDare {
     private $hasCurrentDare;
     private $drinksToWin;
     private $numPlayers;
+    private $activePlayer;
 
     public function __construct($game_id = 0, $userid = 0, $total_rounds = 3, $current_round = 1, $drinksToWin = 10) {
 
@@ -21,6 +22,7 @@ class DrinkOrDare {
         $this->hasCurrentDare = false;
         $this->drinksToWin = $drinksToWin;
         $this->numPlayers = 0;
+        $this->activetPlayer = 0;
     }
 
     /**
@@ -254,6 +256,96 @@ class DrinkOrDare {
         return false;
     }
 
+    public function getWhoseTurn() {
+        global $db;
+        
+        $sql = 'SELECT * FROM drink_or_dare_order AS dodo
+                LEFT JOIN drink_or_dare_user_dares AS dodud ON dodo.user_id = dodud.user_id
+                WHERE dodo.game_id = :gameid
+                AND dodud.completed = 0
+                AND dodud.round_number = :roundnumber
+                ORDER BY dodo.id
+                LIMIT 1';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":gameid", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+
+            if ($result['user_id'] == $this->userid) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getDare($activePlayer = false) {
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                WHERE assign_to_id = :userid';
+
+        $result = $db->prepare($sql);
+
+        if ($activePlayer) {
+
+            if (empty($this->activePlayer)) {
+
+                $sql = 'SELECT * FROM drink_or_dare_order AS dodo
+                        LEFT JOIN drink_or_dare_user_dares AS dodud ON dodo.user_id = dodud.user_id
+                        WHERE dodo.game_id = :gameid
+                        AND dodud.completed = 0
+                        AND dodud.round_number = :roundnumber
+                        ORDER BY dodo.id
+                        LIMIT 1';
+
+                $order = $db->prepare($sql);
+                $order->bindValue(":gameid", $this->gameid);
+                $order->bindValue(":roundnumber", $this->current_round);
+
+                if ($order->execute() && $order->errorCode() == 0 && $order->rowCount() > 0) {
+
+                    $order = $order->fetch(PDO::FETCH_ASSOC);
+                    $this->activePlayer = $order['user_id'];
+                }
+            }
+
+            $result->bindValue(":userid", $this->activePlayer);
+
+        } else {
+
+            $result->bindValue(":userid", $this->userid);
+        }
+
+        //query
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            $dare = $result->fetch(PDO::FETCH_ASSOC);
+
+            if (!$activePlayer) {
+//
+//                $sql = 'UPDATE drink_or_dare_user_dares
+//                        SET has_peeked = 1 WHERE id = :dareid';
+//
+//                $result = $db->prepare($sql);
+//                $result->bindValue(":dareid", $dare['id']);
+//
+//                if ($result->execute() && $result->errorCode() == 0) {
+//
+//                }
+            }
+
+            return $dare['dare'];
+        }
+
+        return false;
+    }
+
     public function getOwner($getInformation = false, $cardId = 0) {
         global $db;
 
@@ -288,8 +380,31 @@ class DrinkOrDare {
 
         $sql = 'SELECT * FROM drink_or_dare_user_dares 
                 WHERE game_id = :game_id 
+                AND assign_to_id = :userid
+                AND round_number = :roundnumber';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":game_id", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
+        $result->bindValue(":userid", $this->userid);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function checkHasPeeked($activePlayer = false) {
+
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                WHERE game_id = :game_id 
                 AND assign_to_id != 0 
                 AND round_number = :roundnumber
+                AND has_peeked = 1
                 AND user_id = :userid';
 
         $result = $db->prepare($sql);
@@ -305,15 +420,13 @@ class DrinkOrDare {
         return false;
     }
 
-    public function checkHasPeeked() {
+    public function pickCard($number) {
 
         global $db;
 
         $sql = 'SELECT * FROM drink_or_dare_user_dares 
                 WHERE game_id = :game_id 
-                AND assign_to_id != 0 
-                AND round_number = :roundnumber
-                AND has_peeked = 1';
+                AND round_number = :roundnumber';
 
         $result = $db->prepare($sql);
         $result->bindValue(":game_id", $this->gameid);
@@ -321,62 +434,47 @@ class DrinkOrDare {
 
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-            return true;
-        }
-
-        return false;
-    }
-
-    public function pickCard($number) {
-
-        global $db;
-
-        $sql = 'SELECT * FROM drink_or_dare_user_dares 
-                WHERE game_id = :game_id AND assign_to_id = 0';
-
-        $result = $db->prepare($sql);
-        $result->bindValue(":game_id", $this->gameid);
-
-        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-
             $results = $result->fetchAll(PDO::FETCH_ASSOC);
 
-            $sql = 'UPDATE drink_or_dare_user_dares 
-                    SET assign_to_id = :userid,
-                    card_picked = :cardpicked
-                    WHERE id = :randomid';
+            if ($results[$number-1]['assign_to_id'] == 0) {
 
-            $result = $db->prepare($sql);
-            $result->bindValue(":userid", $this->userid);
-            $result->bindValue(":randomid", $results[$number-1]['id']);
-            $result->bindValue(":cardpicked", $number);
-
-            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-
-                $sql = 'SELECT * FROM drink_or_dare_order WHERE game_id = :gameid AND user_id = :userid';
+                $sql = 'UPDATE drink_or_dare_user_dares 
+                        SET assign_to_id = :userid,
+                        card_picked = :cardpicked
+                        WHERE id = :randomid';
 
                 $result = $db->prepare($sql);
-                $result->bindValue(":gameid", $this->gameid);
                 $result->bindValue(":userid", $this->userid);
+                $result->bindValue(":randomid", $results[$number - 1]['id']);
+                $result->bindValue(":cardpicked", $number);
 
-                if ($result->execute() && $result->errorCode() == 0) {
+                if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-                    if ($result->rowCount() == 0) {
+                    $sql = 'SELECT * FROM drink_or_dare_order WHERE game_id = :gameid AND user_id = :userid';
 
-                        $sql = 'INSERT INTO drink_or_dare_order (game_id, user_id)
-                                VALUES (:gameid, :userid)';
+                    $result = $db->prepare($sql);
+                    $result->bindValue(":gameid", $this->gameid);
+                    $result->bindValue(":userid", $this->userid);
 
-                        $result = $db->prepare($sql);
-                        $result->bindValue(":gameid", $this->gameid);
-                        $result->bindValue(":userid", $this->userid);
+                    if ($result->execute() && $result->errorCode() == 0) {
 
-                        if ($result->execute() && $result->errorCode() == 0) {
+                        if ($result->rowCount() == 0) {
 
+                            $sql = 'INSERT INTO drink_or_dare_order (game_id, user_id)
+                                    VALUES (:gameid, :userid)';
+
+                            $result = $db->prepare($sql);
+                            $result->bindValue(":gameid", $this->gameid);
+                            $result->bindValue(":userid", $this->userid);
+
+                            if ($result->execute() && $result->errorCode() == 0) {
+
+                            }
                         }
                     }
-                }
 
-                return true;
+                    return true;
+                }
             }
         }
 
