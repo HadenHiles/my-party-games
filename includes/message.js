@@ -3,7 +3,8 @@ var messages = {
     "game-deleted":"Sorry, your game was deleted",
     "game-name-in-use":"Someone is already using that name!",
     "game-not-found":"Game could not be found, do you have the right code?",
-    "game-empty-name":"Please enter a name"
+    "game-empty-name":"Please enter a name",
+    "game-drink-or-dare-empty-dare":"Dare cannot be empty"
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',

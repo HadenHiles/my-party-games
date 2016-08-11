@@ -22,7 +22,7 @@ try {
 
     //check for entered dares to be completed
     if ($dod->checkDaresComplete()) {
-        //$dod->nextState();
+        $dod->nextState();
     }
 
     $gameState["state"] = $dod->getState();

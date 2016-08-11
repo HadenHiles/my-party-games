@@ -31,10 +31,9 @@ class DrinkOrDare {
 
         $result = $db->prepare($sql);
         $result->bindParam(":gameid", $this->gameid);
-
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
             $result = $result->fetch(PDO::FETCH_ASSOC);
-
+var_dump($result);
             $this->total_rounds = $result['total_rounds'];
             $this->current_round = $result['current_round'];
             $this->drinksToWin = $result['drinks_to_win'];
@@ -55,6 +54,7 @@ class DrinkOrDare {
         global $db;
 
         if (!empty($this->gameid)) {
+
             if (!$this->isStarted($this->gameid)) {
                 //game doesnt exist
                 $sql = 'INSERT INTO drink_or_dare
@@ -77,35 +77,29 @@ class DrinkOrDare {
                 $sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
 
                 $result = $db->prepare($sql);
-                $result->bindParam(":gameid", $gameId);
+                $result->bindParam(":gameid", $this->gameid);
 
-                if ($result->execute() && $result->errorCode() == 0) {
-                    if ($result->rowCount() > 0) {
-                        $result = $result->fetch(PDO::FETCH_ASSOC);
+                if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                    $result = $result->fetch(PDO::FETCH_ASSOC);
 
-                        $this->state = $result['state'];
-                        $this->total_rounds = $result['total_rounds'];
-                        $this->current_round = $result['current_round'];
-                        $this->drinksToWin = $result['drinks_to_win'];
+                    //var_dump($result);
+                    $this->state = $result['state'];
+                    $this->total_rounds = $result['total_rounds'];
+                    $this->current_round = $result['current_round'];
+                    $this->drinksToWin = $result['drinks_to_win'];
 
-                        //get user dare state
-                        if (!empty($this->gameid)) {
-
-                            $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                    //get user dare state
+                    $sql = 'SELECT * FROM drink_or_dare_user_dares 
                             WHERE user_id = :userid 
                             AND round_number = :round_number';
 
-                            $result = $db->prepare($sql);
-                            $result->bindParam(":userid", $this->userid);
-                            $result->bindParam(":round_number", $this->current_round);
+                    $result = $db->prepare($sql);
+                    $result->bindParam(":userid", $this->userid);
+                    $result->bindParam(":round_number", $this->current_round);
 
-                            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                    if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-                                $this->hasCurrentDare = true;
-                            }
-                        }
-
-                        return true;
+                        $this->hasCurrentDare = true;
                     }
                 }
             }
@@ -128,10 +122,8 @@ class DrinkOrDare {
         $result = $db->prepare($sql);
         $result->bindParam(":gameid", $gameId);
 
-        if ($result->execute() && $result->errorCode() == 0) {
-            if ($result->rowCount() > 0) {
-                return true;
-            }
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+            return true;
         }
         return false;
     }
@@ -208,6 +200,29 @@ class DrinkOrDare {
     }
 
     public function checkDaresComplete() {
+        global $db, $game;
+
+        $numUsers = count($game['users']);
+
+        if ($numUsers > 0) {
+
+            $userids = array();
+
+            for ($i = 0; $i < $numUsers; $i++) {
+
+                $userids[] = $game['users'][$i]['id'];
+
+            }
+
+            $sql = 'SELECT count(*) FROM drink_or_dare_user_dares WHERE id IN ('.implode(",", $userids).')';
+
+            $result = $db->prepare($sql);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() == $numUsers) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -221,7 +236,7 @@ class DrinkOrDare {
                 $this->state = 2;
             }
 
-            $sql = 'UPDATE drink_or_date SET state = :state WHERE game_id = :game_id';
+            $sql = 'UPDATE drink_or_dare SET state = :state WHERE game_id = :game_id';
 
             $result = $db->prepare($sql);
             $result->bindParam(":game_id", $this->gameid);

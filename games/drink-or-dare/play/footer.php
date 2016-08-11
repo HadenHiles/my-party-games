@@ -4,18 +4,18 @@
 echo $drawerIcon;
 ?>
 <script>
-    (function() {
-        var dialog = document.querySelector('dialog.error');
-        if(dialog != null) {
-            if (!dialog.showModal) {
-                dialogPolyfill.registerDialog(dialog);
-            }
-            dialog.showModal();
-            dialog.querySelector('.close').addEventListener('click', function() {
-                dialog.close();
-            });
-        }
-    })();
+//    (function() {
+//        var dialog = document.querySelector('dialog.error');
+//        if(dialog != null) {
+//            if (!dialog.showModal) {
+//                dialogPolyfill.registerDialog(dialog);
+//            }
+//            dialog.showModal();
+//            dialog.querySelector('.close').addEventListener('click', function() {
+//                dialog.close();
+//            });
+//        }
+//    })();
 </script>
 
 
@@ -28,7 +28,7 @@ echo $drawerIcon;
                 url:"get-update-game.php",
                 method:"POST"
             }).done(function(result) {
-                //console.log(result);
+                console.log(result);
 
                 if (result = JSON.parse(result)) {
                     console.log(result);
@@ -98,7 +98,7 @@ echo $drawerIcon;
                 }
             });
         } else {
-            alert("enter a dare!");
+            msg(false, false, 'game-drink-or-dare-empty-dare');
         }
     }
 </script>
