@@ -42,6 +42,7 @@ try {
     }
     
     if($_POST['delete-game']) {
+        unset($_SESSION['user']);
         $mySession->destroy($thisUser['code']);
     }
 

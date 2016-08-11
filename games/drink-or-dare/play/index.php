@@ -117,8 +117,9 @@ try {
         <div class="mdl-cell mdl-cell--8-col dares center" id="game-stage-2" <?php echo ($state == 2 ? : 'style="display:none"'); ?>>
             <?php
             foreach($game['users'] as $key => $user) {
+                $key = $key + 1;
                 ?>
-                <div class="mdl-card mdl-shadow--6dp square paper dare" onclick="pickCard(<?php echo ++$key; ?>);">
+                <div class="mdl-card mdl-shadow--6dp square paper dare" onclick="pickCard(<?php echo $key; ?>);">
                     <div class="mdl-card__supporting-text content">
                     </div>
                 </div>
