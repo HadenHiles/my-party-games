@@ -24,7 +24,13 @@ try {
     $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
     $dod->start();
 
-    $gameState["status"] = $dod->pickCard($_POST['number']);
+    if (!$dod->checkHasPickedCard()) {
+        $gameState["status"] = $dod->pickCard($_POST['number']);
+    } else {
+        $gameState["status"] = false;
+    }
+
+    $gameState["number"] = $_POST['number'];
     $gameState["state"] = $dod->getState();
 
 } catch (Exception $e) {

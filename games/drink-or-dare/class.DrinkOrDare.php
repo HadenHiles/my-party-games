@@ -246,6 +246,57 @@ class DrinkOrDare {
         $result->bindValue(":game_id", $this->gameid);
         $result->bindValue(":roundnumber", $this->current_round);
 
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() >= $this->numPlayers) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getOwner($getInformation = false, $cardId = 0) {
+        global $db;
+
+        if (!empty($cardId)) {
+            $sql = 'SET @id=0; 
+                   SELECT @id := @id+1 AS "id", dodud.*, users.* 
+                   FROM drink_or_dare_user_dares AS dodud 
+                   LEFT JOIN users ON dodud.user_id = users.id 
+                   WHERE dodud.game_id = :gameid
+                   AND id = :cardid';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":cardid", $cardId);
+            $result->bindValue(":gameid", $this->gameid);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                if ($getInformation) {
+                    $result = $result->fetch(PDO::FETCH_ASSOC);
+                    return $result;
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function checkHasPickedCard() {
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_user_dares 
+                WHERE game_id = :game_id 
+                AND assign_to_id != 0 
+                AND round_number = :roundnumber
+                AND user_id = :userid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":game_id", $this->gameid);
+        $result->bindValue(":roundnumber", $this->current_round);
+        $result->bindValue(":userid", $this->userid);
+
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
             return true;
