@@ -127,6 +127,7 @@ try {
         <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 2 ? : 'style="display:none"'); ?> id="game-stage-2">
             <div class="mdl-card__supporting-text select-avatar">
                 <h1>Choose a Card</h1>
+                <input type="button" onclick="pickCard(1);" value="pick 1">
             </div>
         </div>
         <div class="mdl-card mdl-shadow--6dp" <?php echo ($state == 3 ? : 'style="display:none"'); ?> id="game-stage-3">

@@ -1,5 +1,4 @@
 <?php
-
 require_once('../../../includes/common.php');
 require_once('../../../includes/database.php');
 require_once('../../../includes/class.GameSession.php');
@@ -8,7 +7,9 @@ require_once('../class.DrinkOrDare.php');
 
 $thisUser = $_SESSION['user'];
 
-//init the new game sessio
+//init the new game session
+$dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
+$dod->start();
 
 $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
@@ -20,14 +21,7 @@ try {
         exit();
     }
 
-    $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
-    $dod->start();
-
-    //check for entered dares to be completed
-    if ($dod->checkDaresComplete()) {
-        $dod->nextState();
-    }
-
+    $gameState["status"] = $dod->pickCard();
     $gameState["state"] = $dod->getState();
 
 } catch (Exception $e) {

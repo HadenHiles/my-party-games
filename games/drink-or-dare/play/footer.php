@@ -98,6 +98,30 @@
             msg(false, false, 'game-drink-or-dare-empty-dare');
         }
     }
+
+    function pickCard(number) {
+
+        if (number > 0) {
+            //ajax call to set dare
+            $.ajax({
+                url:"pick-card.php",
+                method:"POST"
+            }).done(function(result) {
+                console.log(result);
+
+                if (result = JSON.parse(result)) {
+
+                    if (result.status == true) {
+//
+//                        document.getElementById('game-stage-1').style.display = "none";
+//                        document.getElementById('game-stage-1-waiting').style.display = "block";
+                    }
+                }
+            });
+        } else {
+            msg(false, false, 'game-drink-or-dare-empty-dare');
+        }
+    }
 </script>
 
 <?php
