@@ -27,7 +27,7 @@ try {
     if (!$dod->checkHasPickedCard()) {
         $gameState["status"] = $dod->pickCard($_POST['number']);
     } else {
-        $gameState["status"] = false;
+        $gameState["status"] = "already-picked";
     }
 
     $gameState["number"] = $_POST['number'];

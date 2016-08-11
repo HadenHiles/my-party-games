@@ -7,7 +7,8 @@ var messages = {
     "game-drink-or-dare-empty-dare":"Dare cannot be empty",
     "game-drink-or-dare-stolen":"Someone stole your dare! Pick another",
     "game-drink-or-dare-submitted-dare":"Dare created successfully!",
-    "game-drink-or-dare-chosen-dare":"You have chosen your dare. Face the concequences."
+    "game-drink-or-dare-chosen-dare":"You have chosen your dare. Face the concequences.",
+    "game-drink-or-dare-already-picked-card":"You have already chosen a card. Please wait."
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',
@@ -16,7 +17,7 @@ var icons = {
     "info":'<i class="fa fa-info-circle" aria-hidden="true"></i>',
     "times":'<i class="fa fa-times" style="color:red" aria-hidden="true"></i>',
     "check":'<i class="fa fa-check" style="color:green" aria-hidden="true"></i>',
-    "spinner":'<i class="fa fa-refresh fa-spin fa-fw"></i>',
+    "spinner":'<i class="fa fa-refresh fa-spin fa-fw"></i>'
 }
 
 //on document load

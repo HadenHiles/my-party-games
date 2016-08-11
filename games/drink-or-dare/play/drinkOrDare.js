@@ -7,7 +7,7 @@ $(function(){
             url:"get-update-game.php",
             method:"POST"
         }).done(function(result) {
-            console.log(result);
+            //console.log(result);
 
             if (result = JSON.parse(result)) {
                 console.log(result);
@@ -18,14 +18,13 @@ $(function(){
                 }
 
                 var state = parseInt(result.state);
-                hideAll(state);
 
                 //otherwise switch based on game state
                 switch (state) {
 
                     case 1:
                         //users are creating dares
-                        document.getElementById('game-stage-1').style.display = "block";
+
                         break;
 
                     case 2:
@@ -89,6 +88,8 @@ function setDare() {
             console.log(result);
 
             if (result = JSON.parse(result)) {
+                
+                hideAll(result.state);
 
                 if (result.status == true) {
                     msg(false, false, "game-drink-or-dare-submitted-dare");
@@ -103,7 +104,7 @@ function setDare() {
 }
 
 function pickCard(number) {
-    console.log("number: " + number);
+    //console.log("number: " + number);
     if (number > 0) {
         //ajax call to set dare
         $.ajax({
@@ -117,8 +118,7 @@ function pickCard(number) {
 
                 if (result.status == true) {
                     msg(false, false, "game-drink-or-dare-chosen-dare");
-//                        document.getElementById('game-stage-1').style.display = "none";
-//                        document.getElementById('game-stage-1-waiting').style.display = "block";
+                    document.getElementById('game-stage-2').style.display = "block";
                     return true;
                 } else if (result.status == "already-picked") {
                     msg(false, false, "game-drink-or-dare-already-picked-card");
