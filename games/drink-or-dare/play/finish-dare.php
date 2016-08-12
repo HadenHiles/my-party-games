@@ -30,25 +30,7 @@ try {
     //store the state in JSON return object
     $state = $dod->getState();
 
-    //some use cases for state 1
-    if ($state == 1) {
-        $gameState["waiting"] = $dod->getHasCurrentDare();
-    }
-
-    //some use cases for state 3: using the cards
-    if ($state == 3) {
-        //check to see if user has looked at their dare or not
-        if ($dod->checkHasPeeked(true)) {
-            $gameState["dare"] = $dod->getDare(true);
-        } else {
-            $gameState["dare"] = "hidden";
-        }
-
-        //check to see if it's their turn
-        $gameState["turn"] = $dod->getWhoseTurn();
-        $gameState["votes"] = $dod->getVotes();
-        $gameState["allVotesCast"] = $dod->checkAllVotesCast();
-    }
+    $gameState["status"] = $dod->finishCurrentDare();
 
     $gameState["state"] = $state;
 

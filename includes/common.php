@@ -24,6 +24,6 @@ define("DEVICE_IP", $_SERVER['REMOTE_ADDR']);
 
 //toggle the hiding of errors
 //error_reporting(E_ERROR | E_WARNING | E_NOTICE | E_PARSE);
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
-//error_reporting(E_ERROR | E_PARSE);
+//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+error_reporting(E_ERROR | E_PARSE);
 ?>

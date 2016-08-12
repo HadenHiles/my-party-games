@@ -4,6 +4,7 @@ var messages = {
     "game-name-in-use":"Someone is already using that name!",
     "game-not-found":"Game could not be found, do you have the right code?",
     "game-empty-name":"Please enter a name",
+
     "game-drink-or-dare-empty-dare":"Dare cannot be empty",
     "game-drink-or-dare-stolen":"Someone stole your dare! Pick another",
     "game-drink-or-dare-submitted-dare":"Dare created successfully!",
@@ -11,7 +12,10 @@ var messages = {
     "game-drink-or-dare-already-picked-card":"You have already chosen a card. Please wait.",
     "game-drink-or-dare-vote-cast-success":"Your vote has been sent",
     "game-drink-or-dare-vote-cast-change":"Your vote has been changed",
-    "game-drink-or-dare-vote-cast-failure":"Your vote could not be cast. Something went wrong."
+    "game-drink-or-dare-vote-cast-failure":"Your vote could not be cast. Something went wrong.",
+    "game-drink-or-dare-finish-dare-success":"Dare completed.",
+    "game-drink-or-dare-finish-dare-failure":"You cannot complete the dare until veirifeid by your peers.",
+    "game-drink-or-dare-all-votes-casted":"You cannot complete the dare until veirifeid by your peers.",
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',

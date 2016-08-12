@@ -1,12 +1,12 @@
 $(function(){
-    var parent = document.getElementById('game-content');
+    var hasNotifiedUserOfAllVotesCated = false;
 
     var updateIneterval = setInterval(function() {
         $.ajax({
             url:"get-update-game.php",
             method:"POST"
         }).done(function(result) {
-            //console.log(result);
+            console.log(result);
 
             if (result = JSON.parse(result)) {
                 console.log(result);
@@ -18,29 +18,44 @@ $(function(){
                 }
 
                 var state = parseInt(result.state);
+                hideAllExcept(state);
 
                 //otherwise switch based on game state
                 switch (state) {
 
                     case 1:
                         //users are creating dares
+                        if (!result.waiting) {
+                            document.getElementById('game-stage-1').style.display = "block";
+                            document.getElementById('game-stage-1-waiting').style.display = "none";
+                        } else {
+                            document.getElementById('game-stage-1').style.display = "none";
+                            document.getElementById('game-stage-1-waiting').style.display = "block";
+                        }
                         break;
 
                     case 2:
                         //shuffling and assigning dares
-                        hideAll(2);
                         document.getElementById('game-stage-2').style.display = "block";
                         break;
 
                     case 3:
                         //looping users carrying out dares
-                        hideAll(3);
+                        document.getElementById('activeDare').innerHTML = "hidden";
                         document.getElementById('game-stage-3').style.display = "block";
 
                         if (result.turn) {
-
+                            document.getElementById('game-stage-3-player').style.display = "block";
+                            document.getElementById('game-stage-3-viewer').style.display = "none";
                         } else {
                             document.getElementById('activeDare').innerHTML = result.dare;
+                            document.getElementById('game-stage-3-player').style.display = "none";
+                            document.getElementById('game-stage-3-viewer').style.display = "block";
+                        }
+
+                        if (!result.allVotesCast && !hasNotifiedUserOfAllVotesCated) {
+                            hasNotifiedUserOfAllVotesCated = true;
+                            msg(false, false, "game-drink-or-dare-all-votes-casted");
                         }
 
                         //get voting stats
@@ -213,8 +228,27 @@ function castVote(vote) {
 
 }
 
+function finishDare() {
 
-function hideAll(except = 0) {
+    //ajax call to set dare
+    $.ajax({
+        url: "finish-dare.php",
+        method: "POST"
+    }).done(function (result) {
+        console.log(result);
+
+        if (result = JSON.parse(result)) {
+
+            if (result.status == true) {
+                msg(false, false, "game-drink-or-dare-finish-dare-success");
+            } else {
+                msg(false, false, "game-drink-or-dare-finish-dare-failure");
+            }
+        }
+    });
+}
+
+function hideAllExcept(except = 0) {
 
     //console.log("hiding all but : " + except);
 

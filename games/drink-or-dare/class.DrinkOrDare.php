@@ -297,8 +297,9 @@ class DrinkOrDare {
 
             $result = $result->fetch(PDO::FETCH_ASSOC);
 
-            if ($result['user_id'] == $this->userid) {
-
+            //var_dump($result['user_id'], $this->userid, $this->gameid, $this->current_round);
+            if ($result['assign_to_id'] == $this->userid) {
+                //var_dump(1);
                 return true;
             }
         }
@@ -553,6 +554,35 @@ class DrinkOrDare {
     /**
      * @return bool
      */
+    public function finishCurrentDare()  {
+
+        global $db;
+
+        if (self::checkAllVotesCast()) {
+
+            $sql = 'UPDATE drink_or_dare_user_dares 
+                    SET completed = 1 
+                    WHERE game_id = :gameid
+                    AND assign_to_id = :userid
+                    AND round_number = :currentround';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":gameid", $this->gameid);
+            $result->bindValue(":userid", $this->userid);
+            $result->bindValue(":currentround", $this->current_round);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     public function checkAllVotesCast() {
         global $db;
 
@@ -698,6 +728,11 @@ class DrinkOrDare {
             }
         }
         return false;
+    }
+
+    public function getUserId() {
+
+        return $this->userid;
     }
 
     /**
