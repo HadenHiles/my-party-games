@@ -31,7 +31,7 @@
                     <i class="material-icons">more_vert</i>
                 </button>
                 <ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right mdl-js-ripple-effect" for="more-button">
-                    <li class="mdl-menu__item"><a href="/admin"><i class="fa fa-lock"></i> Admin</a></li>
+                    <li class="mdl-menu__item"><a href="../lobby/"><i class="fa fa-right-arrow"></i> Current Game</a></li>
                 </ul>
             </div>
         </div>

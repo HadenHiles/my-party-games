@@ -42,7 +42,7 @@ try {
     $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
 }
 ?>
-<div class="mdl-layout mdl-js-layout" id="game-content">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" id="game-content">
     <header class="mdl-layout__header mdl-layout__header--transparent">
         <div class="mdl-layout__header-row">
             <!-- Add spacer, to align navigation to the right -->

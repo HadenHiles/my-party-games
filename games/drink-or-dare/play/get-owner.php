@@ -10,12 +10,23 @@ $cardNum = $_REQUEST['card_num'];
 //get user session information
 $thisUser = $_SESSION['user'];
 
-$dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
+//init the new game session and user class
+$mySession = new GameSession(SESSION_ID, DEVICE_IP);
+$user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
 $owner = array();
 
+//update and check the state of the current game
 try {
+    //check that the game is currently still alive
+    if (!$game = $mySession->loadUsers($thisUser['code'], 0)) {
+        $owner["error"] = "Game could not be loaded";
+    }
+
+    //load the drink or dare class and get game values from database
+    $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
+    $dod->start();
+
     $owner = $dod->getOwner(true, $cardNum);
-    var_dump($owner);
 } catch (Exception $e) {
     //show any errors
     $msg = "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();

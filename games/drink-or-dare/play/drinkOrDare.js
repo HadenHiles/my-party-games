@@ -108,17 +108,23 @@ $(function(){
         }); //end of ajax call
     }, 1000); //end of interval
 
-    $('.pickCard').click(function() {
+    $('.pickCard').unbind('click').click(function() {
+        alert('hi');
         var num = $(this).data("cardnum");
-        //console.log("pickCard num: " + num);
-        if (pickCard(num)) {
-            var owner = getOwner(num);
-            console.log("owner: -------------------------------------" + owner);
-            var name = "<h5 class='owner-name'>" + owner.display_name + "</h5>";
-            var picture = "<img class='owner-picture' src='" + owner.picture + "' />";
-            var ownerHtml = name + picture;
-            $(this).html(ownerHtml);
-        }
+        pickCard(num, function(result) {
+            if(result == true) {
+                getOwner(num, function(ownerResult) {
+                    console.log("ownerResult pic: " + ownerResult.picture);
+                    if(ownerResult != false) {
+                        var name = "<h5 class='owner-name'>" + ownerResult.display_name + "</h5>";
+                        var picture = "<img class='owner-picture' src='" + ownerResult.picture + "' />";
+                        var ownerHtml = name + picture;
+                        $(this).html(ownerHtml);
+                    }
+                });
+            }
+        });
+
     });
 
     $('.showCard').click(function() {
@@ -157,7 +163,7 @@ function setDare() {
     }
 }
 
-function pickCard(number) {
+function pickCard(number, cb) {
     //console.log("number: " + number);
     if (number > 0) {
 
@@ -173,13 +179,13 @@ function pickCard(number) {
 
                 if (result.status == true) {
                     msg(false, false, "game-drink-or-dare-chosen-dare");
-                    return true;
+                    cb(true);
                 } else if (result.status == "already-picked") {
                     msg(false, false, "game-drink-or-dare-already-picked-card");
-                    return false;
+                    cb(false);
                 } else {
                     msg(false, false, 'game-drink-or-dare-stolen');
-                    return false;
+                    cb(false);
                 }
             }
         });
@@ -206,7 +212,7 @@ function showCard() {
     });
 }
 
-function getOwner(cardNum) {
+function getOwner(cardNum, cb) {
     //ajax call to set dare
     $.ajax({
         url:"get-owner.php",
@@ -214,13 +220,12 @@ function getOwner(cardNum) {
         data:{"card_num":cardNum}
     }).done(function(result) {
         if (result = JSON.parse(result)) {
-            console.log(result);
-
             if (typeof result.display_name != "undefined" && typeof result.picture != "undefined") {
-                return result;
+                cb(result);
+            } else {
+                cb(false);
             }
         }
-        return false;
     });
 }
 

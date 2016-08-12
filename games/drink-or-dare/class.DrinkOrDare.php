@@ -371,22 +371,19 @@ class DrinkOrDare {
         global $db;
 
         if (!empty($cardId)) {
-            $sql = 'SET @id=0; 
-                   SELECT @id := @id+1 AS "id", dodud.*, users.* 
+            $sql = 'SELECT dodud.*, users.* 
                    FROM drink_or_dare_user_dares AS dodud 
-                   LEFT JOIN users ON dodud.user_id = users.id 
-                   WHERE dodud.game_id = :gameid
-                   AND id = :cardid';
+                   LEFT JOIN users ON dodud.assign_to_id = users.id 
+                   WHERE dodud.game_id = :gameid';
 
             $result = $db->prepare($sql);
-            $result->bindValue(":cardid", $cardId);
             $result->bindValue(":gameid", $this->gameid);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
                 if ($getInformation) {
-                    $result = $result->fetch(PDO::FETCH_ASSOC);
-                    return $result;
+                    $result = $result->fetchAll(PDO::FETCH_ASSOC);
+                    return $result[$cardId-1];
                 }
 
                 return true;
