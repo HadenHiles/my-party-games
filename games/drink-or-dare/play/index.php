@@ -23,7 +23,7 @@ $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
 require_once("header.php");
 
 try {
-    if (!$game = $mySession->loadUsers($thisUser['code'])) {
+    if (!$game = $mySession->loadUsers($thisUser['code'], 0)) {
         //game was not found
         $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
         exit();
@@ -124,10 +124,10 @@ try {
                     <div class="mdl-tooltip mdl-tooltip--large" for="only-skip">
                         Use a Free Pass
                     </div>
-                    <button id="give-drink" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="finishDare();">
+                    <button id="done-dare" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="finishDare();">
                         <i class="fa fa-check"></i>
                     </button>
-                    <div class="mdl-tooltip mdl-tooltip--large" for="give-drink">
+                    <div class="mdl-tooltip mdl-tooltip--large" for="done-dare">
                         I'm done the dare!
                     </div>
                 </div>
@@ -146,7 +146,7 @@ try {
                     <div class="mdl-tooltip mdl-tooltip--large" for="drink">
                         Dare execution not worthy!
                     </div>
-                    <button id="free-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect middle" onclick="castVote(2);">
+                    <button id="free-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored middle" onclick="castVote(2);">
                         <i class="fa fa-fast-forward"></i>
                     </button>
                     <div class="mdl-tooltip mdl-tooltip--large" for="free-skip">

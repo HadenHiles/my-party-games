@@ -10,7 +10,7 @@ $thisUser = $_SESSION['user'];
 $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
 
-if(!$game = $mySession->loadUsers($thisUser['code'])) {
+if(!$game = $mySession->loadUsers($thisUser['code'], 0)) {
     //game not found
 } else {
     ?>

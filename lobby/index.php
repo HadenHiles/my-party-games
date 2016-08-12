@@ -19,7 +19,7 @@ try {
     $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name'], $thisUser['code']);
 
     // Redirect user to specific game based on game name
-    if($game = $mySession->loadUsers($thisUser['code'])) {
+    if($game = $mySession->loadUsers($thisUser['code'], 0)) {
        if($game['game_name'] == "drink-or-dare") {
            require_once("../games/drink-or-dare/class.DrinkOrDare.php");
            $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
@@ -47,7 +47,7 @@ try {
     }
 
     //load the current game details
-    if (!$game = $mySession->loadUsers($thisUser['code'])) {
+    if (!$game = $mySession->loadUsers($thisUser['code'], 0)) {
         //game was not found
         if($user->isHost("get", $thisUser['userid'])) {
             header("location: /");
@@ -77,7 +77,7 @@ try {
 
             header("location: ../games/" . $game['game_name'] . "/submitSetup.php");
         }
-        if($game = $mySession->loadUsers($thisUser['code'])) {
+        if($game = $mySession->loadUsers($thisUser['code'], 0)) {
             if(count($game['users']) == 1) {
                 $user->isHost("set", $thisUser['userid']);
             }

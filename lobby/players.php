@@ -15,7 +15,7 @@ try {
     $user_session = $_SESSION['user'];
 
     //load the current game details
-    if (!$game = $mySession->loadUsers($user_session['code'])) {
+    if (!$game = $mySession->loadUsers($user_session['code'], 0)) {
         //game was not found
     } else {
         //game was found
