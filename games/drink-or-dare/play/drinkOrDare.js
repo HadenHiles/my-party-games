@@ -111,6 +111,7 @@ $(function(){
     $('.pickCard').unbind('click').click(function() {
         alert('hi');
         var num = $(this).data("cardnum");
+        var $self = $(this);
         pickCard(num, function(result) {
             if(result == true) {
                 getOwner(num, function(ownerResult) {
@@ -119,7 +120,8 @@ $(function(){
                         var name = "<h5 class='owner-name'>" + ownerResult.display_name + "</h5>";
                         var picture = "<img class='owner-picture' src='" + ownerResult.picture + "' />";
                         var ownerHtml = name + picture;
-                        $(this).html(ownerHtml);
+                        console.log(this);
+                        $self.html(ownerHtml);
                     }
                 });
             }
