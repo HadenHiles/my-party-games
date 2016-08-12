@@ -112,7 +112,12 @@ $(function(){
         var num = $(this).data("cardnum");
         //console.log("pickCard num: " + num);
         if (pickCard(num)) {
-            $(this).addClass("chosen");
+            var owner = getOwner(num);
+            console.log("owner: -------------------------------------" + owner);
+            var name = "<h5 class='owner-name'>" + owner.display_name + "</h5>";
+            var picture = "<img class='owner-picture' src='" + owner.picture + "' />";
+            var ownerHtml = name + picture;
+            $(this).html(ownerHtml);
         }
     });
 
@@ -184,7 +189,6 @@ function pickCard(number) {
 }
 
 function showCard() {
-
     //ajax call to set dare
     $.ajax({
         url:"get-dare.php",
@@ -199,6 +203,24 @@ function showCard() {
                document.getElementById('myCard').innerHTML = result.dare;
             }
         }
+    });
+}
+
+function getOwner(cardNum) {
+    //ajax call to set dare
+    $.ajax({
+        url:"get-owner.php",
+        method:"POST",
+        data:{"card_num":cardNum}
+    }).done(function(result) {
+        if (result = JSON.parse(result)) {
+            console.log(result);
+
+            if (typeof result.display_name != "undefined" && typeof result.picture != "undefined") {
+                return result;
+            }
+        }
+        return false;
     });
 }
 
