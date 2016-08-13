@@ -335,8 +335,10 @@ function finishDare() {
     });
 }
 
-function hideAllExcept(except = 0) {
-
+function hideAllExcept(except) {
+    if(typeof except == "undefined") {
+        except = 0;
+    }
     //console.log("hiding all but : " + except);
 
     if (except != 1) {

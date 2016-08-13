@@ -23,21 +23,21 @@ try {
         foreach($game['users'] as $user) {
             if(!$user['is_display']) {
                 if($user['id'] == $user_session['userid']) {
+                    ?>
+                    <div class="mdl-card mdl-shadow--6dp player me">
+                    <?php
+                } else {
+                    ?>
+                    <div class="mdl-card mdl-shadow--6dp player">
+                    <?php
+                }
                 ?>
-                <div class="mdl-card mdl-shadow--6dp player me">
-                <?php
-            } else {
-                ?>
-                <div class="mdl-card mdl-shadow--6dp player">
-                <?php
-            }
-            ?>
-                <div class="mdl-card__supporting-text">
-                    <img src="<?php echo $user['picture']; ?>" border="0" alt="" />
-                    <h5><?php echo $user['display_name']; ?></h5>
+                    <div class="mdl-card__supporting-text">
+                        <img src="<?php echo $user['picture']; ?>" border="0" alt="" />
+                        <h5><?php echo $user['display_name']; ?></h5>
+                    </div>
                 </div>
-            </div>
-            <?php
+                <?php
             } else {
                 $displayCount++;
             }

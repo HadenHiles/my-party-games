@@ -43,6 +43,8 @@ try {
     
     if($_POST['delete-game']) {
         unset($_SESSION['user']);
+        require_once("../games/drink-or-dare/class.DrinkOrDare.php");
+        $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
         $mySession->destroy($thisUser['code']);
     }
 

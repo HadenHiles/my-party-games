@@ -59,7 +59,10 @@ try {
                     <?php
                     if($user->isHost("get", $thisUser['userid'])) {
                         ?>
-                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){window.location.href = '../stop.php'}">Stop Game</li>
+                        <form action="../../../lobby/" method="post" id="delete-game-form">
+                            <input type="hidden" name="delete-game" value="true" />
+                        </form>
+                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){$('#delete-game-form').submit();}">Stop Game</li>
                         <?php
                     }
                     ?>
@@ -105,6 +108,7 @@ try {
 
         <!-- Stage 2 -->
         <div class="mdl-cell mdl-cell--8-col dares center" id="game-stage-2" <?php echo ($state == 2 ? : 'style="display:none"'); ?>>
+            <h4 style="color: #fff; margin: -50px 0 10px 0;">Pick a Dare!</h4>
             <?php
             foreach($game['users'] as $key => $user) {
                 $key = $key + 1;
