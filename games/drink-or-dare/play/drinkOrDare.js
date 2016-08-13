@@ -178,7 +178,7 @@ function setDare() {
     var textContainer = document.getElementById('dare-text');
     var allDrinksWorth = document.getElementsByName('drinksWorth');
     var drinksWorthSet = false;
-    var drinksWorth
+    var drinksWorth;
 
     if (textContainer.value != "") {
         for (var i = 0; i < allDrinksWorth.length; i++) {
