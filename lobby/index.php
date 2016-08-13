@@ -7,6 +7,7 @@ require_once("../includes/database.php");
 //check for user in session
 if (empty($_SESSION['user'])) {
     header ("Location: ../join/");
+    exit();
 } else {
     require_once("header.php");
 }

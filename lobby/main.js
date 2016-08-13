@@ -73,7 +73,8 @@ function checkGame() {
         type: "get",
         dataType: "json",
         success: function(result) {
-            if(result.getGame == false) {
+            console.log(result);
+            if(result.getGame == false || result.started) {
                 location.reload();
             }
         },

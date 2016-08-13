@@ -9,7 +9,20 @@ $thisUser = $_SESSION['user'];
 //init a new game session
 $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 
-$result = array("getGame" => false);
+global $db;
+
+$sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
+
+$result = $db->prepare($sql);
+$result->bindValue(":gameid", $thisUser['code']);
+
+$started = false;
+
+if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+    $started = true;
+}
+
+$result = array("getGame" => false, "started" => $started);
 if($mySession->getGame($thisUser['code'])) {
     $result["getGame"] = true;
     header('Content-Type: application/json');
