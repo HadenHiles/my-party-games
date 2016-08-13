@@ -2,6 +2,7 @@
 require_once("class.DrinkOrDare.php");
 
 $drinkOrDare = new DrinkOrDare(intval($_SESSION['user']['code']), intval($_SESSION['user']['userid']), 3, 1, 10);
+$drinkOrDare->start(0);
 $totalRounds = $drinkOrDare->getTotalRounds();
 $drinksToWin = $drinkOrDare->getDrinksToWin();
 ?>

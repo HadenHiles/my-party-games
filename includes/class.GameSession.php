@@ -95,7 +95,7 @@ class GameSession {
      * @return bool
      */
     public function destroy($code) {
-        global $db;
+        global $db, $dod;
 
         $sql = 'DELETE FROM game_connections WHERE unique_code = :unique_code';
 
@@ -109,11 +109,12 @@ class GameSession {
 
         if ($result->execute() && $result->errorCode()) {
             if($resultUsers->execute() && $resultUsers->errorCode()) {
-                return true;
+                if($dod->destroy($code)) {
+                    return true;
+                }
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /*

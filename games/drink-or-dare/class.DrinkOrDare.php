@@ -59,11 +59,26 @@ class DrinkOrDare {
         return false;
     }
 
+    public function destroy($gameId) {
+        global $db;
+
+        $sql = 'DELETE FROM drink_or_dare WHERE game_id = :game_id';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":game_id", $gameId);
+
+        if ($result->execute() && $result->errorCode()) {
+            return true;
+        }
+        return false;
+    }
+
     /**
+     * @param int $isStarted
      * @return bool
      * @throws Exception
      */
-    public function start() {
+    public function start($isStarted = 1) {
 
         global $db, $game;
 
@@ -71,12 +86,12 @@ class DrinkOrDare {
 
         if (!empty($this->gameid)) {
 
-            if (!$this->isStarted($this->gameid)) {
+            if (!$this->isStarted($this->gameid, $isStarted)) {
                 //game doesnt exist
                 $sql = 'INSERT INTO drink_or_dare
-                        (game_id, state, total_rounds, current_round, drinks_to_win) 
+                        (game_id, state, total_rounds, current_round, drinks_to_win, is_started) 
                         VALUES
-                        (:gameid, :state, :total_rounds, :current_round, :drinks_to_win)';
+                        (:gameid, :state, :total_rounds, :current_round, :drinks_to_win, :is_started)';
 
                 $result = $db->prepare($sql);
                 $result->bindParam(":gameid", $this->gameid);
@@ -84,6 +99,7 @@ class DrinkOrDare {
                 $result->bindParam(":total_rounds", $this->total_rounds);
                 $result->bindParam(":current_round", $this->current_round);
                 $result->bindParam(":drinks_to_win", $this->drinksToWin);
+                $result->bindParam(":is_started", $isStarted);
 
                 if ($result->execute() && $result->errorCode() == 0) {
                     return true;
@@ -231,12 +247,17 @@ class DrinkOrDare {
 
     /**
      * @param $gameId
+     * @param int $checkIsStarted
      * @return bool
      */
-    public function isStarted($gameId) {
+    public function isStarted($gameId, $checkIsStarted = 1) {
         global $db;
 
         $sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
+
+        if($checkIsStarted) {
+            $sql .= " AND is_started = 1";
+        }
 
         $result = $db->prepare($sql);
         $result->bindParam(":gameid", $gameId);
