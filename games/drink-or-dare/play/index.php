@@ -88,16 +88,29 @@ try {
                     </div>
                 </form>
             </div>
-            <div class="mdl-card__actions" style="text-align: center; margin-top: -25px;">
-                <p>** turn this select into a slider ** <br />How many drinks is this dare worth?</p>
-                <select id="drinksWorth">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="setDare();" style="width: 100%;">Done</button>
+            <div class="mdl-card__actions" style="text-align: center; margin-top: -35px;">
+                <p>How many drinks is this dare worth?</p>
+                <label class="mdl-radio drinksWorth mdl-js-radio mdl-js-ripple-effect" for="drinksWorth-1">
+                    <input type="radio" id="drinksWorth-1" class="mdl-radio__button" name="drinksWorth" value="1">
+                    <span class="mdl-radio__label">1</span>
+                </label>
+                <label class="mdl-radio drinksWorth mdl-js-radio mdl-js-ripple-effect" for="drinksWorth-2">
+                    <input type="radio" id="drinksWorth-2" class="mdl-radio__button" name="drinksWorth" value="2">
+                    <span class="mdl-radio__label">2</span>
+                </label>
+                <label class="mdl-radio drinksWorth mdl-js-radio mdl-js-ripple-effect" for="drinksWorth-3">
+                    <input type="radio" id="drinksWorth-3" class="mdl-radio__button" name="drinksWorth" value="3">
+                    <span class="mdl-radio__label">3</span>
+                </label>
+                <label class="mdl-radio drinksWorth mdl-js-radio mdl-js-ripple-effect" for="drinksWorth-4">
+                    <input type="radio" id="drinksWorth-4" class="mdl-radio__button" name="drinksWorth" value="4">
+                    <span class="mdl-radio__label">4</span>
+                </label>
+                <label class="mdl-radio drinksWorth mdl-js-radio mdl-js-ripple-effect" for="drinksWorth-5">
+                    <input type="radio" id="drinksWorth-5" class="mdl-radio__button" name="drinksWorth" value="5">
+                    <span class="mdl-radio__label">5</span>
+                </label>
+                <button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="setDare();" style="width: 100%; margin-top: 15px;">Done</button>
             </div>
         </div>
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 1 && $dod->getHasCurrentDare() ? : 'style="display:none"'); ?> id="game-stage-1-waiting">
