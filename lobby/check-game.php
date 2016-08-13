@@ -11,7 +11,7 @@ $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 
 global $db;
 
-$sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
+$sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid AND is_started = 0';
 
 $result = $db->prepare($sql);
 $result->bindValue(":gameid", $thisUser['code']);
