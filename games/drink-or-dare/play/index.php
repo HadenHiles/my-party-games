@@ -33,6 +33,9 @@ try {
     $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
     $dod->start();
 
+    $roundNum = $dod->getCurrentRound();
+    $totalRounds = $dod->getTotalRounds();
+
     //get game state
     $state =  $dod->getState();
 
@@ -45,6 +48,7 @@ try {
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" id="game-content">
     <header class="mdl-layout__header mdl-layout__header--transparent">
         <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title" id="currentRound"><?php echo "Round " . $roundNum . "/" . $totalRounds; ?></span>
             <!-- Add spacer, to align navigation to the right -->
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation -->

@@ -18,6 +18,8 @@ $(function(){
                     clearInterval(updateIneterval);
                 }
 
+                $('#currentRound').html("Round " + result.currentRound + "/" + result.totalRounds);
+
                 var state = parseInt(result.state);
                 hideAllExcept(state);
 
