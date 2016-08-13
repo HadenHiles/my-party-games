@@ -24,8 +24,20 @@ try {
     $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
     $dod->start();
 
-    $gameState["dare"] = $dod->getDare();
-    
+    if ($dod->getIsMyTurn()) {
+
+        $gameState["dare"] = $dod->getDare();
+        $dod->setDarePeeked();
+
+    } else if ($dod->checkHasPeeked(true)) {
+
+        $gameState["dare"] = $dod->getDare(true);
+
+    } else {
+
+        $gameState["dare"] = "hidden";
+    }
+
     $gameState["state"] = $dod->getState();
 
 } catch (Exception $e) {
