@@ -6,6 +6,7 @@ var messages = {
     "game-empty-name":"Please enter a name",
 
     "game-drink-or-dare-empty-dare":"Dare cannot be empty.",
+    "game-drink-or-dare-empty-drinks-worth":"Please give the dare a number of drinks.",
     "game-drink-or-dare-stolen":"Someone stole your dare! Pick another.",
     "game-drink-or-dare-submitted-dare":"Dare created successfully!",
     "game-drink-or-dare-chosen-dare":"You have chosen your dare. Face the consequences.",

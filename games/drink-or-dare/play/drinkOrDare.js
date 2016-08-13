@@ -18,6 +18,8 @@ $(function(){
                     clearInterval(updateIneterval);
                 }
 
+                $('#currentRound').html("Round " + result.currentRound + "/" + result.totalRounds);
+
                 var state = parseInt(result.state);
                 hideAllExcept(state);
 
@@ -175,28 +177,40 @@ function freePass() {
 function setDare() {
 
     var textContainer = document.getElementById('dare-text');
-    var drinksWorth = document.getElementById('drinksWorth').value;
+    var allDrinksWorth = document.getElementsByName('drinksWorth');
+    var drinksWorthSet = false;
+    var drinksWorth;
 
     if (textContainer.value != "") {
-        //ajax call to set dare
-        $.ajax({
-            url:"set-dare.php",
-            method:"POST",
-            data:{"text":textContainer.value,"drinksWorth":drinksWorth}
-        }).done(function(result) {
-            console.log(result);
-
-            if (result = JSON.parse(result)) {
-                
-                //hideAll(result.state);
-
-                if (result.status == true) {
-                    msg(false, false, "game-drink-or-dare-submitted-dare");
-                    document.getElementById('game-stage-1').style.display = "none";
-                    document.getElementById('game-stage-1-waiting').style.display = "block";
-                }
+        for (var i = 0; i < allDrinksWorth.length; i++) {
+            if (allDrinksWorth[i].checked) {
+                drinksWorth = allDrinksWorth[i];
+                drinksWorthSet = true;
             }
-        });
+        }
+        if(drinksWorthSet) {
+            //ajax call to set dare
+            $.ajax({
+                url:"set-dare.php",
+                method:"POST",
+                data:{"text":textContainer.value,"drinksWorth":drinksWorth.value}
+            }).done(function(result) {
+                console.log(result);
+
+                if (result = JSON.parse(result)) {
+
+                    //hideAll(result.state);
+
+                    if (result.status == true) {
+                        msg(false, false, "game-drink-or-dare-submitted-dare");
+                        document.getElementById('game-stage-1').style.display = "none";
+                        document.getElementById('game-stage-1-waiting').style.display = "block";
+                    }
+                }
+            });
+        } else {
+            msg(false, false, 'game-drink-or-dare-empty-drinks-worth');
+        }
     } else {
         msg(false, false, 'game-drink-or-dare-empty-dare');
     }
