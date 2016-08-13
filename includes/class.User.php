@@ -202,7 +202,8 @@ class User {
                     'code' => $this->gameid,
                     'gameid' => $this->gameid,
                     'name' => $this->displayname,
-                    'isjoined' => $this->isJoined
+                    'isjoined' => $this->isJoined,
+                    'isHost' => $this->isHost
                 );
             }
         }
@@ -383,6 +384,11 @@ class User {
             }
             return false;
         }
+    }
+
+    public function getIsHost() {
+
+        return $this->isHost;
     }
 }
 ?>

@@ -86,6 +86,14 @@ try {
                 </form>
             </div>
             <div class="mdl-card__actions" style="text-align: center; margin-top: -25px;">
+                <p>** turn this select into a slider ** <br />How many drinks is this dare worth?</p>
+                <select id="drinksWorth">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
                 <button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="setDare();" style="width: 100%;">Done</button>
             </div>
         </div>
@@ -111,14 +119,14 @@ try {
         <!-- Stage 3 -->
         <div class="mdl-cell mdl-cell--3-col mdl-cell--6-col-tablet mdl-cell--8-col-phone center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> style="min-width: 300px;" id="game-stage-3">
 
-            <div <?php echo ($dod->getWhoseTurn() ? : 'style="display:none"'); ?> id="game-stage-3-player">
+            <div <?php echo ($dod->getIsMyTurn() ? : 'style="display:none"'); ?> id="game-stage-3-player">
                 <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="myCard">
                     <?php
-                    echo $dod->checkHasPeeked() ? $dod->getDare() : "";
+                    echo $dod->checkHasPeeked() ? $dod->getDare() : "hidden";
                     ?>
                 </div>
                 <div class="mdl-cell mdl-cell--12-col actions center">
-                    <button id="only-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored left">
+                    <button id="only-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored left" onclick="freePass();">
                         <i class="fa fa-fast-forward"></i>
                     </button>
                     <div class="mdl-tooltip mdl-tooltip--large" for="only-skip">
@@ -133,10 +141,10 @@ try {
                 </div>
             </div>
 
-            <div <?php echo (!$dod->getWhoseTurn() ? : 'style="display:none"'); ?> id="game-stage-3-viewer">
+            <div <?php echo (!$dod->getIsMyTurn() ? : 'style="display:none"'); ?> id="game-stage-3-viewer">
                 <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="activeDare">
                     <?php
-                    echo $dod->checkHasPeeked(true) ? $dod->getDare(true) : "";
+                    echo $dod->checkHasPeeked(true) ? $dod->getDare(true) : "hidden";
                     ?>
                 </div>
                 <div class="mdl-cell mdl-cell--12-col actions center">
@@ -160,6 +168,12 @@ try {
                     </div>
                 </div>
             </div>
+
+            <div id="votes">
+                <div id="voted-bad"></div>
+                <div id="voted-skip"></div>
+                <div id="voted-good"></div>
+            </div>
         </div>
 
         <!-- Stage 4 -->
@@ -167,8 +181,12 @@ try {
             <div class="mdl-card__supporting-text">
             </div>
         </div>
+
+        <!-- Stage 5 -->
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 5 ? : 'style="display:none"'); ?> id="game-stage-5">
             <div class="mdl-card__supporting-text">
+                Game Over
+                <input type="button" onclick="restartGame();" value="Restart Game">
             </div>
         </div>
         <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 6 ? : 'style="display:none"'); ?> id="game-stage-6">

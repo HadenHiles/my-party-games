@@ -30,6 +30,7 @@ try {
     //store the state in JSON return object
     $state = $dod->getState();
 
+
     //some use cases for state 1
     if ($state == 1) {
         $gameState["waiting"] = $dod->getHasCurrentDare();
@@ -38,19 +39,42 @@ try {
     //some use cases for state 3: using the cards
     if ($state == 3) {
         //check to see if user has looked at their dare or not
-        if ($dod->checkHasPeeked(true)) {
+        if ($dod->getIsMyTurn() && $dod->checkHasPeeked()) {
+
+            $gameState["dare"] = $dod->getDare();
+
+        } else if ($dod->checkHasPeeked(true)) {
+
             $gameState["dare"] = $dod->getDare(true);
+
         } else {
+
             $gameState["dare"] = "hidden";
         }
 
         //check to see if it's their turn
-        $gameState["turn"] = $dod->getWhoseTurn();
+        $gameState["turn"] = $dod->getIsMyTurn();
         $gameState["votes"] = $dod->getVotes();
         $gameState["allVotesCast"] = $dod->checkAllVotesCast();
+        $gameState["activePlayer"] = $dod->getActivePlayer();
+        $gameState["numPlayers"] = $dod->getNumPlayers();
+    }
+
+    //some use cases for state 4: incrementing round / checking if game completed
+    if ($state == 4) {
+
+    }
+
+    //some use cases for state 5
+    if ($state == 5) {
+
+        $gameState["endResults"] = $dod->getEndResults();
     }
 
     $gameState["state"] = $state;
+    $gameState["totalRounds"] = $dod->getTotalRounds();
+    $gameState["currentRound"] = $dod->getCurrentRound();
+    $gameState["userid"] = $dod->getUserId();
 
 } catch (Exception $e) {
     //show any errors

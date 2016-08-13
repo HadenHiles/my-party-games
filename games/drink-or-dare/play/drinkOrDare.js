@@ -1,5 +1,6 @@
 $(function(){
-    var hasNotifiedUserOfAllVotesCated = false;
+    var hasNotifiedUserOfAllVotesCasted = false;
+    var isMyTurn = false;
 
     var updateIneterval = setInterval(function() {
         $.ajax({
@@ -9,7 +10,7 @@ $(function(){
             console.log(result);
 
             if (result = JSON.parse(result)) {
-                console.log(result);
+                //console.log(result);
 
                 //check for error messages
                 if (result.error != "" && typeof result.error != "undefined") {
@@ -32,6 +33,7 @@ $(function(){
                             document.getElementById('game-stage-1').style.display = "none";
                             document.getElementById('game-stage-1-waiting').style.display = "block";
                         }
+                        hasNotifiedUserOfAllVotesCasted = false;
                         break;
 
                     case 2:
@@ -41,20 +43,26 @@ $(function(){
 
                     case 3:
                         //looping users carrying out dares
-                        document.getElementById('activeDare').innerHTML = "hidden";
+                        document.getElementById('myCard').innerHTML = result.dare;
+                        document.getElementById('activeDare').innerHTML = result.dare;
                         document.getElementById('game-stage-3').style.display = "block";
 
                         if (result.turn) {
                             document.getElementById('game-stage-3-player').style.display = "block";
                             document.getElementById('game-stage-3-viewer').style.display = "none";
+
+                            if (!isMyTurn) {
+                                isMyTurn = true;
+                                hasNotifiedUserOfAllVotesCasted = false;
+                            }
                         } else {
                             document.getElementById('activeDare').innerHTML = result.dare;
                             document.getElementById('game-stage-3-player').style.display = "none";
                             document.getElementById('game-stage-3-viewer').style.display = "block";
                         }
 
-                        if (!result.allVotesCast && !hasNotifiedUserOfAllVotesCated) {
-                            hasNotifiedUserOfAllVotesCated = true;
+                        if (result.allVotesCast && !hasNotifiedUserOfAllVotesCasted) {
+                            hasNotifiedUserOfAllVotesCasted = true;
                             msg(false, false, "game-drink-or-dare-all-votes-casted");
                         }
 
@@ -74,23 +82,30 @@ $(function(){
                                     bad++;
                                 }
                             }
-                            console.log("Votes: good=" + good + ", bad="+bad + ", skip="+skip);
-                        }
 
-                        if (result.allVotesCast) {
-                            //$('#').removeAttr('disabled');
+                            document.getElementById('voted-bad').innerHTML = bad + ' people voted bad.';
+                            document.getElementById('voted-skip').innerHTML = skip + ' people voted skip.';
+                            document.getElementById('voted-good').innerHTML = good + ' people voted good.';
+                            //console.log("Votes: good=" + good + ", bad="+bad + ", skip="+skip);
+                        } else {
+                            document.getElementById('voted-bad').innerHTML = '0 people voted bad.';
+                            document.getElementById('voted-skip').innerHTML = '0 people voted skip.';
+                            document.getElementById('voted-good').innerHTML = '0 people voted good.';
                         }
                         break;
 
                     case 4:
                         //incrementing rounds and check for game completion
-                        //hideAll(3);
 
                         break;
 
                     case 5:
                         //game completed show stats
+                        document.getElementById('game-stage-5').style.display = "block";
 
+                        if (result.reset) {
+                            window.location.reload();
+                        }
                         break;
 
                     case 6:
@@ -136,16 +151,39 @@ $(function(){
 
 }); //end of document load
 
+function freePass() {
+
+    $.ajax({
+        url:"free-pass.php",
+        method:"POST"
+    }).done(function(result) {
+        console.log(result);
+
+        if (result = JSON.parse(result)) {
+
+            //hideAll(result.state);
+
+            if (result.status == true) {
+                msg(false, false, "game-drink-or-dare-free-pass-success");
+            } else {
+                msg(false, false, "game-drink-or-dare-free-pass-failure");
+            }
+        }
+    });
+    
+}
+
 function setDare() {
 
     var textContainer = document.getElementById('dare-text');
+    var drinksWorth = document.getElementById('drinksWorth').value;
 
     if (textContainer.value != "") {
         //ajax call to set dare
         $.ajax({
             url:"set-dare.php",
             method:"POST",
-            data:{"text":textContainer.value}
+            data:{"text":textContainer.value,"drinksWorth":drinksWorth}
         }).done(function(result) {
             console.log(result);
 
@@ -194,6 +232,26 @@ function pickCard(number, cb) {
     } else {
         msg(false, false, 'game-drink-or-dare-empty-dare');
     }
+}
+
+function restartGame() {
+
+    //ajax call to set dare
+    $.ajax({
+        url:"restart-game.php",
+        method:"POST"
+    }).done(function(result) {
+        console.log(result);
+
+        if (result = JSON.parse(result)) {
+
+            if (result.reset) {
+                window.location.reload();
+            } else {
+                msg(false, false, "game-drink-or-dare-reset-success");
+            }
+        }
+    });
 }
 
 function showCard() {
@@ -290,5 +348,11 @@ function hideAllExcept(except = 0) {
     }
     if (except != 3) {
         document.getElementById('game-stage-3').style.display = "none";
+    }
+    if (except != 4) {
+
+    }
+    if (except != 5) {
+        document.getElementById('game-stage-5').style.display = "none";
     }
 }
