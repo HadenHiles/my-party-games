@@ -11,6 +11,7 @@ class DrinkOrDare {
     private $drinksToWin;
     private $numPlayers;
     private $activePlayer;
+    private $freePass;
 
     /**
      * DrinkOrDare constructor.
@@ -20,7 +21,7 @@ class DrinkOrDare {
      * @param int $current_round
      * @param int $drinksToWin
      */
-    public function __construct($game_id = 0, $userid = 0, $total_rounds = 3, $current_round = 1, $drinksToWin = 10) {
+    public function __construct($game_id = 0, $userid = 0, $total_rounds = 3, $current_round = 1, $drinksToWin = 10, $freePass = 1) {
 
         $this->gameid = $game_id;
         $this->state = 1;
@@ -31,6 +32,7 @@ class DrinkOrDare {
         $this->drinksToWin = $drinksToWin;
         $this->numPlayers = 0;
         $this->activetPlayer = 0;
+        $this->freePass = $freePass;
     }
 
     /**
@@ -105,7 +107,7 @@ class DrinkOrDare {
                     //set active players
                     if ($this->state == 3) {
 
-                        $sql = 'SELECT dodo.user_id FROM drink_or_dare_order AS dodo
+                        $sql = 'SELECT dodo.user_id, dodo.free_pass FROM drink_or_dare_order AS dodo
                                 LEFT JOIN drink_or_dare_user_dares AS dodud ON dodo.user_id = dodud.assign_to_id
                                 WHERE dodo.game_id = :gameid
                                 AND dodud.completed = 0
@@ -121,6 +123,7 @@ class DrinkOrDare {
 
                             $order = $order->fetch(PDO::FETCH_ASSOC);
                             $this->activePlayer = $order['user_id'];
+                            $this->freePass = $order['free_pass'];
                         }
                     }
 
@@ -141,6 +144,86 @@ class DrinkOrDare {
             }
         } else {
             throw new Exception("Cannot load game without game id.");
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function freePass() {
+
+        global $db;
+
+        if ($this->freePass > 0) {
+
+            $this->freePass--;
+
+            $sql = 'UPDATE drink_or_dare_order SET free_pass = :freepass
+                    WHERE user_id = :userid';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":freepass", $this->freePass);
+            $result->bindValue(":userid", $this->userid);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+
+                $sql = 'UPDATE drink_or_dare_user_dares SET completed = 1 
+                        WHERE game_id = :gameid 
+                        AND assign_to_id = :assigntoid
+                        AND round_number = :roundnumber';
+
+                $result = $db->prepare($sql);
+                $result->bindValue(":gameid", $this->gameid);
+                $result->bindValue(":assigntoid", $this->userid);
+                $result->bindValue(":roundnumber", $this->current_round);
+
+                if ($result->execute() && $result->errorCode() == 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEndResults() {
+
+        global $db;
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function resetGame() {
+
+        global $db;
+
+        $sql = 'DELETE dodo, dodud, dodv FROM drink_or_dare AS dod
+                LEFT JOIN drink_or_dare_order AS dodo ON dodo.game_id = dod.game_id
+                LEFT JOIN drink_or_dare_user_dares AS dodud ON dodud.game_id = dod.game_id
+                LEFT JOIN drink_or_dare_votes AS dodv ON dodv.dare_id = dodud.id 
+                WHERE dod.game_id = :gameid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":gameid", $this->gameid);
+
+        if ($result->execute() && $result->errorCode() == 0) {
+
+            $sql = 'UPDATE drink_or_dare SET state = 1, current_round = 1 WHERE game_id = :gameid';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":gameid", $this->gameid);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
         }
 
         return false;
@@ -200,7 +283,7 @@ class DrinkOrDare {
      * @return bool
      * @throws Exception
      */
-    public function setDare($text) {
+    public function setDare($text, $drinksWorth = 1) {
 
         global $db;
 
@@ -222,15 +305,16 @@ class DrinkOrDare {
 
                 //dare doesnt exist for this user and round
                 $sql = 'INSERT INTO drink_or_dare_user_dares
-                        (user_id, dare, round_number, game_id) 
+                        (user_id, dare, round_number, game_id, drinks_worth) 
                         VALUES
-                        (:userid, :dare, :round_number, :game_id)';
+                        (:userid, :dare, :round_number, :game_id, :drinksworth)';
 
                 $result = $db->prepare($sql);
                 $result->bindParam(":userid", $this->userid);
                 $result->bindParam(":dare", $text);
                 $result->bindParam(":round_number", $this->current_round);
                 $result->bindParam(":game_id", $this->gameid);
+                $result->bindParam(":drinksworth", $drinksWorth);
 
                 if ($result->execute() && $result->errorCode() == 0) {
                     return true;
@@ -674,12 +758,13 @@ class DrinkOrDare {
 
                         if ($result->rowCount() == 0) {
 
-                            $sql = 'INSERT INTO drink_or_dare_order (game_id, user_id)
-                                    VALUES (:gameid, :userid)';
+                            $sql = 'INSERT INTO drink_or_dare_order (game_id, user_id, free_pass)
+                                    VALUES (:gameid, :userid, :freepass)';
 
                             $result = $db->prepare($sql);
                             $result->bindValue(":gameid", $this->gameid);
                             $result->bindValue(":userid", $this->userid);
+                            $result->bindValue(":freepass", $this->freePass);
 
                             if ($result->execute() && $result->errorCode() == 0) {
 
@@ -844,6 +929,11 @@ class DrinkOrDare {
     public function getActivePlayer() {
 
         return $this->activePlayer;
+    }
+
+    public function getNumPlayers() {
+
+        return $this->numPlayers;
     }
 }
 ?>

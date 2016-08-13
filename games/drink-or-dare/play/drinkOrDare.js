@@ -82,7 +82,15 @@ $(function(){
                                     bad++;
                                 }
                             }
+
+                            document.getElementById('voted-bad').innerHTML = bad + ' people voted bad.';
+                            document.getElementById('voted-skip').innerHTML = skip + ' people voted skip.';
+                            document.getElementById('voted-good').innerHTML = good + ' people voted good.';
                             //console.log("Votes: good=" + good + ", bad="+bad + ", skip="+skip);
+                        } else {
+                            document.getElementById('voted-bad').innerHTML = '0 people voted bad.';
+                            document.getElementById('voted-skip').innerHTML = '0 people voted skip.';
+                            document.getElementById('voted-good').innerHTML = '0 people voted good.';
                         }
                         break;
 
@@ -94,6 +102,10 @@ $(function(){
                     case 5:
                         //game completed show stats
                         document.getElementById('game-stage-5').style.display = "block";
+
+                        if (result.reset) {
+                            window.location.reload();
+                        }
                         break;
 
                     case 6:
@@ -126,16 +138,39 @@ $(function(){
 
 }); //end of document load
 
+function freePass() {
+
+    $.ajax({
+        url:"free-pass.php",
+        method:"POST"
+    }).done(function(result) {
+        console.log(result);
+
+        if (result = JSON.parse(result)) {
+
+            //hideAll(result.state);
+
+            if (result.status == true) {
+                msg(false, false, "game-drink-or-dare-free-pass-success");
+            } else {
+                msg(false, false, "game-drink-or-dare-free-pass-failure");
+            }
+        }
+    });
+    
+}
+
 function setDare() {
 
     var textContainer = document.getElementById('dare-text');
+    var drinksWorth = document.getElementById('drinksWorth').value;
 
     if (textContainer.value != "") {
         //ajax call to set dare
         $.ajax({
             url:"set-dare.php",
             method:"POST",
-            data:{"text":textContainer.value}
+            data:{"text":textContainer.value,"drinksWorth":drinksWorth}
         }).done(function(result) {
             console.log(result);
 
@@ -184,6 +219,26 @@ function pickCard(number) {
     } else {
         msg(false, false, 'game-drink-or-dare-empty-dare');
     }
+}
+
+function restartGame() {
+
+    //ajax call to set dare
+    $.ajax({
+        url:"restart-game.php",
+        method:"POST"
+    }).done(function(result) {
+        console.log(result);
+
+        if (result = JSON.parse(result)) {
+
+            if (result.reset) {
+                window.location.reload();
+            } else {
+                msg(false, false, "game-drink-or-dare-reset-success");
+            }
+        }
+    });
 }
 
 function showCard() {

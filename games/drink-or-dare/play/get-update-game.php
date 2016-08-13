@@ -57,11 +57,18 @@ try {
         $gameState["votes"] = $dod->getVotes();
         $gameState["allVotesCast"] = $dod->checkAllVotesCast();
         $gameState["activePlayer"] = $dod->getActivePlayer();
+        $gameState["numPlayers"] = $dod->getNumPlayers();
     }
 
     //some use cases for state 4: incrementing round / checking if game completed
     if ($state == 4) {
 
+    }
+
+    //some use cases for state 5
+    if ($state == 5) {
+
+        $gameState["endResults"] = $dod->getEndResults();
     }
 
     $gameState["state"] = $state;

@@ -24,8 +24,9 @@ try {
     $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
     $dod->start();
 
-    $gameState["status"] = $dod->setDare($_POST['text'], $_POST['drinksWorth']);
-    $gameState["state"] = $dod->getState();
+    $gameState["reset"] = $dod->resetGame();
+
+    $gameState["state"] = $state;
 
 } catch (Exception $e) {
     //show any errors

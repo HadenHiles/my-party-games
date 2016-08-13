@@ -24,7 +24,7 @@ try {
     $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
     $dod->start();
 
-    $gameState["status"] = $dod->setDare($_POST['text'], $_POST['drinksWorth']);
+    $gameState["status"] = $dod->freePass();
     $gameState["state"] = $dod->getState();
 
 } catch (Exception $e) {
