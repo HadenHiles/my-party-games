@@ -173,7 +173,7 @@ try {
                 </div>
             </div>
 
-            <div id="votes">
+            <div id="votes" style="color:white;font-size:16px">
                 <div id="voted-bad"></div>
                 <div id="voted-skip"></div>
                 <div id="voted-good"></div>

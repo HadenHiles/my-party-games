@@ -124,7 +124,6 @@ $(function(){
     }, 1000); //end of interval
 
     $('.pickCard').unbind('click').click(function() {
-        alert('hi');
         var num = $(this).data("cardnum");
         var $self = $(this);
         pickCard(num, function(result) {
