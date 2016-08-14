@@ -31,7 +31,34 @@ try {
     $state = $dod->getState();
 
     $gameState["status"] = $dod->finishCurrentDare();
+    $gameState["votes"] = $dod->getVotes();
 
+    $good = 0;
+    $bad = 0;
+    $skip = 0;
+    $count = count($gameState["votes"]);
+
+    foreach ($gameState["votes"] as $vote) {
+
+        if ($vote["vote"] == 3) {
+            $good++;
+        } else if ($vote["vote"] == 2) {
+            $skip++;
+        } else if ($vote["vote"] == 1) {
+            $bad++;
+        }
+
+        if ($good > floor($count / 2)) {
+            $verdict = "good";
+            $user->addPoints($dod->getDrinksWorth(true));
+        } else if ($skip > floor($count / 2)) {
+            $verdict = "skip";
+        } else if ($bad > floor($count / 2)) {
+            $verditct = "bad";
+        }
+    }
+
+    $gameState["verdict"] = $verdict;
     $gameState["state"] = $state;
 
 } catch (Exception $e) {
