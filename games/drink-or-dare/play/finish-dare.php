@@ -50,7 +50,7 @@ try {
 
         if ($good > floor($count / 2)) {
             $verdict = "good";
-            $user->addPoints($dod->getDrinksWorth(true));
+            $user->addPoints($dod->getDrinksWorth(true), $thisUser['userid']);
         } else if ($skip > floor($count / 2)) {
             $verdict = "skip";
         } else if ($bad > floor($count / 2)) {
