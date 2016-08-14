@@ -36,6 +36,10 @@ try {
         $gameState["waiting"] = $dod->getHasCurrentDare();
     }
 
+    if ($state == 2) {
+        $gameState["cardInfo"] = $dod->getCardsInfo();
+    }
+
     //some use cases for state 3: using the cards
     if ($state == 3) {
         //check to see if user has looked at their dare or not

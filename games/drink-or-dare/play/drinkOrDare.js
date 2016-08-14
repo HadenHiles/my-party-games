@@ -42,6 +42,14 @@ $(function(){
                     case 2:
                         //shuffling and assigning dares
                         document.getElementById('game-stage-2').style.display = "block";
+
+                        if (result.cardInfo != "") {
+
+                            for (var i = 0; i < result.cardInfo.length; i++) {
+
+                                document.getElementById('').innerHTML = result.cardInfo[i].picture;
+                            }
+                        }
                         break;
 
                     case 3:

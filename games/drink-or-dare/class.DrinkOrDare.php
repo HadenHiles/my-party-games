@@ -335,6 +335,7 @@ class DrinkOrDare {
                 $result->bindParam(":dare", $text);
                 $result->bindParam(":round_number", $this->current_round);
                 $result->bindParam(":game_id", $this->gameid);
+                $result->bindParam(":game_id", $this->gameid);
                 $result->bindParam(":drinksworth", $drinksWorth);
 
                 if ($result->execute() && $result->errorCode() == 0) {
@@ -500,6 +501,23 @@ class DrinkOrDare {
         return false;
     }
 
+    public function getCardsInfo() {
+        global $db;
+
+        $sql = 'SELECT * FROM drink_or_dare_user_dares WHERE game_id = :gameid AND round_number = :roundnumber';;
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":gameid", $this->gameid);
+        $result->bindValue(":round_number", $this->current_round);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            return $result->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return false;
+    }
+
     /**
      * @param bool $getInformation
      * @param int $cardId
@@ -513,7 +531,7 @@ class DrinkOrDare {
                    SELECT @id := @id+1 AS "id", dodud.*, users.* 
                    FROM drink_or_dare_user_dares AS dodud 
                    LEFT JOIN users ON dodud.assign_to_id = users.id 
-                   WHERE dodud.game_id = :gameid';
+                   WHERE dodud.game_id = :gameid;';
 
             $result = $db->prepare($sql);
             $result->bindValue(":gameid", $this->gameid);
@@ -522,6 +540,7 @@ class DrinkOrDare {
 
                 if ($getInformation) {
                     $result = $result->fetchAll(PDO::FETCH_ASSOC);
+
                     return $result[$cardId-1];
                 }
 
