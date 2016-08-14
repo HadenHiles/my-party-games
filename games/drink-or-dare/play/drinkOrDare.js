@@ -1,6 +1,7 @@
 $(function(){
     var hasNotifiedUserOfAllVotesCasted = false;
     var isMyTurn = false;
+    var verdict = "";
 
     var updateIneterval = setInterval(function() {
         $.ajax({
@@ -88,6 +89,7 @@ $(function(){
                             document.getElementById('voted-bad').innerHTML = bad + ' people voted bad.';
                             document.getElementById('voted-skip').innerHTML = skip + ' people voted skip.';
                             document.getElementById('voted-good').innerHTML = good + ' people voted good.';
+
                             //console.log("Votes: good=" + good + ", bad="+bad + ", skip="+skip);
                         } else {
                             document.getElementById('voted-bad').innerHTML = '0 people voted bad.';
@@ -340,7 +342,13 @@ function finishDare() {
         if (result = JSON.parse(result)) {
 
             if (result.status == true) {
-                msg(false, false, "game-drink-or-dare-finish-dare-success");
+                if (result.verdict == "skip") {
+                    msg(false, false, "game-drink-or-dare-skip");
+                } else if (result.verdict == "good") {
+                    msg(false, false, "game-drink-or-dare-good");
+                } else if (result.verdict == "bad") {
+                    msg(false, false, "game-drink-or-dare-bad");
+                }
             } else {
                 msg(false, false, "game-drink-or-dare-finish-dare-failure");
             }

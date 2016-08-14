@@ -231,6 +231,36 @@ class User {
         return false;
     }
 
+    public function addPoints($points = 0, $userid) {
+
+        global $db;
+
+        $sql = 'SELECT points FROM users WHERE id = :userid';
+
+        $result = $db->prepare($sql);
+        $result->bindValue(":userid", $userid);
+
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+
+            $points = $result['points'];
+
+            $sql = 'UPDATE users SET points = :points WHERE id = :userid';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":userid", $userid);
+            $result->bindValue(":points", $points);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param $code
      * @param $orderByPoints

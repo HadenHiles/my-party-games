@@ -20,6 +20,9 @@ var messages = {
     "game-drink-or-dare-reset-success":"The game could not be reset!",
     "game-drink-or-dare-free-pass-failure":"You've already used your free pass!",
     "game-drink-or-dare-free-pass-success":"Using free pass, Chicken. Bwak Bwak!",
+    "game-drink-or-dare-skip":"People voted skip this dare!",
+    "game-drink-or-dare-good":"People voted that you completed the dare!",
+    "game-drink-or-dare-bad":"People voted that you should drink!",
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',
