@@ -36,6 +36,11 @@ try {
         $gameState["waiting"] = $dod->getHasCurrentDare();
     }
 
+    //some use cases for state 2
+    if ($state == 2) {
+        $gameState["cardInfo"] = $dod->getCardsInfo();
+    }
+
     //some use cases for state 3: using the cards
     if ($state == 3) {
         //check to see if user has looked at their dare or not
@@ -51,6 +56,10 @@ try {
 
             $gameState["dare"] = "hidden";
         }
+
+        $gameState["cardInfo"] = $dod->getCardsInfo();
+
+        $gameState["cardInfo"]['cardNum'] = $gameState['cardInfo'][0];
 
         //check to see if it's their turn
         $gameState["turn"] = $dod->getIsMyTurn();

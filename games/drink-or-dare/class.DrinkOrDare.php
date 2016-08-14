@@ -898,6 +898,25 @@ class DrinkOrDare {
         return false;
     }
 
+    public function getCardsInfo() {
+    global $db;
+
+    $sql = 'SELECT users.display_name, users.picture, dodud.card_picked
+               FROM drink_or_dare_user_dares AS dodud
+               LEFT JOIN users ON dodud.assign_to_id = users.id
+               WHERE dodud.game_id = :gameid';
+
+    $result = $db->prepare($sql);
+    $result->bindValue(":gameid", $this->gameid);
+
+    if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+        return $result->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    return false;
+}
+
     public function getUserId() {
 
         return $this->userid;

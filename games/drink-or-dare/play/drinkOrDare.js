@@ -18,6 +18,8 @@ $(function(){
                     clearInterval(updateIneterval);
                 }
 
+                $('#currentRound').html("Round " + result.currentRound + "/" + result.totalRounds);
+
                 var state = parseInt(result.state);
                 hideAllExcept(state);
 
@@ -39,12 +41,24 @@ $(function(){
                     case 2:
                         //shuffling and assigning dares
                         document.getElementById('game-stage-2').style.display = "block";
+
+                        if (result.cardInfo.length > 0) {
+                            $('.pickCard').each(function(idx, val) {
+                                var $targetCard = $(this)[idx];
+                                if(result.cardInfo[idx].display_name != null && result.cardInfo[idx].picture != null) {
+                                    var name = "<h5 class='owner-name'>" + result.cardInfo[idx].display_name + "</h5>";
+                                    var picture = "<img class='owner-picture' src='" + result.cardInfo[idx].picture + "' />";
+                                    var ownerHtml = name + picture;
+                                    $(this).html(ownerHtml);
+                                }
+                            });
+                        }
                         break;
 
                     case 3:
                         //looping users carrying out dares
-                        document.getElementById('myCard').innerHTML = result.dare;
-                        document.getElementById('activeDare').innerHTML = result.dare;
+                        document.getElementById('myCard').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
+                        document.getElementById('activeDare').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
                         document.getElementById('game-stage-3').style.display = "block";
 
                         if (result.turn) {
@@ -56,7 +70,7 @@ $(function(){
                                 hasNotifiedUserOfAllVotesCasted = false;
                             }
                         } else {
-                            document.getElementById('activeDare').innerHTML = result.dare;
+                            document.getElementById('activeDare').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
                             document.getElementById('game-stage-3-player').style.display = "none";
                             document.getElementById('game-stage-3-viewer').style.display = "block";
                         }
@@ -65,6 +79,20 @@ $(function(){
                             hasNotifiedUserOfAllVotesCasted = true;
                             msg(false, false, "game-drink-or-dare-all-votes-casted");
                         }
+
+                        // if (result.cardInfo.length > 0) {
+                        //     $('.showCard').each(function(idx, val) {
+                        //         var $targetCard = $(this)[idx];
+                        //         if($(this).data("cardnum") == idx) {
+                        //             if(result.cardInfo[idx].display_name != null && result.cardInfo[idx].picture != null) {
+                        //                 var name = "<h5 class='owner-name'>" + result.cardInfo[idx].display_name + "</h5>";
+                        //                 var picture = "<img class='owner-picture' src='" + result.cardInfo[idx].picture + "' />";
+                        //                 var ownerHtml = name + picture;
+                        //                 $(this).html(ownerHtml);
+                        //             }
+                        //         }
+                        //     });
+                        // }
 
                         //get voting stats
                         if (result.votes.length > 0) {
@@ -86,6 +114,7 @@ $(function(){
                             document.getElementById('voted-bad').innerHTML = bad + ' people voted bad.';
                             document.getElementById('voted-skip').innerHTML = skip + ' people voted skip.';
                             document.getElementById('voted-good').innerHTML = good + ' people voted good.';
+
                             //console.log("Votes: good=" + good + ", bad="+bad + ", skip="+skip);
                         } else {
                             document.getElementById('voted-bad').innerHTML = '0 people voted bad.';
@@ -124,7 +153,6 @@ $(function(){
     }, 1000); //end of interval
 
     $('.pickCard').unbind('click').click(function() {
-        alert('hi');
         var num = $(this).data("cardnum");
         var $self = $(this);
         pickCard(num, function(result) {
@@ -176,14 +204,23 @@ function freePass() {
 function setDare() {
 
     var textContainer = document.getElementById('dare-text');
-    var drinksWorth = document.getElementById('drinksWorth').value;
+    var allDrinksWorth = document.getElementsByName('drinksWorth');
+    var drinksWorthSet = false;
+    var drinksWorth;
 
     if (textContainer.value != "") {
+        for (var i = 0; i < allDrinksWorth.length; i++) {
+            if (allDrinksWorth[i].checked) {
+                drinksWorth = allDrinksWorth[i];
+                drinksWorthSet = true;
+            }
+        }
+        if(drinksWorthSet) {
         //ajax call to set dare
         $.ajax({
             url:"set-dare.php",
             method:"POST",
-            data:{"text":textContainer.value,"drinksWorth":drinksWorth}
+                data:{"text":textContainer.value,"drinksWorth":drinksWorth.value}
         }).done(function(result) {
             console.log(result);
 
@@ -198,6 +235,9 @@ function setDare() {
                 }
             }
         });
+        } else {
+            msg(false, false, 'game-drink-or-dare-empty-drinks-worth');
+        }
     } else {
         msg(false, false, 'game-drink-or-dare-empty-dare');
     }
@@ -279,6 +319,7 @@ function getOwner(cardNum, cb) {
         method:"POST",
         data:{"card_num":cardNum}
     }).done(function(result) {
+        console.log(result);
         if (result = JSON.parse(result)) {
             if (typeof result.display_name != "undefined" && typeof result.picture != "undefined") {
                 cb(result);
@@ -327,7 +368,13 @@ function finishDare() {
         if (result = JSON.parse(result)) {
 
             if (result.status == true) {
-                msg(false, false, "game-drink-or-dare-finish-dare-success");
+                if (result.verdict == "skip") {
+                    msg(false, false, "game-drink-or-dare-skip");
+                } else if (result.verdict == "good") {
+                    msg(false, false, "You can give out " + result.drinksWorth + " drinks");
+                } else if (result.verdict == "bad") {
+                    msg(false, false, "game-drink-or-dare-bad");
+                }
             } else {
                 msg(false, false, "game-drink-or-dare-finish-dare-failure");
             }

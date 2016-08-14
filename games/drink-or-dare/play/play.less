@@ -1,3 +1,14 @@
+/* fonts */
+@font-face {
+  font-family: 'CompleteinHim';
+  src: url('../fonts/CompleteinHim.eot');
+  src: url('../fonts/CompleteinHim.eot') format('embedded-opentype'),
+  url('../fonts/CompleteinHim.woff2') format('woff2'),
+  url('../fonts/CompleteinHim.woff') format('woff'),
+  url('../fonts/CompleteinHim.ttf') format('truetype'),
+  url('../fonts/CompleteinHim.svg#CompleteinHim') format('svg');
+}
+
 body {
   background: url('images/background.jpg') no-repeat;
   background-size: cover;
@@ -21,6 +32,12 @@ body {
     }
   }
 }
+
+/* Form */
+.drinksWorth {
+  margin: 0 5px;
+}
+
 .dare {
   width: 19%;
   margin: 0.5% 0.5%;
@@ -31,6 +48,38 @@ body {
 .paper {
   background: url('images/paper2.jpg') 100% 100% no-repeat;
   background-size: 100% 100%;
+
+  &.showCard {
+    .dareText {
+      position: absolute;
+      top: 5%;
+      left: 0;
+      width: 96%;
+      text-align: center;
+      font-size: 34px;
+      font-family: "CompleteinHim", Arial, sans-serif;
+    }
+  }
+
+  .owner-name {
+    position: absolute;
+    top: 5px;
+    width: 100%;
+    text-align: center;
+    margin-top: 40%;
+  }
+  img.owner-picture {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+  }
+}
+.votes {
+  color: #fff;
+  font-size: 20px;
 }
 .actions {
   width: 100%;

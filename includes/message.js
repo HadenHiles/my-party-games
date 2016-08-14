@@ -6,6 +6,7 @@ var messages = {
     "game-empty-name":"Please enter a name",
 
     "game-drink-or-dare-empty-dare":"Dare cannot be empty.",
+    "game-drink-or-dare-empty-drinks-worth":"Please give the dare a number of drinks.",
     "game-drink-or-dare-stolen":"Someone stole your dare! Pick another.",
     "game-drink-or-dare-submitted-dare":"Dare created successfully!",
     "game-drink-or-dare-chosen-dare":"You have chosen your dare. Face the consequences.",
@@ -19,6 +20,9 @@ var messages = {
     "game-drink-or-dare-reset-success":"The game could not be reset!",
     "game-drink-or-dare-free-pass-failure":"You've already used your free pass!",
     "game-drink-or-dare-free-pass-success":"Using free pass, Chicken. Bwak Bwak!",
+    "game-drink-or-dare-skip":"People voted skip this dare!",
+    "game-drink-or-dare-good":"People voted that you completed the dare!",
+    "game-drink-or-dare-bad":"People voted that you should drink!",
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',
