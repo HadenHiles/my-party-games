@@ -47,19 +47,20 @@ try {
         } else if ($vote["vote"] == 1) {
             $bad++;
         }
+    }
 
-        if ($good > floor($count / 2)) {
-            $verdict = "good";
-            $user->addPoints($dod->getDrinksWorth(true), $thisUser['userid']);
-        } else if ($skip > floor($count / 2)) {
-            $verdict = "skip";
-        } else if ($bad > floor($count / 2)) {
-            $verditct = "bad";
-        }
+    if ($good == $bad || $good == $skip || $bad == $skip || $skip > $good || $skip > $bad) {
+        $verdict = "skip";
+    } else if ($good == $bad || $good > $skip || $good > $bad) {
+        $verdict = "good";
+        $user->addPoints($dod->getDrinksWorth(true), $thisUser['userid']);
+    } else if ($bad >= $good || $bad > $skip) {
+        $verdict = "bad";
     }
 
     $gameState["verdict"] = $verdict;
     $gameState["state"] = $state;
+    $gameState["drinksWorth"] = $dod->getDrinksWorth(true);
 
 } catch (Exception $e) {
     //show any errors

@@ -345,7 +345,7 @@ function finishDare() {
                 if (result.verdict == "skip") {
                     msg(false, false, "game-drink-or-dare-skip");
                 } else if (result.verdict == "good") {
-                    msg(false, false, "game-drink-or-dare-good");
+                    msg(false, false, "You can give out " + result.drinksWorth + " drinks");
                 } else if (result.verdict == "bad") {
                     msg(false, false, "game-drink-or-dare-bad");
                 }
