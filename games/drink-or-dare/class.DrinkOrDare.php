@@ -508,28 +508,32 @@ class DrinkOrDare {
     public function getOwner($getInformation = false, $cardId = 0) {
         global $db;
 
-        //if (!empty($cardId)) {
-            $sql = 'SET @id=0; 
-                   SELECT @id := @id+1 AS "id", dodud.*, users.* 
-                   FROM drink_or_dare_user_dares AS dodud 
-                   LEFT JOIN users ON dodud.assign_to_id = users.id 
-                   WHERE dodud.game_id = :gameid';
+        if (!empty($cardId)) {
+            $sql = 'SET @id=0;';
+            $normalResult = $db->prepare($sql);
+            $normalResult->execute();
 
-            $result = $db->prepare($sql);
+            $fuckingSql = 'SELECT @id := @id+1 AS "id", dodud.*, users.display_name, users.picture 
+                           FROM drink_or_dare_user_dares AS dodud 
+                           LEFT JOIN users ON dodud.assign_to_id = users.id 
+                           WHERE dodud.game_id = :gameid';
+
+            $result = $db->prepare($fuckingSql);
             $result->bindValue(":gameid", $this->gameid);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-
                 if ($getInformation) {
                     $result = $result->fetchAll(PDO::FETCH_ASSOC);
                     return $result[$cardId-1];
+                } else {
+                    return true;
                 }
-
-                return true;
+            } else {
+                return false;
             }
-        //}
-
-        return false;
+        } else {
+            return false;
+        }
     }
 
     /**

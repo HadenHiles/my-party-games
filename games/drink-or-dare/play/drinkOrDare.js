@@ -294,6 +294,7 @@ function getOwner(cardNum, cb) {
         method:"POST",
         data:{"card_num":cardNum}
     }).done(function(result) {
+        console.log(result);
         if (result = JSON.parse(result)) {
             if (typeof result.display_name != "undefined" && typeof result.picture != "undefined") {
                 cb(result);
