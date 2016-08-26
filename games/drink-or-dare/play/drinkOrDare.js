@@ -43,19 +43,23 @@ $(function(){
                         //shuffling and assigning dares
                         document.getElementById('game-stage-2').style.display = "block";
 
-                        if (result.cardInfo.lenth > 0) {
-
-                            for (var i = 0; i < result.cardInfo.length; i++) {
-
-                                document.getElementById('').innerHTML = result.cardInfo[i].picture;
+                        if (result.cardInfo.length > 0) {
+                            $('.pickCard').each(function(idx, val) {
+                                var $targetCard = $(this)[idx];
+                                if(result.cardInfo[idx].display_name != null && result.cardInfo[idx].picture != null) {
+                                    var name = "<h5 class='owner-name'>" + result.cardInfo[idx].display_name + "</h5>";
+                                    var picture = "<img class='owner-picture' src='" + result.cardInfo[idx].picture + "' />";
+                                    var ownerHtml = name + picture;
+                                    $(this).html(ownerHtml);
                             }
+                            });
                         }
                         break;
 
                     case 3:
                         //looping users carrying out dares
-                        document.getElementById('myCard').innerHTML = result.dare;
-                        document.getElementById('activeDare').innerHTML = result.dare;
+                        document.getElementById('myCard').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
+                        document.getElementById('activeDare').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
                         document.getElementById('game-stage-3').style.display = "block";
 
                         if (result.turn) {
@@ -67,7 +71,7 @@ $(function(){
                                 hasNotifiedUserOfAllVotesCasted = false;
                             }
                         } else {
-                            document.getElementById('activeDare').innerHTML = result.dare;
+                            document.getElementById('activeDare').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
                             document.getElementById('game-stage-3-player').style.display = "none";
                             document.getElementById('game-stage-3-viewer').style.display = "block";
                         }

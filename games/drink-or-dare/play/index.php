@@ -143,7 +143,7 @@ try {
             <div <?php echo ($dod->getIsMyTurn() ? : 'style="display:none"'); ?> id="game-stage-3-player">
                 <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="myCard">
                     <?php
-                    echo $dod->checkHasPeeked() ? $dod->getDare() : "hidden";
+                    echo $dod->checkHasPeeked() ? "<h5 class='dareText'>" . $dod->getDare() . "</h5>" : "hidden";
                     ?>
                 </div>
                 <div class="mdl-cell mdl-cell--12-col actions center">
@@ -190,7 +190,7 @@ try {
                 </div>
             </div>
 
-            <div id="votes" style="color:white;font-size:16px">
+            <div class="votes" id="votes">
                 <div id="voted-bad"></div>
                 <div id="voted-skip"></div>
                 <div id="voted-good"></div>

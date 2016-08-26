@@ -537,10 +537,12 @@ class DrinkOrDare {
             $fuckingSql = 'SELECT @id := @id+1 AS "id", dodud.*, users.display_name, users.picture 
                            FROM drink_or_dare_user_dares AS dodud 
                            LEFT JOIN users ON dodud.assign_to_id = users.id 
-                           WHERE dodud.game_id = :gameid';
+                           WHERE dodud.game_id = :gameid
+                           AND dodud.round_number = :round_number';
 
             $result = $db->prepare($fuckingSql);
             $result->bindValue(":gameid", $this->gameid);
+            $result->bindValue(":round_number", $this->current_round);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
                 if ($getInformation) {
@@ -549,12 +551,9 @@ class DrinkOrDare {
                 } else {
                     return true;
                 }
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
