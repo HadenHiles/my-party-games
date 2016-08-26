@@ -503,7 +503,11 @@ class DrinkOrDare {
     public function getCardsInfo() {
         global $db;
 
-        $sql = 'SELECT * FROM drink_or_dare_user_dares WHERE game_id = :gameid AND round_number = :roundnumber';;
+        $sql = 'SELECT dodud.*, users.*
+               FROM drink_or_dare_user_dares AS dodud
+               LEFT JOIN users ON dodud.assign_to_id = users.id
+               WHERE dodud.game_id = :gameid
+               AND dodud.round_number = :round_number';
 
         $result = $db->prepare($sql);
         $result->bindValue(":gameid", $this->gameid);

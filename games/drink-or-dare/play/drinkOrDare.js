@@ -43,7 +43,7 @@ $(function(){
                         //shuffling and assigning dares
                         document.getElementById('game-stage-2').style.display = "block";
 
-                        if (result.cardInfo != "") {
+                        if (result.cardInfo.lenth > 0) {
 
                             for (var i = 0; i < result.cardInfo.length; i++) {
 
