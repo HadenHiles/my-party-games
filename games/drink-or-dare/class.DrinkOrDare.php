@@ -500,23 +500,6 @@ class DrinkOrDare {
         return false;
     }
 
-    public function getCardsInfo() {
-        global $db;
-
-        $sql = 'SELECT * FROM drink_or_dare_user_dares WHERE game_id = :gameid AND round_number = :roundnumber';;
-
-        $result = $db->prepare($sql);
-        $result->bindValue(":gameid", $this->gameid);
-        $result->bindValue(":round_number", $this->current_round);
-
-        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-
-            return $result->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        return false;
-    }
-
     /**
      * @param bool $getInformation
      * @param int $cardId
@@ -533,10 +516,12 @@ class DrinkOrDare {
             $fuckingSql = 'SELECT @id := @id+1 AS "id", dodud.*, users.display_name, users.picture 
                            FROM drink_or_dare_user_dares AS dodud 
                            LEFT JOIN users ON dodud.assign_to_id = users.id 
-                           WHERE dodud.game_id = :gameid';
+                           WHERE dodud.game_id = :gameid
+                           AND dodud.round_number = :round_number';
 
             $result = $db->prepare($fuckingSql);
             $result->bindValue(":gameid", $this->gameid);
+            $result->bindValue(":round_number", $this->current_round);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
                 if ($getInformation) {
@@ -545,12 +530,9 @@ class DrinkOrDare {
                 } else {
                     return true;
                 }
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -948,23 +930,23 @@ class DrinkOrDare {
     }
 
     public function getCardsInfo() {
-    global $db;
+        global $db;
 
-    $sql = 'SELECT users.display_name, users.picture, dodud.card_picked
-               FROM drink_or_dare_user_dares AS dodud
-               LEFT JOIN users ON dodud.assign_to_id = users.id
-               WHERE dodud.game_id = :gameid';
+        $sql = 'SELECT users.display_name, users.picture, dodud.card_picked
+                   FROM drink_or_dare_user_dares AS dodud
+                   LEFT JOIN users ON dodud.assign_to_id = users.id
+                   WHERE dodud.game_id = :gameid';
 
-    $result = $db->prepare($sql);
-    $result->bindValue(":gameid", $this->gameid);
+        $result = $db->prepare($sql);
+        $result->bindValue(":gameid", $this->gameid);
 
-    if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
-        return $result->fetchAll(PDO::FETCH_ASSOC);
+            return $result->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return false;
     }
-
-    return false;
-}
 
     public function getUserId() {
 

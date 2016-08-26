@@ -40,6 +40,7 @@ try {
 
     foreach ($gameState["votes"] as $vote) {
 
+        var_dump($vote["vote"]);
         if ($vote["vote"] == 3) {
             $good++;
         } else if ($vote["vote"] == 2) {
