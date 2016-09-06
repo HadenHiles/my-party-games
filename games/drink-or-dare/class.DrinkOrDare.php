@@ -31,7 +31,7 @@ class DrinkOrDare {
         $this->hasCurrentDare = false;
         $this->drinksToWin = $drinksToWin;
         $this->numPlayers = 0;
-        $this->activetPlayer = 0;
+        $this->activePlayer = 0;
         $this->freePass = $freePass;
     }
 
@@ -80,7 +80,7 @@ class DrinkOrDare {
      */
     public function start($isStarted = 1) {
 
-        global $db, $game;
+        global $db, $game, $user;
 
         $this->numPlayers = count($game['users']);
 
@@ -123,7 +123,7 @@ class DrinkOrDare {
                     //set active players
                     if ($this->state == 3) {
 
-                        $sql = 'SELECT dodo.user_id, dodo.free_pass FROM drink_or_dare_order AS dodo
+                        $sql = 'SELECT dodo.*, dodo.free_pass, dodud.* FROM drink_or_dare_order AS dodo
                                 LEFT JOIN drink_or_dare_user_dares AS dodud ON dodo.user_id = dodud.assign_to_id
                                 WHERE dodo.game_id = :gameid
                                 AND dodud.completed = 0
@@ -138,7 +138,7 @@ class DrinkOrDare {
                         if ($order->execute() && $order->errorCode() == 0 && $order->rowCount() > 0) {
 
                             $order = $order->fetch(PDO::FETCH_ASSOC);
-                            $this->activePlayer = $order['user_id'];
+                            $this->activePlayer = $user->getUser($order['assign_to_id']);
                             $this->freePass = $order['free_pass'];
                         }
                     }
@@ -429,8 +429,7 @@ class DrinkOrDare {
      * @return bool
      */
     public function getIsMyTurn() {
-
-        if ($this->activePlayer == $this->userid) {
+        if ($this->activePlayer['userid'] == $this->userid) {
             return true;
         }
 
@@ -477,7 +476,7 @@ class DrinkOrDare {
 
         if ($activePlayer) {
 
-            $result->bindValue(":userid", $this->activePlayer);
+            $result->bindValue(":userid", $this->activePlayer['userid']);
 
         } else {
 
@@ -600,7 +599,7 @@ class DrinkOrDare {
 
         if ($activePlayer) {
 
-            $result->bindValue(":userid", $this->activePlayer);
+            $result->bindValue(":userid", $this->activePlayer['userid']);
             //echo $this->activePlayer;
         } else {
 
@@ -691,7 +690,7 @@ class DrinkOrDare {
         $sql = 'SELECT drinks_worth FROM drink_or_dare_user_dares WHERE assign_to_id = :activeplayer AND game_id = :game_id AND round_number = :roundnumber';
         
         $result = $db->prepare($sql);
-        $result->bindValue(":activeplayer", $this->activePlayer);
+        $result->bindValue(":activeplayer", $this->activePlayer['userid']);
         $result->bindValue(":gameid", $this->gameid);
         $result->bindValue(":roundnumber", $this->current_round);
 
@@ -890,8 +889,14 @@ class DrinkOrDare {
             $result->bindValue(":currentround", $this->current_round);
 
             if ($result->execute() && $result->errorCode() == 0) {
+                $sql = "DELETE FROM drink_or_dare_user_dares WHERE game_id = :gameid AND round_number = :currentround";
+                $result = $db->prepare($sql);
+                $result->bindValue(":gameid", $this->gameid);
+                $result->bindValue(":currentround", $this->current_round - 1);
 
-                return true;
+                if ($result->execute() && $result->errorCode() == 0) {
+                    return true;
+                }
             }
         }
 

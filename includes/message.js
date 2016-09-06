@@ -15,7 +15,7 @@ var messages = {
     "game-drink-or-dare-vote-cast-change":"Your vote has been changed.",
     "game-drink-or-dare-vote-cast-failure":"Your vote could not be cast. Something went wrong.",
     "game-drink-or-dare-finish-dare-success":"Dare completed.",
-    "game-drink-or-dare-finish-dare-failure":"You cannot complete the dare until verified by your peers.",
+    "game-drink-or-dare-finish-dare-failure":"You cannot complete the dare until all votes are casted.",
     "game-drink-or-dare-all-votes-casted":"All votes have been casted for this dare!",
     "game-drink-or-dare-reset-success":"The game could not be reset!",
     "game-drink-or-dare-free-pass-failure":"You've already used your free pass!",

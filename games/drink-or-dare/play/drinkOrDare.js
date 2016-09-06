@@ -57,12 +57,15 @@ $(function(){
                         break;
 
                     case 3:
-                        //looping users carrying out dares
-                        document.getElementById('myCard').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
-                        document.getElementById('activeDare').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
                         document.getElementById('game-stage-3').style.display = "block";
 
                         if (result.turn) {
+                            if(result.hasPeeked) {
+                                document.getElementById('myCard').innerHTML = "<h2 class='activeDrinksWorth'>" + result.dare.drinks_worth + "</h2><div class='activeDrinksWorthPic'><img src='/join/pictures/party/pint.png' /></div><h5 class='dareText'>" + result.dare.dare + "</h5>";
+                            } else {
+                                document.getElementById('myCard').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>";
+                                document.getElementById('activeDare').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.name + "</h5>";
+                            }
                             document.getElementById('game-stage-3-player').style.display = "block";
                             document.getElementById('game-stage-3-viewer').style.display = "none";
 
@@ -71,7 +74,11 @@ $(function(){
                                 hasNotifiedUserOfAllVotesCasted = false;
                             }
                         } else {
-                            document.getElementById('activeDare').innerHTML = "<h5 class='dareText'>" + result.dare + "</h5>";
+                            if(result.hasPeeked) {
+                                document.getElementById('activeDare').innerHTML = "<h2 class='activeDrinksWorth'>" + result.dare.drinks_worth + "</h2><div class='activeDrinksWorthPic'><img src='/join/pictures/party/pint.png' /></div><h5 class='dareText'>" + result.dare.dare + "</h5>";
+                            } else {
+                                document.getElementById('activeDare').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.name + "</h5>";
+                            }
                             document.getElementById('game-stage-3-player').style.display = "none";
                             document.getElementById('game-stage-3-viewer').style.display = "block";
                         }
@@ -87,6 +94,7 @@ $(function(){
                             var bad = 0;
                             var good = 0;
                             var skip = 0;
+                            var totalVotes = 0;
 
                             for (var i = 0; i < result.votes.length; i++) {
                                 if (result.votes[i].vote == 3) {
@@ -96,23 +104,26 @@ $(function(){
                                 } else if (result.votes[i].vote == 1) {
                                     bad++;
                                 }
+                                totalVotes++;
                             }
 
-                            document.getElementById('voted-bad').innerHTML = bad + ' people voted bad.';
-                            document.getElementById('voted-skip').innerHTML = skip + ' people voted skip.';
-                            document.getElementById('voted-good').innerHTML = good + ' people voted good.';
+                            // document.getElementById('voted-bad').innerHTML = bad + ' people voted bad.';
+                            // document.getElementById('voted-skip').innerHTML = skip + ' people voted skip.';
+                            // document.getElementById('voted-good').innerHTML = good + ' people voted good.';
 
                             //console.log("Votes: good=" + good + ", bad="+bad + ", skip="+skip);
+                            document.getElementById('num-votes').innerHTML = totalVotes.toString();
                         } else {
-                            document.getElementById('voted-bad').innerHTML = '0 people voted bad.';
-                            document.getElementById('voted-skip').innerHTML = '0 people voted skip.';
-                            document.getElementById('voted-good').innerHTML = '0 people voted good.';
+                            // document.getElementById('voted-bad').innerHTML = '0 people voted bad.';
+                            // document.getElementById('voted-skip').innerHTML = '0 people voted skip.';
+                            // document.getElementById('voted-good').innerHTML = '0 people voted good.';
+                            document.getElementById('num-votes').innerHTML = "0";
                         }
                         break;
 
                     case 4:
                         //incrementing rounds and check for game completion
-
+                        location.reload();
                         break;
 
                     case 5:
@@ -159,10 +170,7 @@ $(function(){
 
     });
 
-    $('.showCard').click(function() {
-
-        showCard();
-    });
+    $('.showCard').on('click', showCard);
 
 }); //end of document load
 

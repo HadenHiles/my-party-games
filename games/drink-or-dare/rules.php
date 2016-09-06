@@ -1,10 +1,20 @@
 <h3>How To Play</h3>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae porttitor quam. Vivamus quis risus et lectus maximus sodales in in magna. Sed lobortis nisi purus, ut tristique risus convallis feugiat. Phasellus pellentesque viverra libero ut varius. Sed ultrices erat libero, et consectetur velit gravida sed. Pellentesque leo tellus, aliquet sit amet tempus et, tempor et nulla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed arcu tellus, tempor at tempor id, imperdiet ut mi. Praesent lorem arcu, sodales vel nisi et, fermentum tempor turpis.</p>
+<ol>
+    <li>Everyone creates a dare and gives it a "drink" rating</li>
+    <li>When it's your turn, touch on the paper to reveal your dare and read it to your friends</li>
+    <li>Perform the dare, or use your one free pass for the entire game</li>
+    <li>
+        When it <bold>is not</bold> your turn, you get to vote on how well your friend performed the dare
+        <br>
+        You can vote:
+        <ol>
+            <li>Did Bad = Friend drinks</li>
+            <li>Free Pass = Friend passes without drinking</li>
+            <li>Did Good = Friend gives out drinks</li>
+        </ol>
+    </li>
+    <li>Repeat step 4 for each player until everyone has had a turn</li>
+</ol>
 
-<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-<li>Cras a libero ut urna lobortis faucibus.</li>
-<li>Aenean facilisis arcu sit amet sem viverra vulputate.</li>
-<li>Ut non tellus semper, consectetur turpis id, hendrerit odio.</li>
-<li>Curabitur ac libero non tellus dictum posuere.</li>
-<li>Donec venenatis leo non faucibus suscipit.</li>
+<p>Repeat steps 1 - 5 for every round in the game until a winner is declared!</p>

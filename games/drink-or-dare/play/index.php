@@ -127,7 +127,7 @@ try {
         <div class="mdl-cell mdl-cell--8-col dares center" id="game-stage-2" <?php echo ($state == 2 ? : 'style="display:none"'); ?>>
             <h4 style="color: #fff; margin: -50px 0 10px 0;">Pick a Dare!</h4>
             <?php
-            foreach($game['users'] as $key => $user) {
+            foreach($game['users'] as $key => $u) {
                 $key = $key + 1;
                 ?>
                 <div class="mdl-card mdl-shadow--6dp square paper dare pickCard" data-cardnum="<?php echo $key; ?>">
@@ -140,10 +140,29 @@ try {
         <!-- Stage 3 -->
         <div class="mdl-cell mdl-cell--3-col mdl-cell--6-col-tablet mdl-cell--8-col-phone center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> style="min-width: 300px;" id="game-stage-3">
 
-            <div <?php echo ($dod->getIsMyTurn() ? : 'style="display:none"'); ?> id="game-stage-3-player">
+            <div <?php echo ($dod->getIsMyTurn() ? '' : 'style="display:none"'); ?> id="game-stage-3-player">
                 <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="myCard">
                     <?php
-                    echo $dod->checkHasPeeked() ? "<h5 class='dareText'>" . $dod->getDare() . "</h5>" : "hidden";
+                    $dare = $dod->getDare(true, true);
+                    if($dod->checkHasPeeked()) {
+                        ?>
+                        <h2 class="activeDrinksWorth"><?php echo $dare['drinks_worth']; ?></h2>
+                        <div class="activeDrinksWorthPic">
+                            <img src='/join/pictures/party/pint.png' />
+                        </div>
+                        <h5 class='dareText'><?php echo $dare['dare'] ?></h5>
+                        <?php
+                    } else if($dare['assign_to_id'] == $thisUser['userid']) {
+                        ?>
+                        <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>
+                        <?php
+                    } else {
+                        $owner = $dod->getOwner(true, $dare['id']);
+                        $ownerName = $owner['display_name'];
+                        ?>
+                        <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?></h5>
+                        <?php
+                    }
                     ?>
                 </div>
                 <div class="mdl-cell mdl-cell--12-col actions center">
@@ -162,10 +181,29 @@ try {
                 </div>
             </div>
 
-            <div <?php echo (!$dod->getIsMyTurn() ? : 'style="display:none"'); ?> id="game-stage-3-viewer">
+            <div <?php echo (!$dod->getIsMyTurn() ? '' : 'style="display:none"'); ?> id="game-stage-3-viewer">
                 <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="activeDare">
                     <?php
-                    echo $dod->checkHasPeeked(true) ? $dod->getDare(true) : "hidden";
+                    $dare = $dod->getDare(true, true);
+                    if($dod->checkHasPeeked()) {
+                        ?>
+                        <h2 class="activeDrinksWorth"><?php echo $dare['drinks_worth']; ?></h2>
+                        <div class="activeDrinksWorthPic">
+                            <img src='/join/pictures/party/pint.png' />
+                        </div>
+                        <h5 class='dareText'><?php echo $dare['dare'] ?></h5>
+                        <?php
+                    } else if($dare['assign_to_id'] == $thisUser['userid']) {
+                        ?>
+                        <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>
+                        <?php
+                    } else {
+                        $owner = $dod->getOwner(true, $dare['id']);
+                        $ownerName = $owner['display_name'];
+                        ?>
+                        <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?></h5>
+                        <?php
+                    }
                     ?>
                 </div>
                 <div class="mdl-cell mdl-cell--12-col actions center">
@@ -191,9 +229,7 @@ try {
             </div>
 
             <div class="votes" id="votes">
-                <div id="voted-bad"></div>
-                <div id="voted-skip"></div>
-                <div id="voted-good"></div>
+                <h3><span id="num-votes">0</span><span>/<?php echo $dod->getNumPlayers() - 1; ?></span> Votes</h3>
             </div>
         </div>
 

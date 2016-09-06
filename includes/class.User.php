@@ -165,31 +165,21 @@ class User {
      * Return the current user information
      * @returns array, user information
      */
-    public function getUser() {
+    public function getUser($specificUserId = 0) {
         global $db;
 
-        if (!empty($this->userid)) {
-
-            return array(
-                'userid' => $this->userid,
-                'code' => $this->gameid,
-                'gameid' => $this->gameid,
-                'name' => $this->displayname
-            );
-        } else if (!empty($this->sessionid)) {
-
-            $sql = 'SELECT * FROM users WHERE session_id = :sessionid';
+        if($specificUserId > 0) {
+            $sql = 'SELECT * FROM users WHERE id = :userid';
 
             $result = $db->prepare($sql);
-            $result->bindParam(":sessionid", $this->sessionid);
+            $result->bindParam(":userid", $specificUserId);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
                 $result = $result->fetch(PDO::FETCH_ASSOC);
-                $this->userid = $result['userid'];
-                $this->code = $result['gameid'];
-                $this->name = $result['displayname'];
-                $this->gameid = $result['gameid'];
+                $this->userid = $result['id'];
+                $this->gameid = $result['game_id'];
+                $this->displayname = $result['display_name'];
                 $this->isHost = $result['is_host'];
                 $this->isDisplay = $result['is_display'];
 
@@ -205,6 +195,45 @@ class User {
                     'isjoined' => $this->isJoined,
                     'isHost' => $this->isHost
                 );
+            }
+        } else {
+            if (!empty($this->userid)) {
+
+                return array(
+                    'userid' => $this->userid,
+                    'code' => $this->gameid,
+                    'gameid' => $this->gameid,
+                    'name' => $this->displayname
+                );
+            } else if (!empty($this->sessionid)) {
+
+                $sql = 'SELECT * FROM users WHERE session_id = :sessionid';
+
+                $result = $db->prepare($sql);
+                $result->bindParam(":sessionid", $this->sessionid);
+
+                if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                    $result = $result->fetch(PDO::FETCH_ASSOC);
+                    $this->userid = $result['id'];
+                    $this->gameid = $result['game_id'];
+                    $this->displayname = $result['display_name'];
+                    $this->isHost = $result['is_host'];
+                    $this->isDisplay = $result['is_display'];
+
+                    if (!empty($this->code)) {
+                        $this->isJoined = true;
+                    }
+
+                    return array(
+                        'userid' => $this->userid,
+                        'code' => $this->gameid,
+                        'gameid' => $this->gameid,
+                        'name' => $this->displayname,
+                        'isjoined' => $this->isJoined,
+                        'isHost' => $this->isHost
+                    );
+                }
             }
         }
 

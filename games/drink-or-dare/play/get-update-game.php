@@ -62,11 +62,13 @@ try {
         $gameState["allVotesCast"] = $dod->checkAllVotesCast();
         $gameState["activePlayer"] = $dod->getActivePlayer();
         $gameState["numPlayers"] = $dod->getNumPlayers();
+        $gameState["dare"] = $dod->getDare(true, true);
+        $gameState['hasPeeked'] = $dod->checkHasPeeked(true);
     }
 
     //some use cases for state 4: incrementing round / checking if game completed
     if ($state == 4) {
-
+        $dod->checkNextRound();
     }
 
     //some use cases for state 5
