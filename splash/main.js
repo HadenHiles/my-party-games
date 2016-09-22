@@ -19,6 +19,8 @@ $(function() {
         }
     }, 250);
 
+    $('#search-results a').on('click', function() { clearInterval(isFocus); });
+
     //trigger search on keyups
     $('#search-field').on('keyup', function(e) {
 

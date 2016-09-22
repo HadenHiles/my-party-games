@@ -82,7 +82,12 @@ class DrinkOrDare {
 
         global $db, $game, $user;
 
-        $this->numPlayers = count($game['users']);
+        foreach ($game['users'] as $tempUser) {
+            if ($tempUser['is_display'] == 0) {
+                $this->numPlayers++;
+            }
+        }
+
 
         if (!empty($this->gameid)) {
 
@@ -687,7 +692,11 @@ class DrinkOrDare {
 
         global $db;
 
-        $sql = 'SELECT drinks_worth FROM drink_or_dare_user_dares WHERE assign_to_id = :activeplayer AND game_id = :game_id AND round_number = :roundnumber';
+        $sql = 'SELECT drinks_worth
+                FROM drink_or_dare_user_dares
+                WHERE assign_to_id = :activeplayer
+                AND game_id = :game_id
+                AND round_number = :roundnumber';
         
         $result = $db->prepare($sql);
         $result->bindValue(":activeplayer", $this->activePlayer['userid']);

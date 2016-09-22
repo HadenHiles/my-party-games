@@ -16,7 +16,7 @@ $gameState = array();
 //update and check the state of the current game
 try {
     //check that the game is currently still alive
-    if (!$game = $mySession->loadUsers($thisUser['code'], 0)) {
+    if (!$game = $mySession->loadUsers($thisUser['code'])) {
         $gameState["error"] = "Game could not be loaded";
     }
 
