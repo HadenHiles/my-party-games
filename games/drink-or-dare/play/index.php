@@ -8,6 +8,7 @@ require_once('../class.DrinkOrDare.php');
 //check for user in session
 if (empty($_SESSION['user'])) {
     header("Location: /join/");
+    $_SESSION['message'][''] =
     exit();
 }
 

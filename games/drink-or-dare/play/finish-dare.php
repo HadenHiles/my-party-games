@@ -31,32 +31,34 @@ try {
     $state = $dod->getState();
 
     $gameState["status"] = $dod->finishCurrentDare();
-    $gameState["votes"] = $dod->getVotes();
 
-    $good = 0;
-    $bad = 0;
-    $skip = 0;
-    $count = count($gameState["votes"]);
+    if ($gameState["status"]) {
+        $gameState["votes"] = $dod->getVotes();
 
-    foreach ($gameState["votes"] as $vote) {
+        $good = 0;
+        $bad = 0;
+        $skip = 0;
+        $count = count($gameState["votes"]);
 
-        var_dump($vote["vote"]);
-        if ($vote["vote"] == 3) {
-            $good++;
-        } else if ($vote["vote"] == 2) {
-            $skip++;
-        } else if ($vote["vote"] == 1) {
-            $bad++;
+        foreach ($gameState["votes"] as $vote) {
+
+            if ($vote["vote"] == 3) {
+                $good++;
+            } else if ($vote["vote"] == 2) {
+                $skip++;
+            } else if ($vote["vote"] == 1) {
+                $bad++;
+            }
         }
-    }
 
-    if ($good == $bad || $good == $skip || $bad == $skip || $skip > $good || $skip > $bad) {
-        $verdict = "skip";
-    } else if ($good == $bad || $good > $skip || $good > $bad) {
-        $verdict = "good";
-        $user->addPoints($dod->getDrinksWorth(true), $thisUser['userid']);
-    } else if ($bad >= $good || $bad > $skip) {
-        $verdict = "bad";
+        if ($good == $bad || $good == $skip || $bad == $skip || $skip > $good || $skip > $bad) {
+            $verdict = "skip";
+        } else if ($good == $bad || $good > $skip || $good > $bad) {
+            $verdict = "good";
+            $user->addPoints($dod->getDrinksWorth(true), $thisUser['userid']);
+        } else if ($bad >= $good || $bad > $skip) {
+            $verdict = "bad";
+        }
     }
 
     $gameState["verdict"] = $verdict;

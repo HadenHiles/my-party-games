@@ -438,7 +438,7 @@ class GameSession {
      * @param $orderByPoints
      * @return bool|mixed
      */
-    public function loadUsers($code, $orderByPoints) {
+    public function loadUsers($code, $orderByPoints = false) {
 
         global $db, $user;
 
