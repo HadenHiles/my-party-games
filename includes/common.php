@@ -8,9 +8,12 @@
 
 //start the session if it isn't already started
 //if(!session_id()) {
-    session_start();
+session_start();
   //  echo "hit";
 //}
+
+//var_dump($_SESSION);
+//var_dump($_POST);
 
 //examples of constants
 define("SESSION_ID", session_id());

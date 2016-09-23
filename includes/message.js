@@ -23,6 +23,8 @@ var messages = {
     "game-drink-or-dare-skip":"People voted skip this dare!",
     "game-drink-or-dare-good":"People voted that you completed the dare!",
     "game-drink-or-dare-bad":"People voted that you should drink!",
+
+    "user-enter-nickname":"Please enter a nickname"
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',

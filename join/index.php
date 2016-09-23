@@ -18,170 +18,166 @@ $fb = new Facebook\Facebook([
 ]);
 
 //requests
-$isDisplay = $_REQUEST['display'];
-$formToDisplay = "joinGame";
+$formToDisplay = "join";
 
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
     $user = new User(SESSION_ID, DEVICE_IP);
 
+    $gameName = $_SESSION['game']['gameName'];
+    $isDisplay = (isset($_SESSION['game']['isDisplay']) && $_SESSION['game']['isDisplay']);
+    $isHost = (isset($_SESSION['game']['isHost']) && $_SESSION['game']['isHost']);
+
+    //set game name
+    if (!empty($gameName)) {
+        $mySession->setGameName($gameName);
+
+        //check for request to leave game
+        if (isset($_REQUEST['leave'])) {
+            $mySession->clearSessionVars($gameName);
+            header("Location: /join/");
+            exit();
+        }
+    }
+
     //check for form submission to join a game session
-    if ((!empty($_REQUEST['unique-id']) || !empty($_SESSION['current_game_code']))) {
-        //vars
+    if ((!empty($_REQUEST['unique-id']) || !empty($_SESSION['game']['code']))) {
+
+        //get the game code from url or session
         $code = $_REQUEST['unique-id'];
-        
-        if(empty($code) && !empty($_SESSION['current_game_code'])) {
-            $code = $_SESSION['current_game_code'];
-        } else if($_SESSION['current_game_code'] != intval($code)) {
-            $_SESSION['current_game_code'] = intval($code);
+        if(empty($code) && !empty($_SESSION['game']['code'])) {
+            $code = $_SESSION['game']['code'];
         }
 
-        if(!$mySession->getGame($code)) {
+        //get game name now that we have a code if we dont already have it
+        if (empty($gameName)) {
+            $_SESSION['game']['gameName'] = $mySession->getGameName($code);
+            $gameName = $_SESSION['game']['gameName'];
+        }
+
+        if(!$mySession->validateGame($code)) {
             $msg[] = array("msg" => "game-not-found");
-            $formToDisplay = "join";
         } else {
+            //check for update to code in session
+            if($_SESSION['game']['code'] != intval($code)) {
+                $_SESSION['game']['code']  = $code;
+            }
+
+            //display nickname form
             $formToDisplay = "nickname";
 
-            if($user->isJoined(true)) {
+            //check to see if a user is already in a game
+            if($user->isJoined()) {
                 //For users who just left a game and we still have all of their information except game_id
                 $mySession->switchGame($code);
-
                 header("Location: ../lobby/");
                 exit();
             }
-            
+
+            $fbToken = '';
+            $fbUserId = '';
+            $gamePicture = '';
+            $name = '';
+
+            //check for user submitted profile and validate
             if(isset($_REQUEST['display-name'])) {
+
                 $name = $_REQUEST['display-name'];
-                $picture = $_REQUEST['picture'];
-                $fbToken = '';
-                $fbUserId = '';
+                $gamePicture = $_REQUEST['picture'];
+            }
+            //user chose to login via facebook
+            else if (isset($_REQUEST['fb-login'])) {
 
-                //basic error handling
-                if (empty($name)) {
-                    $msg = "Please enter a nickname!";
-                } else {
-                    //request to join a session
-                    $result = $mySession->join($name, $fbToken, $fbUserId, $picture);
-
-                    //check result and if true then save user in session and redirect to lobby
-                    if ($result == true && intval($result)) {
-                        $_SESSION['user'] = $user->getUser();
-
-                        if($_SESSION['isHost']) {
-                            $user->isHost("set", $_SESSION['user']['userid']);
-                            unset($_SESSION['isHost']);
-                        }
-
-                        header("Location: ../lobby/");
-                        exit();
-                    } else if ($result == "user-exists") {
-                        $msg[] = array("msg" => "game-name-in-use");
-                    } else {
-                        $msg[] = array("msg" => "game-not-found");
-                    }
-                }
-            } else if(isset($_REQUEST['fb-login'])) {
-                $formToDisplay = "nickname";
                 try {
                     // Get the Facebook\GraphNodes\GraphUser object for the current user.
                     // If you provided a 'default_access_token', the '{access-token}' is optional.
                     $response = $fb->get('/me', $_SESSION['fb_access_token']);
-
                     $me = $response->getGraphUser();
 
                     //request to join a session
-                    $picture = "http://graph.facebook.com/". $me['id']. "/picture?type=large";
-                    $result = $mySession->join($me['name'], $_SESSION['fb_access_token'], $me['id'], $picture);
+                    $fbToken =  $_SESSION['fb_access_token'];
+                    $fbUserId = $me['id'];
+                    $name = $me['name'];
+                    $gamePicture = "http://graph.facebook.com/". $me['id']. "/picture?type=large";
 
-                    //check result and if true then save user in session and redirect to lobby
-                    if ($result == true && intval($result)) {
+                } catch(Facebook\Exceptions\FacebookResponseException $e) {
+                    // When Graph returns an error
+                    $msg = array('msg' => 'Graph returned an error: ' . $e->getMessage());
+                } catch(Facebook\Exceptions\FacebookSDKException $e) {
+                    // When validation fails or other local issues
+                    $msg = array('msg' => 'Facebook SDK returned an error: ' . $e->getMessage());
+                }
+            } else if ($isDisplay) {
 
+                $formToDisplay = "display";
+                $name = $_REQUEST['screen-name'];
+            }
+
+            //join a game here
+            if (empty($name)) {
+                $msg[] = array("msg" => "user-enter-nickname");
+            } else if (!$isDisplay) {
+                //request to join a session
+                $result = $mySession->join($name, $fbToken, $fbUserId, $gamePicture);
+
+                //check result and if true then save user in session and redirect to lobby
+                if ($result == true && intval($result)) {
+                    $_SESSION['user'] = $user->getUser();
+
+                    if($isHost) {
+                        $user->isHost("set", $_SESSION['user']['userid']);
+
+                        //reset user session values
                         $_SESSION['user'] = $user->getUser();
+                    }
 
-                        if($_SESSION['isHost']) {
-                            $user->isHost("set", $_SESSION['user']['userid']);
-                            unset($_SESSION['isHost']);
-                        }
+                    header("Location: ../lobby/");
+                    exit();
+                } else if ($result == "user-exists") {
 
-                        header("Location: ../lobby/");
-                        exit();
-                    } else if ($result == "user-exists") {
+                    //override information if user using facebook otherwise they will have to choose another name
+                    if (!empty($fbUserId)) {
                         //override with new information
-                        $result = $mySession->updateUser($me['name'], $code, $_SESSION['fb_access_token'], $me['id'], $picture);
-                        
-                        if ($result == true) {
+                        if ($mySession->updateUser($name, $code, $fbToken, $fbUserId, $picture)) {
                             $_SESSION['user'] = $user->getUser();
 
-                            if($_SESSION['isHost']) {
+                            if($isHost) {
                                 $user->isHost("set", $_SESSION['user']['userid']);
-                                unset($_SESSION['isHost']);
+
+                                //reset user session values
+                                $_SESSION['user'] = $user->getUser();
+                            }
+                            if($isDisplay) {
+                                $user->isDisplay("set", $_SESSION['user']['userid'], 1);
+
+                                //reset user session values
+                                $_SESSION['user'] = $user->getUser();
                             }
 
                             header("Location: ../lobby/");
                             exit();
-                        } else if (intval($result)) {
                         } else {
                             $msg[] = array("msg" => "game-not-found");
                         }
                     } else {
-                        $msg[] = array("msg" => "game-not-found");
-                    }
-                } catch(Facebook\Exceptions\FacebookResponseException $e) {
-                    // When Graph returns an error
-                    $msg = 'Graph returned an error: ' . $e->getMessage();
-                } catch(Facebook\Exceptions\FacebookSDKException $e) {
-                    // When validation fails or other local issues
-                    $msg = 'Facebook SDK returned an error: ' . $e->getMessage();
-                }
-            } else if($isDisplay) {
-                $formToDisplay = "display";
-
-                $name = $_REQUEST['screen-name'];
-                $picture = '';
-                $fbToken = '';
-                $fbUserId = '';
-
-                //basic error handling
-                if (empty($name)) {
-                    if(!isset($_SESSION['isHost'])) {
-                        $msg[] = array("msg" => "game-empty-name");
+                        $msg[] = array("msg" => "game-name-in-use");
                     }
                 } else {
-                    //request to join a session
-                    $result = $mySession->join($name, $fbToken, $fbUserId, $picture);
-
-                    //check result and if true then save user in session and redirect to lobby
-                    if ($result == true && intval($result)) {
-                        $_SESSION['user'] = $user->getUser();
-
-                        //If user is a host
-                        if($_SESSION['isHost']) {
-                            $user->isHost("set",$_SESSION['user']['userid']);
-                            unset($_SESSION['isHost']);
-                        }
-                        $user->isDisplay("set", $_SESSION['user']['userid'], 1);
-                        header("Location: ../lobby/");
-                    } else if ($result == "user-exists") {
-                        $msg[] = array("msg" => "game-name-in-use");
-                    } else {
-                        $msg[] = array("msg" => "game-not-found");
-                    }
+                    $msg[] = array("msg" => "game-not-found");
                 }
             }
         }
+    } else if(!$isDisplay) {
+        $formToDisplay = "join";
     } else {
-        if(!$isDisplay) {
-            $formToDisplay = "join";
-        } else {
-            $formToDisplay = "display";
-        }
+        $formToDisplay = "display";
     }
 } catch (Exception $e) {
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
 }
 
-
+//var_dump($formToDisplay);
 
 if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     require_once('header.php');
@@ -200,6 +196,9 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                     <h2 class="mdl-card__title-text">Who the heck are you?</h2>
                 </div>
                 <div class="mdl-card__supporting-text select-avatar">
+                    <div class="joining-game">
+                        <p style="text-align:center;">Currently Joining Game <?php echo $code; ?> <a href="/join/?leave=true">Leave</a></p>
+                    </div>
                     <div class="avatar">
                         <a id="show-avatars" type="button" class="mdl-button" style="height: 64px; width: 64px; padding: 5px;">
                             <img src="pictures/person.png" alt="Avatar" class="responsive" />

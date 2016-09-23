@@ -59,16 +59,22 @@ class DrinkOrDare {
         return false;
     }
 
-    public function destroy($gameId) {
+    public function destroy($gameId = 0) {
         global $db;
 
-        $sql = 'DELETE FROM drink_or_dare WHERE game_id = :game_id';
+        if (!empty($gameId)) {
+            //delete game
+            $sql = 'DELETE FROM drink_or_dare AS dod
+                    LEFT JOIN drink_or_dare_order AS dodo ON dod.game_id = dodo.game_id
+                    LEFT JOIN drink_or_dare_user_dares AS dodud ON dod.game_id = dodud.game_id                    
+                    WHERE game_id = :game_id';
 
-        $result = $db->prepare($sql);
-        $result->bindValue(":game_id", $gameId);
+            $result = $db->prepare($sql);
+            $result->bindValue(":game_id", $gameId);
 
-        if ($result->execute() && $result->errorCode()) {
-            return true;
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
         }
         return false;
     }
