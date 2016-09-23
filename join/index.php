@@ -202,6 +202,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                 <div class="mdl-card__supporting-text select-avatar">
                     <div class="avatar">
                         <a id="show-avatars" type="button" class="mdl-button" style="height: 64px; width: 64px; padding: 5px;">
+                            <p>Choose</p>
                             <img src="pictures/person.png" alt="Avatar" class="responsive" />
                         </a>
                     </div>
