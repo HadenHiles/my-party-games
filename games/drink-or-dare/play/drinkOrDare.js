@@ -123,7 +123,7 @@ $(function(){
 
                     case 4:
                         //incrementing rounds and check for game completion
-                        location.reload();
+                        window.location.reload();
                         break;
 
                     case 5:

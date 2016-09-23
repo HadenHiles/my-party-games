@@ -24,11 +24,11 @@ $output = '<ul class="search-list-item mdl-list">';
 if (!empty($results)) {
 
     foreach ($results as $key => $result) {
-        $output .= '<li class="mdl-list__item">
-                   <span class="mdl-list__item-primary-content">
-                   <a href="/games/' . $key . '" class="fade">' . $result . '</a>
-                   </span>
-                   </li>';
+        $output .= '<a href="/games/' . $key . '" class="fade">
+                   <li class="mdl-list__item">
+                   <span class="mdl-list__item-primary-content">' . $result . '</span>
+                   </li>
+                   </a>';
     }
 } else {
     $output .= '<li class="mdl-list__item">
