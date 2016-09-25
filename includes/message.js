@@ -24,7 +24,9 @@ var messages = {
     "game-drink-or-dare-good":"People voted that you completed the dare!",
     "game-drink-or-dare-bad":"People voted that you should drink!",
 
-    "user-enter-nickname":"Please enter a nickname"
+    "user-enter-nickname":"Please enter a nickname",
+
+    "lobby":""
 };
 var icons = {
     "warning":'<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>',
@@ -37,7 +39,7 @@ var icons = {
 }
 
 //on document load
-$(function() {
+window.onload = function() {
 
     //check for server messages
     if (srvmsg != "") {
@@ -47,10 +49,11 @@ $(function() {
         var maxTries = 20;
 
         var waitForMDL = setInterval(function () {
-
             console.log(typeof MaterialSnackbar);
+
             //set a timeout to wait for MDL to load
             if (typeof MaterialSnackbar != "undefined") {
+                clearInterval(waitForMDL);
 
                 //loop through each server message
                 for (var message of srvmsg) {
@@ -59,10 +62,7 @@ $(function() {
                     if (message.msg != "") {
                         msg(message.popup, message.ele, message.msg, message.title, message.type, message.icon, (message.hide == false ? false : true), message.delay);
                     }
-                }
-
-                //clear the timeout
-                clearInterval(waitForMDL);
+                } // end of loop
             }
 
             //if MDL hasnt loaded in 20 tries, clean interval
@@ -70,9 +70,10 @@ $(function() {
             if (maxTries <= 0) {
                 clearInterval(waitForMDL);
             }
-        }, 100);
+        }, 250);
     }
-});
+}; //end of document load
+
 
 //display an error on the webpage
 function msg(popup, ele, msgid, title, type, icon, hide, delay) {
@@ -82,13 +83,13 @@ function msg(popup, ele, msgid, title, type, icon, hide, delay) {
     //     type = "info";
     // }
 
-    //check for undefined parameters
+    /*
+     * check for undefined parameters
+     */
     delay = (parseInt(delay) ? delay : 3000);
-    //hide = !(hide == false);
     popup = (popup == "snackbar" || popup == "dialog" ? popup : "snackbar");
-
-    //default element example: #info-msg
     ele = (ele == false || typeof ele == "undefined" ? 'snackbar-message' : ele);
+    //hide = !(hide == false);
 
     console.log("Message request - Popup: " + popup + ", Ele: " + ele + ", Msgid: " + msgid + ", Type: " + type + ", Icon: " + icon + ", Hide: " + hide);
 
@@ -126,7 +127,7 @@ function msg(popup, ele, msgid, title, type, icon, hide, delay) {
 
             } else if (popup == "dialog") {
 
-                var dialog = document.querySelector('dialog');
+                var dialog = document.querySelector('dialog.msg');
                 //var showDialogButton = document.querySelector('#show-dialog');
                 if (! dialog.showModal) {
                     dialogPolyfill.registerDialog(dialog);

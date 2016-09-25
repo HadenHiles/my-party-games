@@ -45,6 +45,7 @@ class DrinkOrDare {
 
         $result = $db->prepare($sql);
         $result->bindParam(":gameid", $this->gameid);
+
         if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
             $result = $result->fetch(PDO::FETCH_ASSOC);
 
@@ -64,9 +65,11 @@ class DrinkOrDare {
 
         if (!empty($gameId)) {
             //delete game
-            $sql = 'DELETE FROM drink_or_dare AS dod
-                    LEFT JOIN drink_or_dare_order AS dodo ON dod.game_id = dodo.game_id
-                    LEFT JOIN drink_or_dare_user_dares AS dodud ON dod.game_id = dodud.game_id                    
+//            $sql = 'DELETE FROM drink_or_dare AS dod
+//                    LEFT JOIN drink_or_dare_order AS dodo ON dod.game_id = dodo.game_id
+//                    LEFT JOIN drink_or_dare_user_dares AS dodud ON dod.game_id = dodud.game_id
+//                    WHERE game_id = :game_id';
+            $sql = 'DELETE FROM drink_or_dare                
                     WHERE game_id = :game_id';
 
             $result = $db->prepare($sql);
@@ -84,21 +87,31 @@ class DrinkOrDare {
      * @return bool
      * @throws Exception
      */
-    public function start($isStarted = 1) {
+    public function start($play = true) {
 
         global $db, $game, $user;
 
+        //make sure we have players
+        if (empty($game['users'])) {
+            throw new Exception("Game cannot start without players");
+            return false;
+        }
+
+        //find amount of players excluding all displays
         foreach ($game['users'] as $tempUser) {
             if ($tempUser['is_display'] == 0) {
                 $this->numPlayers++;
             }
         }
 
-
+        //make sure we have a game id to work with
         if (!empty($this->gameid)) {
 
-            if (!$this->isStarted($this->gameid, $isStarted)) {
-                //game doesnt exist
+            //check if game has already started
+            if (!self::isStarted($this->gameid, $play)) {
+                /*
+                 * game doesnt exist, create it here
+                 */
                 $sql = 'INSERT INTO drink_or_dare
                         (game_id, state, total_rounds, current_round, drinks_to_win, is_started) 
                         VALUES
@@ -110,13 +123,15 @@ class DrinkOrDare {
                 $result->bindParam(":total_rounds", $this->total_rounds);
                 $result->bindParam(":current_round", $this->current_round);
                 $result->bindParam(":drinks_to_win", $this->drinksToWin);
-                $result->bindParam(":is_started", $isStarted);
+                $result->bindParam(":is_started", $play);
 
                 if ($result->execute() && $result->errorCode() == 0) {
                     return true;
                 }
             } else {
-                //game exists
+                /*
+                 * game exists already
+                 */
                 $sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
 
                 $result = $db->prepare($sql);
@@ -261,20 +276,23 @@ class DrinkOrDare {
      * @param int $checkIsStarted
      * @return bool
      */
-    public function isStarted($gameId, $checkIsStarted = 1) {
+    public function isStarted($gameId = 0, $checkGameInProgress = false) {
         global $db;
 
-        $sql = 'SELECT * FROM drink_or_dare WHERE game_id = :gameid';
+        if (!empty($gameId)) {
+            $sql = 'SELECT * FROM drink_or_dare 
+                    WHERE game_id = :gameid';
 
-        if($checkIsStarted) {
-            $sql .= " AND is_started = 1";
-        }
+            if ($checkGameInProgress) {
+                $sql .= ' AND is_started = 1';
+            }
 
-        $result = $db->prepare($sql);
-        $result->bindParam(":gameid", $gameId);
+            $result = $db->prepare($sql);
+            $result->bindParam(":gameid", $gameId);
 
-        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-            return true;
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                return true;
+            }
         }
         return false;
     }
@@ -288,24 +306,29 @@ class DrinkOrDare {
      * @return bool
      */
     public function update($gameId, $state, $totalRounds, $currentRound, $drinksToWin) {
+
         global $db;
 
-        $sql = 'UPDATE drink_or_dare SET 
-                  state = :state, 
-                  total_rounds = :total_rounds, 
-                  current_round = :current_round, 
-                  drinks_to_win = :drinks_to_win
-                WHERE game_id = :gameid';
+        if (!empty($gameId)) {
+            $sql = 'UPDATE drink_or_dare SET 
+                      state = :state, 
+                      total_rounds = :total_rounds, 
+                      current_round = :current_round, 
+                      drinks_to_win = :drinks_to_win
+                    WHERE game_id = :gameid';
 
-        $result = $db->prepare($sql);
-        $result->bindParam(":gameid", $gameId);
-        $result->bindParam(":state", $state);
-        $result->bindParam(":total_rounds", $totalRounds);
-        $result->bindParam(":current_round", $currentRound);
-        $result->bindParam(":drinks_to_win", $drinksToWin);
+            $result = $db->prepare($sql);
+            $result->bindParam(":gameid", $gameId);
+            $result->bindParam(":state", $state);
+            $result->bindParam(":total_rounds", $totalRounds);
+            $result->bindParam(":current_round", $currentRound);
+            $result->bindParam(":drinks_to_win", $drinksToWin);
 
-        if ($result->execute() && $result->errorCode() == 0) {
-            return true;
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
+        } else {
+            throw new Exception("Cannot update game without game id");
         }
         return false;
     }

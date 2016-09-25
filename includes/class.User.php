@@ -45,6 +45,26 @@ class User {
         }
     }
 
+    public function erase ($userid = 0) {
+
+        global $db;
+
+        if (!empty($userid)) {
+
+            $sql = 'DELETE FROM users WHERE id = :userid';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":userid", $userid);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
+        } else {
+            throw new Exception ("cannot erase user without userid");
+        }
+
+        return false;
+    }
 
     /**
      * Determine if the user is in a game already
@@ -55,11 +75,12 @@ class User {
 
         if ($check) {
             $sql = "SELECT session_id FROM users 
-                  WHERE session_id = :session_id 
+                  WHERE session_id = :session_id                   
                   AND game_id != 0";
 
             $result = $db->prepare($sql);
             $result->bindValue(":session_id", $this->sessionid);
+            //$result->bindValue(":displayname", $this->displayname);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
                 $this->isJoined = true;
@@ -163,8 +184,21 @@ class User {
      */
     public function setName($name) {
 
+        global $db;
+
         if (!empty($name)) {
             $this->displayname = $name;
+
+            //update in database
+            $sql = 'UPDATE users SET display_name = :displayname WHERE session_id = :sessionid';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":displayname", $this->displayname);
+            $result->bindValue(":sessionid", $this->sessionid);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
         } else {
             throw new Exception("You need to specify a name");
         }
@@ -212,6 +246,7 @@ class User {
                 return $result;
             }
         }
+
         return false;
     }
 
@@ -270,7 +305,7 @@ class User {
      * @param $orderByPoints
      * @return array|bool
      */
-    public function getAll($code = 0, $orderByPoints) {
+    public function getAll($code = 0, $orderByPoints = false) {
         global $db;
 
         if (!empty($code)) {
@@ -286,7 +321,8 @@ class User {
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
 
                 //add the users to the game
-                return $result->fetchAll(PDO::FETCH_ASSOC);
+                $result = $result->fetchAll(PDO::FETCH_ASSOC);
+                return $result;
             }
         }
 
@@ -382,6 +418,10 @@ class User {
         return false;
     }
 
+    public function getId() {
+
+    }
+
     /**
      * @param $action - "get" or "set"
      * @param $userId - user id to target
@@ -423,5 +463,130 @@ class User {
 
         return $this->isHost;
     }
+
+
+    /*
+     * Update the users information
+     * @param string, name
+     * @param int, code
+     * @param string, fbaccesstoken
+     * @returns boolean, true/false
+     */
+    public function updateUser($name, $code, $fbaccesstoken, $fbuserid, $picture) {
+
+        global $db;
+
+        if (!empty($code)) {
+            //check for current game sessions via unique code
+            $sql = 'SELECT * FROM game_connections WHERE unique_code = :code';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":code", $code);
+
+            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                //game session found, now check for existing user else create user
+                $sql = 'SELECT * FROM users
+                        WHERE display_name = :name
+                        AND game_id = :code';
+
+                $result = $db->prepare($sql);
+                $result->bindValue(":name", $name);
+                $result->bindValue(":code", $code);
+
+                if ($result->execute() && $result->errorCode() == 0) {
+
+                    //user alerady exists if rowcount greater than 0
+                    if ($result->rowCount() > 0) {
+                        //ensure there are no duplicate users in different games
+                        $sql = 'DELETE FROM users
+                                    WHERE game_id != :code
+                                    AND fb_user_id = :fbuserid';
+                        $result = $db->prepare($sql);
+                        $result->bindParam(":fbuserid", $fbuserid);
+                        $result->bindParam(":code", $code);
+                        $result->execute();
+
+                        $sqlUpdate = 'UPDATE users SET game_id = :code, ip_address = :ip, session_id = :session_id, display_name = :name, fb_access_token = :fbaccesstoken, picture = :picture, last_active_date = NOW() 
+                                      WHERE fb_user_id = :fbuserid';
+
+                        $resultUpdate = $db->prepare($sqlUpdate);
+                        $resultUpdate->bindParam(":name", $name, PDO::PARAM_STR, 25);
+                        $resultUpdate->bindParam(":code", $code, PDO::PARAM_INT);
+                        $resultUpdate->bindParam(":fbaccesstoken", $fbaccesstoken, PDO::PARAM_STR, 300);
+                        $resultUpdate->bindParam(":fbuserid", $fbuserid, PDO::PARAM_STR, 25);
+                        $resultUpdate->bindParam(":picture", $picture, PDO::PARAM_STR, 100);
+                        $resultUpdate->bindParam(":ip", $this->hostip, PDO::PARAM_STR, 25);
+                        $result->bindParam(":session_id", $this->sessionid, PDO::PARAM_STR, 150);
+
+                        if ($resultUpdate->execute() && $resultUpdate->errorCode() == 0) {
+                            //get the row details of this user
+                            $sql = 'SELECT id FROM users
+                                    WHERE game_id = :code
+                                    AND fb_user_id = :fbuserid';
+
+                            $result = $db->prepare($sql);
+                            $result->bindParam(":fbuserid", $fbuserid);
+                            $result->bindParam(":code", $code);
+
+                            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+                                //fetch and store user details in object for later use
+                                $result = $result->fetch(PDO::FETCH_ASSOC);
+                                $this->userid = $result['id'];
+                                $this->uniquecode = $code;
+                                $this->displayname = $name;
+                                return true;
+                            }
+                        }
+                    } else {
+                        //create user reference in database
+                        $sql = 'INSERT INTO users (game_id, ip_address, session_id, display_name, fb_access_token, fb_user_id, picture, last_active_date)
+                                VALUES (:code, :ip, :session_id, :name, :fbaccesstoken, :fbuserid, :picture, NOW())';
+
+                        $result = $db->prepare($sql);
+                        $result->bindParam(":name", $name, PDO::PARAM_STR, 25);
+                        $result->bindParam(":code", $code, PDO::PARAM_INT);
+                        $result->bindParam(":fbaccesstoken", $fbaccesstoken, PDO::PARAM_STR, 300);
+                        $result->bindParam(":fbuserid", $fbuserid, PDO::PARAM_STR, 25);
+                        $result->bindParam(":picture", $picture, PDO::PARAM_STR, 100);
+                        $result->bindParam(":ip", $this->hostip, PDO::PARAM_STR, 25);
+                        $result->bindParam(":session_id", $this->sessionid, PDO::PARAM_STR, 150);
+
+                        if ($result->execute() && $result->errorCode() == 0) {
+
+                            //get the row details of this user
+                            $sql = 'SELECT id FROM users
+                                    WHERE game_id = :code
+                                    AND display_name = :name';
+
+                            $result = $db->prepare($sql);
+                            $result->bindValue(":name", $name);
+                            $result->bindValue(":code", $code);
+
+                            if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+
+                                //fetch and store user details in object for later use
+                                $result = $result->fetch(PDO::FETCH_ASSOC);
+                                $this->userid = $result['id'];
+                                $this->uniquecode = $code;
+                                $this->displayname = $name;
+                                return true;
+                            }
+                        } else {
+                            throw new Exception ("Could not insert into users table.");
+                        }
+                    }
+                } else {
+                    throw new Exception ("Users table could not be queried.");
+                }
+            } else {
+                return false;
+            }
+        }
+
+        //something went wrong if this function returns false
+        return false;
+    }
+
 }
 ?>

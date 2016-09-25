@@ -1,8 +1,8 @@
 <?php
-require_once("../includes/class.GameSession.php");
-require_once("../includes/class.User.php");
-require_once("../includes/common.php");
-require_once("../includes/database.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/includes/common.php");
+require_once(ROOT."/includes/class.GameSession.php");
+require_once(ROOT."/includes/class.User.php");
+require_once(ROOT."/includes/database.php");
 
 //check for user in session and we have a game code
 if (empty($_SESSION['user']) || empty($_SESSION['game']['code'])) {
@@ -10,8 +10,10 @@ if (empty($_SESSION['user']) || empty($_SESSION['game']['code'])) {
     exit();
 }
 
+//var_dump($_SESSION);
+
 //get header information
-require_once("header.php");
+require_once(ROOT."/lobby/header.php");
 
 try {
     //load user data from session
@@ -36,32 +38,26 @@ try {
     if($game = $mySession->loadUsers($code)) {
         //var_dump($game);
 
-        //check for settings update
-        if(isset($_POST['settings']) && $_POST['settings']) {
-            foreach($game['users'] as $gameUser) {
-                $user->isDisplay("set", $gameUser['id'], 0);
-            }
-            $displays = $_POST['displays'];
-            $host = $_POST['host'];
-            foreach($displays as $userDisplay) {
-                $user->isDisplay("set", $userDisplay, 1);
-            }
-            $user->isHost("set", $host);
-
-            $game_fields = explode(",", $_POST['fields']);
-
-            $key_value_array = array();
-            foreach($game_fields as $field) {
-                $key_value_array[$field] = $_POST[$field];
-            }
-            $_SESSION['game_field_values'] = $key_value_array;
-
-            header("location: ../games/" . $game['game_name'] . "/submitSetup.php");
-        }
-
         //check to see if this is the first user to join game and if so make them host
-        if(count($game['users']) == 1) {
-            $user->isHost("set", $thisUser['userid']);
+//        if(count($game['users']) == 1 && $user->isHost("set", $thisUser['id'])) {
+//            $_SESSION['game']['isHost'] = true;
+//            $isHost = true;
+//        }
+
+        //check if this user is now host
+        if (!$_SESSION['game']['isHost'] && $isHost) {
+            //user got host
+            $_SESSION['game']['isHost'] = true;
+            //reset user session variables
+            $_SESSION['user'] = $user->getUser();
+        } else if ($_SESSION['game']['isHost'] && !$isHost) {
+            //user lost host
+            $_SESSION['game']['isHost'] = false;
+            //reset user session variables
+            $_SESSION['user'] = $user->getUser();
+        } else if (!$isHost) {
+            //reset other users sessions to not host
+            $_SESSION['game']['isHost'] = false;
         }
 
         /*
@@ -71,7 +67,7 @@ try {
 
             //required steps to init drink or dare
             case "drink-or-dare":
-                require_once("../games/drink-or-dare/class.DrinkOrDare.php");
+                require_once(ROOT."/games/drink-or-dare/class.DrinkOrDare.php");
 
                 $dod = new DrinkOrDare($code, $thisUser['id']);
 
@@ -86,14 +82,61 @@ try {
 
                     //leave game if not host
                     if($mySession->leave()) {
-                        header('Location: /join/?lunique-code=' . $code);
+                        header('Location: /join/?unique-code=' . $code);
                         exit();
                     }
                 }
 
+                //check for settings update
+                if(isset($_POST['settings']) && $_POST['settings'] && $isHost) {
+                    //var_dump($_POST);
+
+                    //get post variables
+                    $displays = $_POST['displays'];
+                    $host = $_POST['host'];
+
+                    //set new host
+                    $user->isHost("set", $host);
+
+                    //toggle displays
+                    if (!empty($displays)) {
+                        //reset all displays
+                        foreach ($game['users'] as $gameUser) {
+                            $user->isDisplay("set", $gameUser['id'], 0);
+                        }
+
+                        //set all displays from post
+                        foreach ($displays as $userDisplay) {
+                            $user->isDisplay("set", $userDisplay, 1);
+                        }
+                    }
+
+                    //get posted fields
+                    $game_fields = explode(",", $_POST['fields']);
+
+                    $key_value_array = array();
+                    foreach($game_fields as $field) {
+                        $key_value_array[$field] = $_POST[$field];
+                    }
+                    $game_field_values = $key_value_array;
+
+                    //update the game
+                    if (!$dod->isStarted($thisUser['game_id'])) {
+                        //game doesn't exist so we can start game here and it will be created with our init variables
+                        $dod->start(false);
+                    } else {
+                        //game already exists so we need to update it with new variables
+                        $dod->update($thisUser['game_id'], 1, $game_field_values['rounds'], 1, $game_field_values['drinks_to_win']);
+                    }
+
+                    //refresh without post data
+                    header("location: /lobby/");
+                    exit();
+                }
+
                 //check if game has started
-                if($dod->isStarted($code)) {
-                    header('location: ../games/drink-or-dare/play');
+                if($dod->isStarted($code, true)) {
+                    header('location: /games/drink-or-dare/play/');
                     exit();
                 }
                 break;
@@ -110,16 +153,23 @@ try {
         header("location: /");
         exit();
     } else {
-        header("location: /join");
+        header("location: /join/");
         exit();
     }
 
+    /*
+     * start html output here
+     */
     ?>
     <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
         <header class="header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
             <div class="mdl-layout__header-row">
                 <?php
-                if(!$user->isDisplay("get", $thisUser['userid'], 1)) {
+
+                /*
+                 * Show leave button only if user not display
+                 */
+                if(!$isDisplay) {
                     ?>
                     <a href="<?php echo $_SERVER['PHP_SELF']; ?>?leave=true" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><i class="fa fa-times" style="position: relative; left: -5px; top: -1px;"></i> Leave</a>
                     <?php
@@ -131,8 +181,14 @@ try {
                 <div class="mdl-layout-spacer"></div>
                 <div class="mdl-cell mdl-cell--1-col right" style="text-align: right;">
                     <?php
-                    if($user->isHost("get", $thisUser['userid'])) {
+
+                    /*
+                     * show host controls if this user is the host of the game
+                     */
+                    if($isHost) {
+                        echo '<p style="float:left; margin:4px 0 0 0;font-weight:700;">HOST</p>';
                         ?>
+
                         <!-- Right aligned menu below button -->
                         <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
                             <i class="fa fa-cog fade"></i>
@@ -145,8 +201,13 @@ try {
                         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" id="delete-game-form">
                             <input type="hidden" name="delete-game" value="true" />
                         </form>
+
                         <?php
                     } else {
+
+                        /*
+                         * normal user, wait for host to start game
+                         */
                         ?>
                         <p class="fade" style="width: 175px; margin: 4px 0 0 -100px;">Waiting for game to start...</p>
                         <?php
@@ -157,7 +218,7 @@ try {
         </header>
         <div class="ribbon">
             <div class="game_code" style="text-align: center; margin-top: 5vh;">
-                <p class="fade" style="width: 100%; float: left; font-size: 36px; color: #fff;">#<?php echo $game['unique_code']; ?></p>
+                <p class="fade" style="width: 100%; float: left; font-size: 36px; color: #fff;">#<?php echo $code; ?></p>
             </div>
         </div>
         <main class="main mdl-layout__content">
@@ -169,8 +230,10 @@ try {
                     <div class="crumbs mdl-color-text--grey-500" style="color: #6ab344; float: left; font-size: 30px; text-transform: capitalize; margin-bottom: 0;">
                         <?php echo str_replace("-", " ", $game['game_name']); ?>
                     </div>
+
                     <?php
-                    if($user->isDisplay("get", $thisUser['userid'], 1)) {
+                    //check if this user is a display
+                    if($isDisplay) {
                         ?>
                         <!--                            <button class="mdl-button mdl-js-button mdl-button--icon" id="show-rules" style="float: left; color: #777; margin: -5px 0 0 5px;">-->
                         <!--                                <i class="fa fa-question"></i>-->
@@ -179,11 +242,21 @@ try {
                         <?php
                     }
                     ?>
+
                     <div class="clear"></div>
-                    <p class="fade" style="width: 100%; float: left; font-size: 20px; color: #000;">#<?php echo $game['unique_code']; ?></p>
+                    <p class="fade" style="width: 100%; float: left; font-size: 20px; color: #000;">#<?php echo $code; ?></p>
+
                     <?php
-                    $showRules = true;
-                    require_once("../games/" . $game['game_name'] . "/rules.php");
+                    /*
+                     * Showing rules for the game here
+                     */
+                    require_once(ROOT."/games/" . $game['game_name'] . "/rules.php");
+
+
+                    /*
+                     * chat currently not working
+                     */
+
                     /*
                     ?>
                     <div id="chatMessages"></div>
@@ -203,117 +276,61 @@ try {
                         }
                     */
                     ?>
+
                 </div>
             </div>
+
             <?php
-            if($user->isHost("get", $thisUser['userid'])) {
+            /*
+             * show start game button if this user is a host
+             */
+            if($isHost) {
                 ?>
                 <a href="/games/<?php echo $game['game_name']; ?>/play" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right start-button">Start Game</a>
                 <?php
             }
             ?>
+
         </main>
     </div>
     <?php
 
 } catch (Exception $e) {
     //show any errors
-    $msg =
     $msg[] = array("msg" => "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile());
 }
 
-if(!empty($msg)) {
+//output the settings dialog if this user is host
+if ($isHost) {
     ?>
-    <dialog class="mdl-dialog error">
-        <h4 class="mdl-dialog__title"><?php echo $msg_title; ?></h4>
+    <dialog class="mdl-dialog settings">
         <div class="mdl-dialog__content">
-            <p style="color: #ccc; font-size: 8px;">Something happened.</p>
-            <p><?php echo $msg; ?></p>
+            <form id="settingsForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+                    <div class="mdl-tabs__tab-bar">
+                        <a href="#game-setup-panel" class="mdl-tabs__tab is-active">Setup</a>
+                        <a href="#advanced-settings-panel" class="mdl-tabs__tab">Advanced Settings</a>
+                    </div>
+                    <div class="clear" style="margin-bottom: 10px;"></div>
+                    <div class="mdl-tabs__panel is-active" id="game-setup-panel">
+                        <?php
+                        require_once(ROOT . "/games/" . $game['game_name'] . "/settings.php");
+                        ?>
+                    </div>
+                    <div class="mdl-tabs__panel" id="advanced-settings-panel">
+                        <div id="settingsContent"></div>
+                    </div>
+                </div>
+                <input type="hidden" name="settings" value="true"/>
+            </form>
         </div>
         <div class="mdl-dialog__actions">
-            <button type="button" class="mdl-button close">OK</button>
-        </div>
-    </dialog>
-    <script>
-        (function() {
-            var dialog = document.querySelector('dialog.error');
-            if (dialog != null) {
-                if (!dialog.showModal) {
-                    dialogPolyfill.registerDialog(dialog);
-                }
-                dialog.showModal();
-                dialog.querySelector('.close').addEventListener('click', function () {
-                    dialog.close();
-                });
-            }
-        })();
-    </script>
-    <?php
-}
-
-/*
-if($showRules) {
-    ?>
-    <dialog class="mdl-dialog rules" style="width: 90%;">
-        <div class="mdl-dialog__content">
-            <?php require_once("../games/" . $game['game_name'] . "/rules.php"); ?>
-        </div>
-        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button mdl-color--primary save" style="color: #fff;">APPLY</button>
             <button type="button" class="mdl-button close">CLOSE</button>
         </div>
     </dialog>
-    <script>
-        (function() {
-            var rulesDialog = document.querySelector('dialog.rules');
-            if(rulesDialog != null) {
-                if (!rulesDialog.showModal) {
-                    dialogPolyfill.registerDialog(rulesDialog);
-                }
 
-                document.querySelector('#show-rules').addEventListener('click', function() {
-                    rulesDialog.showModal();
-                });
-
-                rulesDialog.querySelector('.close').addEventListener('click', function() {
-                    rulesDialog.close();
-                });
-            }
-        })();
-    </script>
-    <?php
-}
-*/
-?>
-<dialog class="mdl-dialog settings">
-    <div class="mdl-dialog__content">
-        <form id="settingsForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-            <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
-                <div class="mdl-tabs__tab-bar">
-                    <a href="#game-setup-panel" class="mdl-tabs__tab is-active">Setup</a>
-                    <a href="#advanced-settings-panel" class="mdl-tabs__tab">Advanced Settings</a>
-                </div>
-                <div class="clear" style="margin-bottom: 10px;"></div>
-                <div class="mdl-tabs__panel is-active" id="game-setup-panel">
-                    <?php
-                    require_once("../games/" . $game['game_name'] . "/settings.php");
-                    ?>
-                </div>
-                <div class="mdl-tabs__panel" id="advanced-settings-panel">
-                    <div id="settingsContent"></div>
-                </div>
-            </div>
-            <input type="hidden" name="settings" value="true" />
-        </form>
-    </div>
-    <div class="mdl-dialog__actions">
-        <button type="button" class="mdl-button mdl-color--primary save" style="color: #fff;">APPLY</button>
-        <button type="button" class="mdl-button close">CLOSE</button>
-    </div>
-</dialog>
-<?php
-if($user->isHost("get", $thisUser['userid'])) {
-    ?>
-    <script>
+    <script defer type="text/javascript">
         $(function() {
             $.get("settings.php", function(data) {
                 $('#settingsContent').html(data);
@@ -327,9 +344,9 @@ if($user->isHost("get", $thisUser['userid'])) {
                     }
 
                     document.querySelector('#show-settings').addEventListener('click', function() {
-                        $.get("settings.php", function(data) {
-                            $('#settingsContent').html(data);
-                        });
+//                        $.get("settings.php", function(data) {
+//                            $('#settingsContent').html(data);
+//                        });
                         $('dialog.settings').css({"display": "block"});
                         settingsDialog.showModal();
                     });
@@ -348,8 +365,9 @@ if($user->isHost("get", $thisUser['userid'])) {
             }
         });
     </script>
+
     <?php
 }
 
-require_once("footer.php");
+require_once(ROOT."/lobby/footer.php");
 ?>

@@ -2,14 +2,14 @@
 /**
  * Created by handshiles on 2016-07-10.
  */
-require_once('../includes/common.php');
-require_once('../includes/database.php');
-require_once('../includes/class.GameSession.php');
-require_once('../includes/class.User.php');
+require_once($_SERVER['DOCUMENT_ROOT']."/includes/common.php");
+require_once(ROOT.'/includes/database.php');
+require_once(ROOT.'/includes/class.GameSession.php');
+require_once(ROOT.'/includes/class.User.php');
 
 //Facebook login
-require_once("../vendor/autoload.php");
-require_once("../login/facebook/config.php");
+require_once(ROOT."/vendor/autoload.php");
+require_once(ROOT."/login/facebook/config.php");
 
 $fb = new Facebook\Facebook([
     'app_id' => APP_ID,
@@ -26,16 +26,26 @@ try {
     $user = new User(SESSION_ID, DEVICE_IP);
 
     $gameName = $_SESSION['game']['gameName'];
-    $isDisplay = (isset($_SESSION['game']['isDisplay']) && $_SESSION['game']['isDisplay']);
     $isHost = (isset($_SESSION['game']['isHost']) && $_SESSION['game']['isHost']);
+    $isDisplay = (isset($_SESSION['game']['isDisplay']) && $_SESSION['game']['isDisplay']);
+
+    //set default host in session if not already set
+    if (empty($_SESSION['game']['isHost'])) {
+        $_SESSION['game']['isHost'] = $isHost;
+    }
+
+    //set default display in session if not already set
+    if (empty($_SESSION['game']['isDisplay'])) {
+        $_SESSION['game']['isDisplay'] = $isDisplay;
+    }
 
     //set game name
     if (!empty($gameName)) {
         $mySession->setGameName($gameName);
 
         //check for request to leave game
-        if (isset($_REQUEST['leave'])) {
-            $mySession->clearSessionVars($gameName);
+        if (isset($_REQUEST['leave']) && $_REQUEST['leave']) {
+            $mySession->clearSessionVars();
             header("Location: /join/");
             exit();
         }
@@ -56,6 +66,7 @@ try {
             $gameName = $_SESSION['game']['gameName'];
         }
 
+        //valudate that the code given exists
         if(!$mySession->validateGame($code)) {
             $msg[] = array("msg" => "game-not-found");
         } else {
@@ -126,8 +137,7 @@ try {
                     $_SESSION['user'] = $user->getUser();
 
                     if($isHost) {
-                        $user->isHost("set", $_SESSION['user']['userid']);
-
+                        $user->isHost("set", $_SESSION['user']['id']);
                         //reset user session values
                         $_SESSION['user'] = $user->getUser();
                     }
@@ -139,17 +149,17 @@ try {
                     //override information if user using facebook otherwise they will have to choose another name
                     if (!empty($fbUserId)) {
                         //override with new information
-                        if ($mySession->updateUser($name, $code, $fbToken, $fbUserId, $picture)) {
+                        if ($user->updateUser($name, $code, $fbToken, $fbUserId, $gamePicture)) {
                             $_SESSION['user'] = $user->getUser();
 
                             if($isHost) {
-                                $user->isHost("set", $_SESSION['user']['userid']);
+                                $user->isHost("set", $_SESSION['user']['id']);
 
                                 //reset user session values
                                 $_SESSION['user'] = $user->getUser();
                             }
                             if($isDisplay) {
-                                $user->isDisplay("set", $_SESSION['user']['userid'], 1);
+                                $user->isDisplay("set", $_SESSION['user']['id'], 1);
 
                                 //reset user session values
                                 $_SESSION['user'] = $user->getUser();
@@ -177,10 +187,11 @@ try {
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
 }
 
+require_once(ROOT.'/join/header.php');
 //var_dump($formToDisplay);
 
 if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
-    require_once('header.php');
+
     $helper = $fb->getRedirectLoginHelper();
 
     $permissions = ["public_profile"]; // Optional permissions
@@ -272,7 +283,6 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     </dialog>
     <?php
 } else if($formToDisplay == "join") {
-    require_once('header.php');
     ?>
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
         <main class="mdl-layout__content main-form">
@@ -301,7 +311,6 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     </div>
     <?php
 } else if($formToDisplay == "display") {
-    require_once('header.php');
     ?>
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
         <main class="mdl-layout__content main-form">
@@ -333,5 +342,5 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
     <?php
 }
 
-require_once('footer.php');
+require_once(ROOT.'/join/footer.php');
 ?>

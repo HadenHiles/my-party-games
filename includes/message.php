@@ -1,4 +1,5 @@
 <?php
+//this is a test on how php messages should be displayed
 //$msg[] = array("msg" => "game-deleted", "title" => "my title", "popup" => "snackbar");
 ?>
 
@@ -8,7 +9,7 @@
     <button class="mdl-snackbar__action" type="button"></button>
 </div>
 
-<dialog class="mdl-dialog">
+<dialog class="mdl-dialog msg">
     <h4 class="mdl-dialog__title" id="dialog-title">Oops!</h4>
     <div class="mdl-dialog__content">
         <p id="dialog-text">

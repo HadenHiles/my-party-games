@@ -2,10 +2,11 @@
 /**
  * Created by handshiles on 2016-07-12.
  */
-require_once("../includes/class.GameSession.php");
-require_once("../includes/class.User.php");
-require_once("../includes/common.php");
-require_once("../includes/database.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/includes/common.php");
+
+require_once(ROOT."/includes/class.GameSession.php");
+require_once(ROOT."/includes/class.User.php");
+require_once(ROOT."/includes/database.php");
 
 try {
     //init a new game session
@@ -15,14 +16,22 @@ try {
     $user_session = $_SESSION['user'];
 
     //load the current game details
-    if (!$game = $mySession->loadUsers($user_session['code'], 0)) {
-        //game was not found
+    if (!$game = $mySession->loadUsers($user_session['game_id'], 0)) {
+        /*
+         * game was not found
+         */
     } else {
         //game was found
         $displayCount = 0;
-        foreach($game['users'] as $user) {
-            if(!$user['is_display']) {
-                if($user['id'] == $user_session['userid']) {
+
+        //loop through game players
+        foreach($game['users'] as $gameUser) {
+
+            //check if current iteration is a display
+            if(!$gameUser['is_display']) {
+
+                //check to see if current iteration = current player
+                if($gameUser['id'] == $user_session['id']) {
                     ?>
                     <div class="mdl-card mdl-shadow--6dp player me">
                     <?php
@@ -32,16 +41,27 @@ try {
                     <?php
                 }
                 ?>
+
                     <div class="mdl-card__supporting-text">
-                        <img src="<?php echo $user['picture']; ?>" border="0" alt="" />
-                        <h5><?php echo $user['display_name']; ?></h5>
+                        <img src="<?php echo $gameUser['picture']; ?>" border="0" alt="" />
+                        <h5>
+                            <?php
+                            echo $gameUser['display_name'];
+
+                            if ($user->isHost("get", $gameUser['id'])) {
+                                echo ' - HOST';
+                            }
+                            ?>
+                        </h5>
                     </div>
                 </div>
+
                 <?php
             } else {
                 $displayCount++;
             }
         }
+
         if(count($game['users']) == $displayCount) {
             ?>
             <p class="fade">Waiting for players...</p>
@@ -52,19 +72,5 @@ try {
 } catch (Exception $e) {
     //show any errors
     $msg = "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
-}
-if(!empty($msg)) {
-    ?>
-    <dialog class="mdl-dialog error">
-        <h4 class="mdl-dialog__title">Oops!</h4>
-        <div class="mdl-dialog__content">
-            <p style="color: #ccc; font-size: 8px;">You done did it.</p>
-            <p><?php echo $msg; ?></p>
-        </div>
-        <div class="mdl-dialog__actions">
-            <button type="button" class="mdl-button close">OK</button>
-        </div>
-    </dialog>
-    <?php
 }
 ?>

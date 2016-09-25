@@ -3,9 +3,10 @@
  * Created by handshiles on 2016-08-01.
  */
 $pageTitle = "Drink Or Dare";
-
-require_once("../header.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/includes/common.php");
+require_once(ROOT."/games/header.php");
 ?>
+
     <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
         <header class="header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
             <div class="mdl-layout__header-row">
@@ -33,5 +34,7 @@ require_once("../header.php");
             <a href="create.php" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right create-button">Create Game</a>
         </main>
     </div>
+
 <?php
-require_once("../footer.php");
+require_once(ROOT."/games/footer.php");
+?>

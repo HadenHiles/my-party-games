@@ -1,9 +1,9 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'].'/includes/common.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/database.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.GameSession.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.User.php');
-//require_once($_SERVER['DOCUMENT_ROOT'].'/header/header.php');
+
+require_once(ROOT.'/includes/database.php');
+require_once(ROOT.'/includes/class.GameSession.php');
+require_once(ROOT.'/includes/class.User.php');
 
 //this variables is a must
 $gameName = 'drink-or-dare';
@@ -57,7 +57,7 @@ try {
 
 $pageTitle = "Drink Or Dare";
 
-require_once("../header.php");
+require_once(ROOT."/games/header.php");
 ?>
 <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
     <header class="header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
@@ -95,4 +95,4 @@ require_once("../header.php");
     </main>
 </div>
 <?php
-require_once("../footer.php");
+require_once(ROOT."/games/footer.php");
