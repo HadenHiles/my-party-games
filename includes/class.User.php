@@ -312,7 +312,7 @@ class User {
             //select all users in current game
             $sql = 'SELECT * FROM users WHERE game_id = :code';
             if($orderByPoints) {
-                $sql .= ' ORDER BY points DESC';
+                $sql .= ' ORDER BY score DESC';
             }
 
             $result = $db->prepare($sql);
