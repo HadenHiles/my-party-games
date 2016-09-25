@@ -213,7 +213,7 @@ try {
                 <i class="fa fa-glass" aria-hidden="true" style="color: #8bc34a;"></i> Party Games
             </span>
                 <div class="mdl-layout-spacer"></div>
-                <div class="mdl-cell mdl-cell--1-col right" style="text-align: right; min-width: 30%;">
+                <div class="mdl-cell mdl-cell--1-col right" style="text-align: right; min-width: 80px;">
                     <?php
 
                     /*

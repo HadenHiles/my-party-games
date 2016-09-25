@@ -33,7 +33,7 @@ try {
                 //check to see if current iteration = current player
                 if($gameUser['id'] == $user_session['id']) {
                     ?>
-                    <div class="mdl-card mdl-shadow--6dp player me">
+                    <div class="mdl-card mdl-shadow--16dp player me">
                     <?php
                 } else {
                     ?>
