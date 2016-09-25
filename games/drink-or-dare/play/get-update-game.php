@@ -11,6 +11,7 @@ $thisUser = $_SESSION['user'];
 //init the new game session and user class
 $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 $user = new User(SESSION_ID, DEVICE_IP, $thisUser['display_name']);
+
 $gameState = array();
 
 //update and check the state of the current game
@@ -31,7 +32,9 @@ try {
     $state = $dod->getState();
 
 
-    //some use cases for state 1
+    /*
+     * some use cases for state 1
+     */
     if ($state == 1) {
         $gameState["waiting"] = $dod->getHasCurrentDare();
     }
@@ -40,19 +43,19 @@ try {
         $gameState["cardInfo"] = $dod->getCardsInfo();
     }
 
-    //some use cases for state 3: using the cards
+    /*
+     * some use cases for state 3: using the cards
+     */
     if ($state == 3) {
         //check to see if user has looked at their dare or not
         if ($dod->getIsMyTurn() && $dod->checkHasPeeked()) {
-
-            $gameState["dare"] = $dod->getDare();
-
+            //this users turn and they have looked
+            $gameState["dare"] = $dod->getDare(true, true);
         } else if ($dod->checkHasPeeked(true)) {
-
-            $gameState["dare"] = $dod->getDare(true);
-
+            //not current users turn and they have looked
+            $gameState["dare"] = $dod->getDare(true, true);
         } else {
-
+            //active player 
             $gameState["dare"] = "hidden";
         }
 
@@ -62,7 +65,7 @@ try {
         $gameState["allVotesCast"] = $dod->checkAllVotesCast();
         $gameState["activePlayer"] = $dod->getActivePlayer();
         $gameState["numPlayers"] = $dod->getNumPlayers();
-        $gameState["dare"] = $dod->getDare(true, true);
+        //$gameState["dare"] = $dod->getDare(true, true);
         $gameState['hasPeeked'] = $dod->checkHasPeeked(true);
     }
 
@@ -76,6 +79,7 @@ try {
         $gameState["endResults"] = $dod->getEndResults();
     }
 
+    //variables always used in the javascript
     $gameState["state"] = $state;
     $gameState["totalRounds"] = $dod->getTotalRounds();
     $gameState["currentRound"] = $dod->getCurrentRound();

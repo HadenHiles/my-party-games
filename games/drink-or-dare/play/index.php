@@ -81,7 +81,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                     <?php
                     if($isHost) {
                         ?>
-                        <form action="../../../lobby/leave.php" method="post" id="delete-game-form">
+                        <form action="../../../lobby/" method="post" id="delete-game-form">
                             <input type="hidden" name="delete-game" value="true" />
                         </form>
                         <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){$('#delete-game-form').submit();}">Stop Game</li>
@@ -94,7 +94,8 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
     </header>
 
     <?php
-    require_once("../../../leaderboard/leaderboard.php");
+    //show leaderboard code here
+    require_once(ROOT."/leaderboard/leaderboard.php");
     ?>
 
     <main class="mdl-layout__content">
@@ -148,7 +149,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
             <h4 style="color: #fff; margin: -50px 0 10px 0;">Pick a Dare!</h4>
             <?php
             foreach($game['users'] as $key => $u) {
-                $key = $key + 1;
+                $key++;
                 ?>
                 <div class="mdl-card mdl-shadow--6dp square paper dare pickCard" data-cardnum="<?php echo $key; ?>">
                 </div>

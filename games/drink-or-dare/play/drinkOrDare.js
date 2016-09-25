@@ -2,7 +2,8 @@ $(function(){
     var hasNotifiedUserOfAllVotesCasted = false;
     var isMyTurn = false;
     var verdict = "";
-    return false;
+    var gameCheckInterval = 1000; // 1 second
+
     var updateIneterval = setInterval(function() {
         $.ajax({
             url:"get-update-game.php",
@@ -21,6 +22,7 @@ $(function(){
 
                 $('#currentRound').html("Round " + result.currentRound + "/" + result.totalRounds);
 
+                //get state and hide all elements not required by current state
                 var state = parseInt(result.state);
                 hideAllExcept(state);
 
@@ -44,14 +46,22 @@ $(function(){
                         document.getElementById('game-stage-2').style.display = "block";
 
                         if (result.cardInfo.length > 0) {
+
+                            //loop through each html card
                             $('.pickCard').each(function(idx, val) {
                                 var $targetCard = $(this)[idx];
+
+                                //check if current iteration at name or picture != null meaning a user has picked this card
                                 if(result.cardInfo[idx].display_name != null && result.cardInfo[idx].picture != null) {
-                                    var name = "<h5 class='owner-name'>" + result.cardInfo[idx].display_name + "</h5>";
-                                    var picture = "<img class='owner-picture' src='" + result.cardInfo[idx].picture + "' />";
-                                    var ownerHtml = name + picture;
-                                    $(this).html(ownerHtml);
-                            }
+
+                                    //only update if html is empty so we dont flash
+                                    if ($(this).html() != '') {
+                                        var name = "<h5 class='owner-name'>" + result.cardInfo[idx].display_name + "</h5>";
+                                        var picture = "<img class='owner-picture' src='" + result.cardInfo[idx].picture + "' />";
+                                        var ownerHtml = name + picture;
+                                        $(this).html(ownerHtml);
+                                    }
+                                }
                             });
                         }
                         break;
@@ -64,7 +74,7 @@ $(function(){
                                 document.getElementById('myCard').innerHTML = "<h2 class='activeDrinksWorth'>" + result.dare.drinks_worth + "</h2><div class='activeDrinksWorthPic'><img src='/join/pictures/party/pint.png' /></div><h5 class='dareText'>" + result.dare.dare + "</h5>";
                             } else {
                                 document.getElementById('myCard').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>";
-                                document.getElementById('activeDare').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.name + "</h5>";
+                                document.getElementById('activeDare').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.display_name + "</h5>";
                             }
                             document.getElementById('game-stage-3-player').style.display = "block";
                             document.getElementById('game-stage-3-viewer').style.display = "none";
@@ -77,7 +87,7 @@ $(function(){
                             if(result.hasPeeked) {
                                 document.getElementById('activeDare').innerHTML = "<h2 class='activeDrinksWorth'>" + result.dare.drinks_worth + "</h2><div class='activeDrinksWorthPic'><img src='/join/pictures/party/pint.png' /></div><h5 class='dareText'>" + result.dare.dare + "</h5>";
                             } else {
-                                document.getElementById('activeDare').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.name + "</h5>";
+                                document.getElementById('activeDare').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.display_name + "</h5>";
                             }
                             document.getElementById('game-stage-3-player').style.display = "none";
                             document.getElementById('game-stage-3-viewer').style.display = "block";
@@ -90,33 +100,8 @@ $(function(){
 
                         //get voting stats
                         if (result.votes.length > 0) {
-
-                            var bad = 0;
-                            var good = 0;
-                            var skip = 0;
-                            var totalVotes = 0;
-
-                            for (var i = 0; i < result.votes.length; i++) {
-                                if (result.votes[i].vote == 3) {
-                                    good++;
-                                } else if (result.votes[i].vote == 2) {
-                                    skip++;
-                                } else if (result.votes[i].vote == 1) {
-                                    bad++;
-                                }
-                                totalVotes++;
-                            }
-
-                            // document.getElementById('voted-bad').innerHTML = bad + ' people voted bad.';
-                            // document.getElementById('voted-skip').innerHTML = skip + ' people voted skip.';
-                            // document.getElementById('voted-good').innerHTML = good + ' people voted good.';
-
-                            //console.log("Votes: good=" + good + ", bad="+bad + ", skip="+skip);
-                            document.getElementById('num-votes').innerHTML = totalVotes.toString();
+                            document.getElementById('num-votes').innerHTML = result.votes.length.toString();
                         } else {
-                            // document.getElementById('voted-bad').innerHTML = '0 people voted bad.';
-                            // document.getElementById('voted-skip').innerHTML = '0 people voted skip.';
-                            // document.getElementById('voted-good').innerHTML = '0 people voted good.';
                             document.getElementById('num-votes').innerHTML = "0";
                         }
                         break;
@@ -148,11 +133,12 @@ $(function(){
 
             } //end of parse json object if
         }); //end of ajax call
-    }, 1000); //end of interval
+    }, gameCheckInterval); //end of interval
 
     $('.pickCard').unbind('click').click(function() {
         var num = $(this).data("cardnum");
         var $self = $(this);
+
         pickCard(num, function(result) {
             if(result == true) {
                 getOwner(num, function(ownerResult) {
@@ -161,14 +147,13 @@ $(function(){
                         var name = "<h5 class='owner-name'>" + ownerResult.display_name + "</h5>";
                         var picture = "<img class='owner-picture' src='" + ownerResult.picture + "' />";
                         var ownerHtml = name + picture;
-                        console.log(this);
+                        //console.log(this);
                         $self.html(ownerHtml);
                     }
                 });
             }
         });
-
-    });
+    }); //end of click function
 
     $('.showCard').on('click', showCard);
 
@@ -196,31 +181,39 @@ function freePass() {
     
 }
 
+/*
+ * called on stage 1 to submit users dare
+ */
 function setDare() {
-
     var textContainer = document.getElementById('dare-text');
     var allDrinksWorth = document.getElementsByName('drinksWorth');
     var drinksWorthSet = false;
     var drinksWorth;
 
+    //check user typed a dare
     if (textContainer.value != "") {
+
+        //check they have picked the drinks worth
         for (var i = 0; i < allDrinksWorth.length; i++) {
             if (allDrinksWorth[i].checked) {
                 drinksWorth = allDrinksWorth[i];
                 drinksWorthSet = true;
             }
         }
+
         if(drinksWorthSet) {
             //ajax call to set dare
             $.ajax({
                 url:"set-dare.php",
                 method:"POST",
-                data:{"text":textContainer.value,"drinksWorth":drinksWorth.value}
+                data:{
+                    "text":textContainer.value,
+                    "drinksWorth":drinksWorth.value
+                }
             }).done(function(result) {
                 console.log(result);
 
                 if (result = JSON.parse(result)) {
-
                     //hideAll(result.state);
 
                     if (result.status == true) {
@@ -246,7 +239,9 @@ function pickCard(number, cb) {
         $.ajax({
             url:"pick-card.php",
             method:"POST",
-            data:{"number":number}
+            data:{
+                "number":number
+            }
         }).done(function(result) {
             console.log(result);
 
@@ -299,9 +294,9 @@ function showCard() {
 
         if (result = JSON.parse(result)) {
 
-            if (typeof result.dare != "undefined") {
+            if (typeof result.dare != "undefined" && result.dare != "hidden") {
                 //msg(false, false, "game-drink-or-dare-chosen-dare");
-               document.getElementById('myCard').innerHTML = result.dare;
+                document.getElementById('myCard').innerHTML = result.dare;
             }
         }
     });
@@ -377,6 +372,10 @@ function finishDare() {
     });
 }
 
+/**
+ *
+ * @param except
+ */
 function hideAllExcept(except) {
     if(typeof except == "undefined") {
         except = 0;
