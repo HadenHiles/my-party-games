@@ -17,6 +17,9 @@ $fb = new Facebook\Facebook([
     'default_graph_version' => 'v2.6'
 ]);
 
+//var_dump($_SESSION);
+//var_dump($_POST);
+
 //requests
 $formToDisplay = "join";
 
@@ -28,7 +31,7 @@ try {
     $gameName = $_SESSION['game']['gameName'];
     $isHost = (isset($_SESSION['game']['isHost']) && $_SESSION['game']['isHost']);
     $isDisplay = (isset($_SESSION['game']['isDisplay']) && $_SESSION['game']['isDisplay']);
-
+    
     //set default host in session if not already set
     if (empty($_SESSION['game']['isHost'])) {
         $_SESSION['game']['isHost'] = $isHost;
@@ -81,7 +84,7 @@ try {
             //check to see if a user is already in a game
             if($user->isJoined()) {
                 //For users who just left a game and we still have all of their information except game_id
-                $mySession->switchGame($code);
+                $user->switchGame($code);
                 header("Location: ../lobby/");
                 exit();
             }
@@ -128,7 +131,7 @@ try {
             //join a game here
             if (empty($name)) {
                 $msg[] = array("msg" => "user-enter-nickname");
-            } else if (!$isDisplay) {
+            } else {
                 //request to join a session
                 $result = $mySession->join($name, $fbToken, $fbUserId, $gamePicture);
 
@@ -138,6 +141,11 @@ try {
 
                     if($isHost) {
                         $user->isHost("set", $_SESSION['user']['id']);
+                        //reset user session values
+                        $_SESSION['user'] = $user->getUser();
+                    }
+                    if ($isDisplay) {
+                        $user->isDisplay("set", $_SESSION['user']['id'], true);
                         //reset user session values
                         $_SESSION['user'] = $user->getUser();
                     }
@@ -154,13 +162,11 @@ try {
 
                             if($isHost) {
                                 $user->isHost("set", $_SESSION['user']['id']);
-
                                 //reset user session values
                                 $_SESSION['user'] = $user->getUser();
                             }
                             if($isDisplay) {
-                                $user->isDisplay("set", $_SESSION['user']['id'], 1);
-
+                                $user->isDisplay("set", $_SESSION['user']['id'], true);
                                 //reset user session values
                                 $_SESSION['user'] = $user->getUser();
                             }

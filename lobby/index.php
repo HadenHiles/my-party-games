@@ -11,6 +11,7 @@ if (empty($_SESSION['user']) || empty($_SESSION['game']['code'])) {
 }
 
 //var_dump($_SESSION);
+//var_dump($_POST);
 
 //get header information
 require_once(ROOT."/lobby/header.php");
@@ -26,7 +27,7 @@ try {
 
     //other variables
     $isHost = $user->isHost("get", $thisUser['id']);
-    $isDisplay = (isset($_SESSION['game']['isDisplay']) && $_SESSION['game']['isDisplay']);
+    $isDisplay = $user->isDisplay("get", $thisUser['id']);
 
     //make sure code is valid and game exists
     if (!$mySession->validateGame($code)) {
@@ -38,26 +39,44 @@ try {
     if($game = $mySession->loadUsers($code)) {
         //var_dump($game);
 
-        //check to see if this is the first user to join game and if so make them host
-//        if(count($game['users']) == 1 && $user->isHost("set", $thisUser['id'])) {
-//            $_SESSION['game']['isHost'] = true;
-//            $isHost = true;
-//        }
-
-        //check if this user is now host
+        //check for correct host privleges
         if (!$_SESSION['game']['isHost'] && $isHost) {
             //user got host
             $_SESSION['game']['isHost'] = true;
-            //reset user session variables
+            //reset user session variables and reload
             $_SESSION['user'] = $user->getUser();
+            header("Location: /lobby");
+            exit();
         } else if ($_SESSION['game']['isHost'] && !$isHost) {
-            //user lost host
+            //user lost host, force reload
             $_SESSION['game']['isHost'] = false;
-            //reset user session variables
+            //reset user session variables and reload
             $_SESSION['user'] = $user->getUser();
+            header("Location: /lobby");
+            exit();
         } else if (!$isHost) {
             //reset other users sessions to not host
             $_SESSION['game']['isHost'] = false;
+        }
+
+        //check for correct display privleges
+        if (!$_SESSION['game']['isDisplay'] && $isDisplay) {
+            //user got host
+            $_SESSION['game']['isDisplay'] = true;
+            //reset user session variables and reload
+            $_SESSION['user'] = $user->getUser();
+            header("Location: /lobby");
+            exit();
+        } else if ($_SESSION['game']['isDisplay'] && !$isDisplay) {
+            //user lost host, force reload
+            $_SESSION['game']['isDisplay'] = false;
+            //reset user session variables and reload
+            $_SESSION['user'] = $user->getUser();
+            header("Location: /lobby");
+            exit();
+        } else if (!$isDisplay) {
+            //reset other users sessions to not host
+            $_SESSION['game']['isDisplay'] = false;
         }
 
         /*
@@ -97,17 +116,28 @@ try {
 
                     //set new host
                     $user->isHost("set", $host);
+                    if ($host == $thisUser['id']) {
+                        $_SESSION['game']['isHost'] = true;
+                    } else {
+                        $_SESSION['game']['isHost'] = false;
+                    }
+
+                    //reset all displays
+                    foreach ($game['users'] as $gameUser) {
+                        $user->isDisplay("set", $gameUser['id'], false);
+                    }
 
                     //toggle displays
                     if (!empty($displays)) {
-                        //reset all displays
-                        foreach ($game['users'] as $gameUser) {
-                            $user->isDisplay("set", $gameUser['id'], 0);
-                        }
-
                         //set all displays from post
                         foreach ($displays as $userDisplay) {
-                            $user->isDisplay("set", $userDisplay, 1);
+
+                            $user->isDisplay("set", $userDisplay, true);
+                            if ($userDisplay == $thisUser['id']) {
+                                $_SESSION['game']['isDisplay'] = true;
+                            } else {
+                                $_SESSION['game']['isDisplay'] = false;
+                            }
                         }
                     }
 
@@ -128,6 +158,9 @@ try {
                         //game already exists so we need to update it with new variables
                         $dod->update($thisUser['game_id'], 1, $game_field_values['rounds'], 1, $game_field_values['drinks_to_win']);
                     }
+
+                    //reset user session before refreshing
+                    $_SESSION['user'] = $user->getUser();
 
                     //refresh without post data
                     header("location: /lobby/");
@@ -286,7 +319,7 @@ try {
              */
             if($isHost) {
                 ?>
-                <a href="/games/<?php echo $game['game_name']; ?>/play" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right start-button">Start Game</a>
+                <a href="/games/<?php echo $game['game_name']; ?>/play/" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right start-button">Start Game</a>
                 <?php
             }
             ?>
@@ -344,9 +377,9 @@ if ($isHost) {
                     }
 
                     document.querySelector('#show-settings').addEventListener('click', function() {
-//                        $.get("settings.php", function(data) {
-//                            $('#settingsContent').html(data);
-//                        });
+                        $.get("settings.php", function(data) {
+                            $('#settingsContent').html(data);
+                        });
                         $('dialog.settings').css({"display": "block"});
                         settingsDialog.showModal();
                     });

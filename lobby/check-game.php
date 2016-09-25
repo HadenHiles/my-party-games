@@ -14,6 +14,7 @@ $started = false;
 $exists = false;
 $forceReload = false;
 $isHost = $user->isHost("get", $thisUser['id']);
+$isDisplay = $user->isDisplay("get", $thisUser['id']);
 
 if ($mySession->validateGame($thisUser['game_id'])) {
 
@@ -27,21 +28,39 @@ if ($mySession->validateGame($thisUser['game_id'])) {
     //check if this user is now host
     if (!$_SESSION['game']['isHost'] && $isHost) {
         //user got host
-        $forceReload = true;
         $_SESSION['game']['isHost'] = true;
 
-        //reset user session variables
+        //reset user session variables and reload
         $_SESSION['user'] = $user->getUser();
+        $forceReload = true;
     } else if ($_SESSION['game']['isHost'] && !$isHost) {
         //user lost host, force reload
-        $forceReload = true;
         $_SESSION['game']['isHost'] = false;
 
-        //reset user session variables
+        //reset user session variables and reload
         $_SESSION['user'] = $user->getUser();
+        $forceReload = true;
     } else if (!$isHost) {
         //reset other users sessions to not host
         $_SESSION['game']['isHost'] = false;
+    }
+
+    //check for correct display privleges
+    if (!$_SESSION['game']['isDisplay'] && $isDisplay) {
+        //user got host
+        $_SESSION['game']['isDisplay'] = true;
+        //reset user session variables and reload
+        $_SESSION['user'] = $user->getUser();
+        $forceReload = true;
+    } else if ($_SESSION['game']['isDisplay'] && !$isDisplay) {
+        //user lost host, force reload
+        $_SESSION['game']['isDisplay'] = false;
+        //reset user session variables and reload
+        $_SESSION['user'] = $user->getUser();
+        $forceReload = true;
+    } else if (!$isDisplay) {
+        //reset other users sessions to not host
+        $_SESSION['game']['isDisplay'] = false;
     }
 }
 

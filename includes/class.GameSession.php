@@ -273,20 +273,6 @@ class GameSession {
 
             if ($result->execute() && $result->errorCode() == 0) {
 
-                if ($result->rowCount() > 0) {
-                    $result = $result->fetch(PDO::FETCH_ASSOC);
-
-                    //check if user has already been created but left a game
-                    if ($user->findUser($this->uniquecode)) {
-                        //user already exists in this game
-                        return "user-exists";
-                    } else {
-                        //switch their code to current game and return true which wll send them through
-                        self::switchGame($this->uniquecode);
-                        return true;
-                    }
-                }
-
                 //user hasnt been created, chcek if another user has that name
                 if ($user->findUser($this->uniquecode)) {
                     //user already exists in this game
@@ -349,28 +335,6 @@ class GameSession {
 
         if ($result->execute() && $result->errorCode() == 0) {
             return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param $code
-     * @return bool
-     */
-    public function switchGame($code = 0) {
-        global $db;
-
-        if (!empty($code) && !empty($this->sessionid)) {
-
-            $sql = "UPDATE users SET game_id = :code WHERE session_id = :session_id";
-
-            $result = $db->prepare($sql);
-            $result->bindValue(":code", $code);
-            $result->bindValue(":session_id", $this->sessionid);
-
-            if ($result->execute() && $result->errorCode() == 0) {
-                return true;
-            }
         }
         return false;
     }

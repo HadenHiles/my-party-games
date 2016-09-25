@@ -94,7 +94,7 @@ class User {
      * @param $code
      * @return bool
      */
-    public function findUser($code) {
+    public function findUser($code = 0) {
 
         global $db;
 
@@ -379,6 +379,31 @@ class User {
         return false;
     }
 
+
+    /**
+     * @param $code
+     * @return bool
+     */
+    public function switchGame($code = 0) {
+        global $db;
+
+        if (!empty($code) && !empty($this->sessionid)) {
+
+            $sql = "UPDATE users 
+                    SET game_id = :code 
+                    WHERE session_id = :session_id";
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":code", $code);
+            $result->bindValue(":session_id", $this->sessionid);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * @param $action - "get" or "set"
      * @param $userId - user id to target
@@ -429,7 +454,7 @@ class User {
      * @return bool
      * Set or Get the isDisplay value for the user based on the requested action
      */
-    public function isDisplay($action, $userId, $isDisplay) {
+    public function isDisplay($action = '', $userId = 0, $isDisplay = false) {
         global $db;
 
         if($action == "set") {
@@ -444,16 +469,14 @@ class User {
                 return true;
             }
             return false;
-        } else if ($action == "get") {
-            $sql = 'SELECT is_display FROM users WHERE id = :id AND is_display = true';
+        } else if ($action == "get" && !empty($userId)) {
+            $sql = 'SELECT is_display FROM users WHERE id = :id AND is_display = 1';
 
             $result = $db->prepare($sql);
             $result->bindParam(":id", $userId);
 
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
-                $result = $result->fetch(PDO::FETCH_ASSOC);
-
-                return $result['is_display'];
+                return true;
             }
             return false;
         }
