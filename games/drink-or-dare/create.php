@@ -1,46 +1,54 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'].'/includes/common.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/database.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.GameSession.php');
-require_once($_SERVER['DOCUMENT_ROOT'].'/includes/class.User.php');
-//require_once($_SERVER['DOCUMENT_ROOT'].'/header/header.php');
 
+require_once(ROOT.'/includes/database.php');
+require_once(ROOT.'/includes/class.GameSession.php');
+require_once(ROOT.'/includes/class.User.php');
+
+//this variables is a must
 $gameName = 'drink-or-dare';
 
 try {
     //init a new game session
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
     $user = new User(SESSION_ID, DEVICE_IP);
-    
-    $mySession->setup($gameName);
 
-    //check for form submission to join a game session
-    if (isset($_POST['start-game'])) {
-        $displayOnly = (isset($_POST['display']));
-        $_SESSION['isHost'] = true;
+    if (!empty($gameName)) {
+        //setup the game
+        $mySession->setup($gameName);
 
-        if ($displayOnly) {
-            header("Location: /join/?display=true&unique-id=".$mySession->getCode(SESSION_ID));
-        } else {
-            header("Location: /join/?unique-id=".$mySession->getCode(SESSION_ID));
+        //check for form submission to join a game session
+        if (isset($_POST['start-game'])) {
+
+            //store game session variables
+            $_SESSION['game']['isDisplay'] = isset($_POST['display']);
+            $_SESSION['game']['isHost'] = true;
+            $_SESSION['game']['gameName'] = $gameName;
+            $_SESSION['game']['code'] = $mySession->getCode(SESSION_ID);
+
+            //move to the join paeg
+            header("Location: /join/");
+            exit();
+        } else if (isset($_POST['new-code'])) {
+
+            //requested to make a new code for the current session
+            $mySession->newCode();
+            header("Location: create.php");
+            exit();
+        } else if (isset($_POST['new-session'])) {
+
+            //requested to make a new session
+            session_regenerate_id();
+            $mySession->removeSession(SESSION_ID);
+            header("Location: create.php");
+            exit();
         }
-    } else if (isset($_POST['new-code'])) {
 
-        //requested to make a new code for the current session
-        $mySession->newCode();
-        header("Location: create.php");
-        exit();
-    } else if (isset($_POST['new-session'])) {
-
-        //requested to make a new session
-        session_regenerate_id();
-        $mySession->removeSession(SESSION_ID);
-        header("Location: create.php");
+        //get the current game code
+        $code = $mySession->getCode(SESSION_ID);
+    } else {
+        throw new Exception ("You need a game name variable");
     }
-
-    //get the current game code
-    $code = $mySession->getCode(SESSION_ID);
-
 } catch (Exception $e) {
     echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
 }
@@ -49,7 +57,7 @@ try {
 
 $pageTitle = "Drink Or Dare";
 
-require_once("../header.php");
+require_once(ROOT."/games/header.php");
 ?>
 <div class="layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
     <header class="header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
@@ -87,4 +95,4 @@ require_once("../header.php");
     </main>
 </div>
 <?php
-require_once("../footer.php");
+require_once(ROOT."/games/footer.php");

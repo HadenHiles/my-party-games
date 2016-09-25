@@ -1,10 +1,12 @@
 <?php
-require_once("class.DrinkOrDare.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/includes/common.php");
+require_once(ROOT."/games/drink-or-dare/class.DrinkOrDare.php");
 
-$drinkOrDare = new DrinkOrDare(intval($_SESSION['user']['code']), intval($_SESSION['user']['userid']), 3, 1, 10);
-$drinkOrDare->start(0);
+$drinkOrDare = new DrinkOrDare($_SESSION['game']['code'], $_SESSION['user']['id']);
+$drinkOrDare->start(false);
 $totalRounds = $drinkOrDare->getTotalRounds();
 $drinksToWin = $drinkOrDare->getDrinksToWin();
+
 ?>
 <!-- Slider with Starting Value -->
 <label for="roundSlider">Rounds</label>
@@ -18,7 +20,7 @@ $drinksToWin = $drinkOrDare->getDrinksToWin();
 
 <input type="hidden" name="fields" value="rounds,drinks_to_win" />
 
-<script>
+<script type="text/javascript">
     var roundSlider = document.querySelector('#roundSlider');
     var $roundsInput = $('#roundsInput');
     var drinksToWinSlider = document.querySelector('#drinksToWinSlider');

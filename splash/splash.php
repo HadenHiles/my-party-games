@@ -1,5 +1,5 @@
-<?php
-    require_once("header.php");
+<?php 
+    require_once(ROOT."/splash/header.php");
     ?>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
@@ -87,5 +87,5 @@
         </div>
     </div>
 <?php
-require_once("footer.php");
+require_once(ROOT."/splash/footer.php");
 ?>

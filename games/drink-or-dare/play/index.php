@@ -1,51 +1,68 @@
 <?php
-require_once('../../../includes/common.php');
-require_once('../../../includes/database.php');
-require_once('../../../includes/class.GameSession.php');
-require_once('../../../includes/class.User.php');
-require_once('../class.DrinkOrDare.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/includes/common.php');
 
-//check for user in session
-if (empty($_SESSION['user'])) {
-    header("Location: /join/");
-    $_SESSION['message'][''] =
-    exit();
-}
+require_once(ROOT.'/includes/database.php');
+require_once(ROOT.'/includes/class.GameSession.php');
+require_once(ROOT.'/includes/class.User.php');
+require_once(ROOT.'/games/drink-or-dare/class.DrinkOrDare.php');
 
 $pageTitle = 'Playing Drink Or Dare';
-$thisUser = $_SESSION['user'];
-//var_dump($thisUser);
-
-$mySession = new GameSession(SESSION_ID, DEVICE_IP);
-$user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
-
-//$dod->getDrinkOrDare();
-
-require_once("header.php");
 
 try {
-    if (!$game = $mySession->loadUsers($thisUser['code'], 0)) {
-        //game was not found
-        $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
+    //init classes
+    $mySession = new GameSession(SESSION_ID, DEVICE_IP);
+    $user = new User(SESSION_ID, DEVICE_IP);
+
+    //check for user in session
+    if (empty($_SESSION['user'])) {
+        $_SESSION['user'] = $user->getUser();
+        header("Location: /join/");
         exit();
     }
 
-    //init the new game session
-    $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
-    $dod->start();
+    //check we have valid code
+    if (!$mySession->validateGame($_SESSION['game']['code'])) {
+        header("Location: /join/");
+        exit();
+    }
 
-    $roundNum = $dod->getCurrentRound();
-    $totalRounds = $dod->getTotalRounds();
+    $thisUser = $_SESSION['user'];
+    $code = $_SESSION['game']['code'];
+    $isHost = $user->isHost("get", $thisUser['id']);
+    $isDisplay = $user->isDisplay("get", $thisUser['id']);
+    //var_dump($thisUser);
 
-    //get game state
-    $state =  $dod->getState();
+    if (!$game = $mySession->loadUsers($code, 0)) {
+        //game was not found
+        $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
+        exit();
+    } else {
 
+        //init the new game session
+        $dod = new DrinkOrDare($code, $thisUser['id']);
+        if ($result = $dod->start()) {
+            //start game in game_conenctions table which triggers others to join game
+            $mySession->setCode($code);
+            $mySession->start();
+        }
+
+        $roundNum = $dod->getCurrentRound();
+        $totalRounds = $dod->getTotalRounds();
+
+        //get game state
+        $state = $dod->getState();
+    }
 } catch (Exception $e) {
     //show any errors
-    $msg = "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
-    $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
+    echo "Caught Exception: " . $e->getMessage() . ' | Line: ' . $e->getLine() . ' | File: ' . $e->getFile();
+    //$msg[] = array("msg" => "game-not-found", "popup" => "dialog");
+
 }
+
+require_once(ROOT."/games/drink-or-dare/play/header.php");
+
 ?>
+
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" id="game-content">
     <header class="mdl-layout__header mdl-layout__header--transparent">
         <div class="mdl-layout__header-row">
@@ -54,7 +71,7 @@ try {
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation -->
             <nav class="mdl-navigation">
-                <h6 style="margin: 0 5px;"><?php echo $thisUser['code']; ?></h6>
+                <h6 style="margin: 0 5px;"><?php echo $code; ?></h6>
                 <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
                     <i class="fa fa-cog fade"></i>
                 </button>
@@ -62,7 +79,7 @@ try {
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
                     <li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>
                     <?php
-                    if($user->isHost("get", $thisUser['userid'])) {
+                    if($isHost) {
                         ?>
                         <form action="../../../lobby/" method="post" id="delete-game-form">
                             <input type="hidden" name="delete-game" value="true" />
@@ -75,9 +92,11 @@ try {
             </nav>
         </div>
     </header>
+
     <?php
     require_once("../../../leaderboard/leaderboard.php");
     ?>
+
     <main class="mdl-layout__content">
 
         <!-- Stage 1 -->
@@ -255,6 +274,6 @@ try {
 </div>
 
 <?php
-require_once("footer.php");
+require_once(ROOT."/games/drink-or-dare/play/footer.php");
 ?>
 

@@ -1,8 +1,9 @@
 <?php
-require_once("../includes/class.GameSession.php");
-require_once("../includes/class.User.php");
-require_once("../includes/common.php");
-require_once("../includes/database.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/includes/common.php");
+
+require_once(ROOT."/includes/class.GameSession.php");
+require_once(ROOT."/includes/class.User.php");
+require_once(ROOT."/includes/database.php");
 
 $thisUser = $_SESSION['user'];
 
@@ -10,7 +11,7 @@ $thisUser = $_SESSION['user'];
 $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 $user = new User(SESSION_ID, DEVICE_IP, $thisUser['name']);
 
-if(!$game = $mySession->loadUsers($thisUser['code'], 0)) {
+if(!$game = $mySession->loadUsers($thisUser['game_id'], 0)) {
     //game not found
 } else {
     ?>
