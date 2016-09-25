@@ -249,7 +249,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
             </div>
 
             <div class="votes" id="votes">
-                <h3><span id="num-votes">0</span><span>/<?php echo $dod->getNumPlayers() - 1; ?></span> Votes</h3>
+                <h3><span id="num-votes">0</span><span>/<?php echo $dod->getNumPlayers(); ?></span> Votes</h3>
             </div>
         </div>
 

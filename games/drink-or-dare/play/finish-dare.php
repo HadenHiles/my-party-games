@@ -51,13 +51,16 @@ try {
             }
         }
 
-        if ($good == $bad || $good == $skip || $bad == $skip || $skip > $good || $skip > $bad) {
-            $verdict = "skip";
-        } else if ($good == $bad || $good > $skip || $good > $bad) {
-            $verdict = "good";
-            $user->addPoints($dod->getDrinksWorth(true), $thisUser['userid']);
-        } else if ($bad >= $good || $bad > $skip) {
+        if($bad > $good && $bad > $skip) {
             $verdict = "bad";
+            $newScore = $dod->getScore($thisUser['id']) - $dod->getDrinksWorth(true);
+            $dod->updateScore($thisUser['id'], $newScore);
+        } else if($skip >= $bad && $skip > $good) {
+            $verdict = "skip";
+        } else {
+            $verdict = "good";
+            $newScore = $dod->getScore($thisUser['id']) + $dod->getDrinksWorth(true);
+            $dod->updateScore($thisUser['id'], $newScore);
         }
     }
 
