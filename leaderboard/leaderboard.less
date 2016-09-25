@@ -1,0 +1,27 @@
+.leaderboard {
+  .mdl-card.player {
+    width      : 100%;
+    margin     : 5px 0;
+    border     : 3px solid rgba(33, 150, 243, 0);
+
+    .place.negative {
+      color: #CC0000 !important;
+    }
+
+    &.me {
+      border: 3px solid rgba(33, 150, 243, 0) !important;
+      .mdl-card__supporting-text h5 {
+        color: #6ab344;
+      }
+    }
+    &:nth-child(1) {
+      border : 3px groove gold !important;
+    }
+    &:nth-child(2) {
+      border : 3px groove silver !important;
+    }
+    &:nth-child(3) {
+       border : 3px groove #CD7F32 !important;
+    }
+  }
+}

@@ -19,7 +19,7 @@
                 if(!$usr['is_display']) {
                     if($usr['id'] == $user_session['id']) {
                         ?>
-                        <div class="mdl-card mdl-shadow--6dp player me">
+                        <div class="mdl-card mdl-shadow--16dp player me">
                         <?php
                     } else {
                         ?>
@@ -28,7 +28,7 @@
                     }
                         ?>
                         <div class="mdl-card__supporting-text">
-                            <h5 class="place"><?php echo $usr['score']; ?></h5>
+                            <h5 class="place <?php if($usr['score'] < 0) { echo 'negative'; } ?>"><?php echo $usr['score']; ?></h5>
                             <img src="<?php echo $usr['picture']; ?>" border="0" alt="" />
                             <h5><?php echo $usr['display_name']; ?></h5>
                         </div>
