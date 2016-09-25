@@ -294,27 +294,36 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
 } else if($formToDisplay == "join") {
     ?>
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+
         <main class="mdl-layout__content main-form">
-            <div style="color: #cccccc;">
-                <a href="/" class="party-games-title" style="color: #ccc;"><h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4></a>
+            <div class="mdl-cell mdl-cell--8-col">
+                <div style="color: #cccccc;">
+                    <a href="/" class="party-games-title" style="color: #ccc;"><h3 style="float: left;"><i class="fa fa-glass"></i></h3 style="float: left;"><h4 style="float: left; position: relative; top: 8px; left: 10px;">Party Games</h4></a>
+                </div>
+                <div class="mdl-card mdl-shadow--6dp">
+                    <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+                        <h2 class="mdl-card__title-text">Join Game</h2>
+                    </div>
+                    </br>
+                    <div class="mdl-card__supporting-text">
+                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" id="joinForm">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="<?php echo $_REQUEST['last-game-code']; ?>" required />
+                                <label class="mdl-textfield__label" for="unique-id">Game Code</label>
+                                <span class="mdl-textfield__error">Please enter a valid code!</span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mdl-card__actions" style="text-align: center;">
+                        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="$('#joinForm').submit();" style="width: 100%;">Join</button>
+                    </div>
+                </div>
             </div>
-            <div class="mdl-card mdl-shadow--6dp">
-                <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
-                    <h2 class="mdl-card__title-text">Join Game</h2>
+            <div class="mdl-cell mdl-cell--4-col current-games">
+                <div style="color: #cccccc;">
+                    <h4 style="float: left; width: 300px;">Recently Created:</h4>
                 </div>
-                </br>
-                <div class="mdl-card__supporting-text">
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET" id="joinForm">
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="number" name="unique-id" id="unique-id" pattern="-?[0-9]*(\.[0-9]+)?" value="<?php echo $_REQUEST['last-game-code']; ?>" required />
-                            <label class="mdl-textfield__label" for="unique-id">Game Code</label>
-                            <span class="mdl-textfield__error">Please enter a valid code!</span>
-                        </div>
-                    </form>
-                </div>
-                <div class="mdl-card__actions" style="text-align: center;">
-                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="$('#joinForm').submit();" style="width: 100%;">Join</button>
-                </div>
+                <?php require_once("current-games.php"); ?>
             </div>
         </main>
     </div>

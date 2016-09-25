@@ -489,4 +489,23 @@ class GameSession {
 
         return $this->uniquecode;
     }
+
+    /**
+     * @return array|bool|PDOStatement
+     */
+    public function getCurrentGames() {
+        global $db;
+
+        $sql = 'SELECT DISTINCT * FROM game_connections WHERE game_active = 0 ORDER BY id DESC LIMIT 4';
+
+        $result = $db->prepare($sql);
+
+        //query
+        if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
+            $result = $result->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+        }
+        return false;
+    }
 }
