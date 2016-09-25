@@ -1,9 +1,9 @@
 <?php
-require_once('../../../includes/common.php');
-require_once('../../../includes/database.php');
-require_once('../../../includes/class.GameSession.php');
-require_once('../../../includes/class.User.php');
-require_once('../class.DrinkOrDare.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/includes/common.php');
+require_once(ROOT.'/includes/database.php');
+require_once(ROOT.'/includes/class.GameSession.php');
+require_once(ROOT.'/includes/class.User.php');
+require_once(ROOT.'/games/drink-or-dare/class.DrinkOrDare.php');
 
 //get user session information
 $thisUser = $_SESSION['user'];
@@ -16,25 +16,20 @@ $gameState = array();
 //update and check the state of the current game
 try {
     //check that the game is currently still alive
-    if (!$game = $mySession->loadUsers($thisUser['code'], 0)) {
+    if (!$game = $mySession->loadUsers($thisUser['game_id'], 0)) {
         $gameState["error"] = "Game could not be loaded";
     }
 
     //load the drink or dare class and get game values from database
-    $dod = new DrinkOrDare($thisUser['code'], $thisUser['userid']);
+    $dod = new DrinkOrDare($thisUser['game_id'], $thisUser['id']);
     $dod->start();
 
     if ($dod->getIsMyTurn()) {
-
-        $gameState["dare"] = $dod->getDare();
+        $gameState["dare"] = $dod->getDare(true, true);
         $dod->setDarePeeked();
-
     } else if ($dod->checkHasPeeked(true)) {
-
-        $gameState["dare"] = $dod->getDare(true);
-
+        $gameState["dare"] = $dod->getDare(true, true);
     } else {
-
         $gameState["dare"] = "hidden";
     }
 
