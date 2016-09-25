@@ -81,7 +81,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                     <?php
                     if($isHost) {
                         ?>
-                        <form action="../../../lobby/" method="post" id="delete-game-form">
+                        <form action="../../../lobby/leave.php" method="post" id="delete-game-form">
                             <input type="hidden" name="delete-game" value="true" />
                         </form>
                         <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){$('#delete-game-form').submit();}">Stop Game</li>
