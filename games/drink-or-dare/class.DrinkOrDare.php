@@ -290,6 +290,13 @@ class DrinkOrDare {
             $result->bindValue(":gameid", $this->gameid);
 
             if ($result->execute() && $result->errorCode() == 0) {
+                //make sure to reset the scores as well
+                $sql = 'UPDATE drink_or_dare_order SET score = 0 WHERE game_id = :gameid';
+
+                $result = $db->prepare($sql);
+                $result->bindValue(":gameid", $this->gameid);
+                $result->execute();
+
                 return true;
             }
         }
