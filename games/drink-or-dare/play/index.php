@@ -11,7 +11,7 @@ $pageTitle = 'Playing Drink Or Dare';
 try {
     //init classes
     $mySession = new GameSession(SESSION_ID, DEVICE_IP);
-    $user = new User(SESSION_ID, DEVICE_IP, $thisUser['display_name']);
+    $user = new User(SESSION_ID, DEVICE_IP);
 
     //check for user in session
     if (empty($_SESSION['user'])) {
@@ -96,7 +96,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
     <?php
     require_once("../../../leaderboard/leaderboard.php");
     ?>
-    
+
     <main class="mdl-layout__content">
 
         <!-- Stage 1 -->
