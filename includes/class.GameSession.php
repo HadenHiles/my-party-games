@@ -34,19 +34,19 @@ class GameSession {
         }
     }
 
-    public function isStarted() {
+    public function isStarted($code = 0) {
         global $db;
 
-        if (!empty($this->uniquecode)) {
+        if (!empty($this->uniquecode) || !empty($code)) {
 
             $sql = 'SELECT * FROM game_connections 
-                    WHERE unique_code = :code 
-                    AND session_id = :sessionid
+                    WHERE unique_code = :code
                     AND game_active = 1';
 
             $result = $db->prepare($sql);
-            $result->bindValue(":sessionid", $this->sessionid);
-            $result->bindValue(":code", $this->uniquecode);
+
+            $code = (!empty($code) ?  $code : $this->uniquecode);
+            $result->bindValue(":code", $code);
 
             //check to see if game session was created
             if ($result->execute() && $result->errorCode() == 0 && $result->rowCount() > 0) {
@@ -54,6 +54,35 @@ class GameSession {
             }
         }
 
+        return false;
+    }
+
+    public function start() {
+        global $db;
+
+        if (!empty($this->uniquecode)) {
+
+            $sql = 'UPDATE game_connections
+                    SET game_active = 1
+                    WHERE unique_code = :code';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":code", $this->uniquecode);
+
+            //check to see if game session was created
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
+        } else {
+            throw new Exception("Cannot start game without code");
+        }
+        return false;
+    }
+
+    public function setCode($code = 0) {
+        if (!empty($code) && is_numeric($code)) {
+            $this->uniquecode = $code;
+        }
         return false;
     }
 

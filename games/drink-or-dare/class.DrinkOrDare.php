@@ -12,6 +12,7 @@ class DrinkOrDare {
     private $numPlayers;
     private $activePlayer;
     private $freePass;
+    private $isStarted;
 
     /**
      * DrinkOrDare constructor.
@@ -33,6 +34,7 @@ class DrinkOrDare {
         $this->numPlayers = 0;
         $this->activePlayer = 0;
         $this->freePass = $freePass;
+        $this->isStarted = false;
     }
 
     /**
@@ -104,11 +106,16 @@ class DrinkOrDare {
             }
         }
 
+        if ($play && $this->numPlayers == 0) {
+            throw new Exception("Cannot start game with at least 1 player.");
+            return false;
+        }
+
         //make sure we have a game id to work with
         if (!empty($this->gameid)) {
 
             //check if game has already started
-            if (!self::isStarted($this->gameid, $play)) {
+            if (!self::isStarted($this->gameid, false)) {
                 /*
                  * game doesnt exist, create it here
                  */
@@ -123,7 +130,9 @@ class DrinkOrDare {
                 $result->bindParam(":total_rounds", $this->total_rounds);
                 $result->bindParam(":current_round", $this->current_round);
                 $result->bindParam(":drinks_to_win", $this->drinksToWin);
-                $result->bindParam(":is_started", $play);
+
+                $isStarted = ($play ? 1 : 0);
+                $result->bindParam(":is_started", $isStarted);
 
                 if ($result->execute() && $result->errorCode() == 0) {
                     return true;
@@ -145,6 +154,21 @@ class DrinkOrDare {
                     $this->total_rounds = $result['total_rounds'];
                     $this->current_round = $result['current_round'];
                     $this->drinksToWin = $result['drinks_to_win'];
+
+                    //check if not started but should be
+                    if (!$result['is_started'] && $play) {
+
+                        $sql = 'UPDATE drink_or_dare
+                                SET is_started = 1
+                                WHERE game_id = :gameid';
+
+                        $result = $db->prepare($sql);
+                        $result->bindParam(":gameid", $this->gameid);
+
+                        if ($result->execute() && $result->errorCode() == 0) {
+
+                        }
+                    }
 
                     //set active players
                     if ($this->state == 3) {
@@ -182,6 +206,8 @@ class DrinkOrDare {
 
                         $this->hasCurrentDare = true;
                     }
+
+                    return true;
                 }
             }
         } else {

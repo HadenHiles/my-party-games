@@ -49,6 +49,7 @@ try {
         //check for request to leave game
         if (isset($_REQUEST['leave']) && $_REQUEST['leave']) {
             $mySession->clearSessionVars();
+            $_SESSION['user'] = $user->getUser();
             header("Location: /join/");
             exit();
         }
@@ -85,6 +86,7 @@ try {
             if($user->isJoined()) {
                 //For users who just left a game and we still have all of their information except game_id
                 $user->switchGame($code);
+                $_SESSION['user'] = $user->getUser();
                 header("Location: ../lobby/");
                 exit();
             }

@@ -101,6 +101,7 @@ try {
 
                     //leave game if not host
                     if($mySession->leave()) {
+                        $_SESSION['user'] = $user->getUser();
                         header('Location: /join/?unique-code=' . $code);
                         exit();
                     }

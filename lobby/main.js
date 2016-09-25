@@ -69,18 +69,18 @@ function checkGame() {
     $.ajax({
         url: "check-game.php",
         type: "get",
-        dataType: "json",
         success: function(result) {
             console.log(result);
 
             //check if the game has started
             if (!result.exists) {
                 location.reload();
-            } else if (result.started || result.forceReload) {
+            } else if (result.forceReload) {
                 location.reload();
             }
         },
         error(xhr, status, error) {
+            console.log(error);
             msg("dialog", false, "lobby-check-game-not-working");
             clearInterval(checkGameInterval);
         }

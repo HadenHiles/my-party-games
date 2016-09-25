@@ -10,7 +10,6 @@ $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 $user = new User(SESSION_ID, DEVICE_IP);
 
 $thisUser = $_SESSION['user'];
-$started = false;
 $exists = false;
 $forceReload = false;
 $isHost = $user->isHost("get", $thisUser['id']);
@@ -21,8 +20,8 @@ if ($mySession->validateGame($thisUser['game_id'])) {
     $exists = true;
 
     //check if the game has started
-    if ($mySession->isStarted()) {
-        $started = true;
+    if ($mySession->isStarted($thisUser['game_id'])) {
+        $forceReload = true;
     }
 
     //check if this user is now host
@@ -66,4 +65,4 @@ if ($mySession->validateGame($thisUser['game_id'])) {
 
 //echo response
 header('Content-Type: application/json');
-echo json_encode(array("exists" => $exists, "started" => $started, "forceReload" => $forceReload));
+echo json_encode(array("exists" => $exists, "forceReload" => $forceReload));

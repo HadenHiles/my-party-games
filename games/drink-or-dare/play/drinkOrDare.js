@@ -2,7 +2,7 @@ $(function(){
     var hasNotifiedUserOfAllVotesCasted = false;
     var isMyTurn = false;
     var verdict = "";
-
+    return false;
     var updateIneterval = setInterval(function() {
         $.ajax({
             url:"get-update-game.php",
