@@ -1,4 +1,5 @@
 <?php
+ini_set("display_errors", 1);
 require_once($_SERVER['DOCUMENT_ROOT'].'/includes/common.php');
 require_once(ROOT.'/includes/database.php');
 require_once(ROOT.'/includes/class.GameSession.php');

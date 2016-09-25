@@ -760,7 +760,7 @@ class DrinkOrDare {
         $sql = 'SELECT drinks_worth
                 FROM drink_or_dare_user_dares
                 WHERE assign_to_id = :activeplayer
-                AND game_id = :game_id
+                AND game_id = :gameid
                 AND round_number = :roundnumber';
         
         $result = $db->prepare($sql);
@@ -772,7 +772,7 @@ class DrinkOrDare {
 
             $result = $result->fetch(PDO::FETCH_ASSOC);
 
-            return $result['points'];
+            return $result['drinks_worth'];
         }
 
         return false;
@@ -1054,11 +1054,12 @@ class DrinkOrDare {
         $sql = 'SELECT score FROM drink_or_dare_order WHERE game_id = :gameid AND user_id = :userid';
 
         $result = $db->prepare($sql);
-        $result->bindParam(":game_id", $this->gameid);
+        $result->bindParam(":gameid", $this->gameid);
         $result->bindParam(":userid", $userId);
 
         if ($result->execute() && $result->errorCode() == 0) {
-            return $result->fetch(PDO::FETCH_ASSOC);
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+            return $result['score'];
         }
 
         return false;
@@ -1075,7 +1076,7 @@ class DrinkOrDare {
         $sql = 'UPDATE drink_or_dare_order SET score = :score WHERE game_id = :gameid AND user_id = :userid';
 
         $result = $db->prepare($sql);
-        $result->bindParam(":game_id", $this->gameid);
+        $result->bindParam(":gameid", $this->gameid);
         $result->bindParam(":userid", $userId);
         $result->bindParam(":score", $score);
 
