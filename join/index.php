@@ -319,12 +319,7 @@ if($formToDisplay == "nickname" && !isset($_REQUEST['fb-login'])) {
                     </div>
                 </div>
             </div>
-            <div class="mdl-cell mdl-cell--4-col current-games">
-                <div style="color: #cccccc;">
-                    <h4 style="float: left; width: 300px;">Recently Created:</h4>
-                </div>
-                <?php require_once("current-games.php"); ?>
-            </div>
+            <?php require_once("current-games.php"); ?>
         </main>
     </div>
     <?php
