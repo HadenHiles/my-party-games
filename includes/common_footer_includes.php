@@ -43,7 +43,7 @@ $(function() {
         4:"http://www.halloweenasylum.com/assets/images/GhoulishProductions/26446.png"
     }
 
-    var index = Math.floor(Math.random() * 5);
+    var index = Math.floor(Math.random() * images.size);
     $(ghost).attr('src', images[index]);
 
     console.log(images.length);
