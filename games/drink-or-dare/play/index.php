@@ -73,10 +73,14 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
             <!-- Navigation -->
             <nav class="mdl-navigation">
                 <h6 style="margin: 0 5px;"><?php echo $code; ?></h6>
-                <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
-                    <i class="fa fa-cog fade"></i>
-                </button>
+                <?php
+                if($isHost) {
+                    ?>
+                    <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
+                        <i class="fa fa-cog fade"></i>
+                    </button>
 
+<<<<<<< HEAD
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
                     <?php
                     if(!$isHost) {
@@ -89,10 +93,24 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                             <input type="hidden" name="delete-game" value="true" />
                         </form>
                         <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to delete the game?')){$('#delete-game-form').submit();}">Delete Game</li>
+=======
+                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                        <!--<li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>-->
+>>>>>>> 30c5ab5024ead13f6de87a6707ebe07a7ca5a722
                         <?php
-                    }
-                    ?>
-                </ul>
+                        if($isHost) {
+                            ?>
+                            <form action="../../../lobby/" method="post" id="delete-game-form">
+                                <input type="hidden" name="delete-game" value="true" />
+                            </form>
+                            <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){$('#delete-game-form').submit();}">Stop Game</li>
+                            <?php
+                        }
+                        ?>
+                    </ul>
+                    <?php
+                }
+                ?>
             </nav>
         </div>
     </header>
