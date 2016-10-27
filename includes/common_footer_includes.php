@@ -1,5 +1,12 @@
 <div>
-    <img src="https://a2ua.com/ghost/ghost-002.jpg" style="
+    <style>
+        @media screen and (max-width: 700px) {
+            .halloween-image {
+                width: 50% !important;
+            }
+        }
+    </style>
+    <img src="https://a2ua.com/ghost/ghost-002.jpg" class="halloween-image" style="
         pointer-events: none;
         position: fixed;
         top: 50%;
@@ -95,7 +102,7 @@ $(function() {
             index = Math.floor(Math.random() * images.length);
             $(ghost).attr('src', images[index]);
             $(ghost).css("top", Math.floor((Math.random() * 65) + 10)+"%");
-            $(ghost).css("left", Math.floor((Math.random() * 80) + 10)+"%");
+            $(ghost).css("left", Math.floor((Math.random() * 70) + 10)+"%");
             current = 0;
             wait = Math.floor(Math.random() * 250) + 1;
         }
