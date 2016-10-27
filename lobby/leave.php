@@ -22,6 +22,6 @@ if($user->isHost("get", $thisUser['id'])) {
 
 if($mySession->leave()) {
     $_SESSION['user'] = $user->getUser();
-    header('Location: /join/?last-game-code=' . $code);
+    header('Location: /join/?unique-id=' . $code);
     exit();
 }

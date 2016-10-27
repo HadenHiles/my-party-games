@@ -27,6 +27,11 @@ class User {
 
         if (!empty($sessionid)) {
 
+            if (!is_numeric($game_id)) {
+                throw new Exception ("Invalid game id.");
+                return false;
+            }
+
             //required variables
             $this->sessionid = $sessionid;
             $this->hostip = $ip;
@@ -223,7 +228,7 @@ class User {
                 $result = $result->fetch(PDO::FETCH_ASSOC);
                 return $result;
             }
-        } else if (!empty($this->sessionid)) {
+        } else {
 
             $sql = 'SELECT * FROM users WHERE session_id = :sessionid';
 

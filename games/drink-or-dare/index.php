@@ -12,7 +12,7 @@ require_once(ROOT."/games/header.php");
             <div class="mdl-layout__header-row">
                 <!-- Icon button -->
                 <button class="mdl-button mdl-js-button mdl-button--icon" onclick="window.history.back(); return false;">
-                    <i class="fa fa-arrow-left"></i>
+                    <i class="fa fa-arrow-left" title="Go back"></i>
                 </button>
                 <span class="mdl-layout-title"><?php echo $pageTitle; ?></span>
                 <div class="mdl-layout-spacer"></div>

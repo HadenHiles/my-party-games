@@ -35,6 +35,7 @@ try {
     if (!$game = $mySession->loadUsers($code, 0)) {
         //game was not found
         $msg[] = array("msg" => "game-not-found", "popup" => "dialog");
+        header("Location: /join/?unique-id=".$code);
         exit();
     } else {
 
@@ -77,14 +78,17 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                 </button>
 
                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
-                    <li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>
                     <?php
-                    if($isHost) {
+                    if(!$isHost) {
+                        ?>
+                        <li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>
+                        <?php
+                    } else if ($isHost) {
                         ?>
                         <form action="../../../lobby/" method="post" id="delete-game-form">
                             <input type="hidden" name="delete-game" value="true" />
                         </form>
-                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){$('#delete-game-form').submit();}">Stop Game</li>
+                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to delete the game?')){$('#delete-game-form').submit();}">Delete Game</li>
                         <?php
                     }
                     ?>
