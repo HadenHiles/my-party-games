@@ -34,6 +34,7 @@ $(function() {
     var ghost = $('#testerino');
     var toggle = false;
     var op = 0;
+
     var images = [
         "https://a2ua.com/ghost/ghost-002.jpg",
         "http://vignette3.wikia.nocookie.net/clubpenguin/images/0/0a/Pumpkin_Head_clothing_icon_ID_1095.png/revision/latest?cb=20131006145935",
@@ -61,26 +62,35 @@ $(function() {
 
     var index = Math.floor(Math.random() * images.length);
     $(ghost).attr('src', images[index]);
+    var wait = Math.floor(Math.random() * 160) + 60;
+    var current = 0;
 
-    console.log(images.length);
     var inte = setInterval(function() {
-        if (!toggle) {
-            op+=.05
-        } else {
-            op-=.1;
+
+        if (current < wait) {
+            current++;
+            return;
         }
-        if (op >= .8) {
+
+        if (!toggle) {
+            op+=.02;
+        } else {
+            op-=.03;
+        }
+
+        if (op >= .9) {
             toggle = true;
         } else if ( op <= 0) {
             toggle = false;
-
             index = Math.floor(Math.random() * images.length);
             $(ghost).attr('src', images[index]);
             $(ghost).css("top", Math.floor((Math.random() * 65) + 10)+"%");
             $(ghost).css("left", Math.floor((Math.random() * 80) + 10)+"%");
+            current = 0;
+            wait = Math.floor(Math.random() * 250) + 1;
         }
         $(ghost).css("opacity", op);
-    }, 100);
+    }, 50);
 });
 </script>
 
