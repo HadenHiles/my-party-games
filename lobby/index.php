@@ -209,7 +209,7 @@ try {
                     <?php
                 }
                 ?>
-                <span class="android-title mdl-layout-title" style="color: #757575; margin-left: 15px;">
+                <span class="android-title mdl-layout-title" style="margin-left: 15px;">
                 <i class="fa fa-glass" aria-hidden="true" style="color: #8bc34a;"></i> Party Games
             </span>
                 <div class="mdl-layout-spacer"></div>

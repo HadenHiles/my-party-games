@@ -1,8 +1,3 @@
-
-        <ul>
-            <li><a href="/">Home</a></li>
-        </ul>
-
         <?php
         //common file needed to run on all pages
         require_once(ROOT.'/includes/common_footer_includes.php');
