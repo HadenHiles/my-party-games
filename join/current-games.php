@@ -6,7 +6,7 @@ if($currentGames) {
     ?>
     <div class="mdl-cell mdl-cell--4-col current-games">
         <div style="color: #cccccc;">
-            <h4 style="float: left; width: 300px;">Recently Created:</h4>
+            <h4 class="mdl-color-text--grey-800" style="float: left; width: 300px;">Recently Created:</h4>
         </div>
         <?php
         foreach($currentGames as $game) {

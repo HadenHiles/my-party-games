@@ -25,7 +25,7 @@
     require_once(ROOT.'/includes/common_header_includes.php');
     ?>
 
-    <link rel="stylesheet" href="android.css" />
-    <link rel="stylesheet" href="join.css" />
+    <link rel="stylesheet" href="halloween.css" />
+    <link rel="stylesheet" href="halloween-join.css" />
 </head>
 <body>
