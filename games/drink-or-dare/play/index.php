@@ -79,36 +79,20 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                     <button id="settings" class="mdl-button mdl-js-button mdl-button--icon">
                         <i class="fa fa-cog fade"></i>
                     </button>
-
-<<<<<<< HEAD
-                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
+                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
                     <?php
                     if(!$isHost) {
                         ?>
-                        <li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>
+                        <!--<li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>-->
                         <?php
                     } else if ($isHost) {
                         ?>
                         <form action="../../../lobby/" method="post" id="delete-game-form">
-                            <input type="hidden" name="delete-game" value="true" />
+                            <input type="hidden" name="delete-game" value="true"/>
                         </form>
-                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to delete the game?')){$('#delete-game-form').submit();}">Delete Game</li>
-=======
-                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="settings">
-                        <!--<li class="mdl-menu__item" id="leave-game" onclick="window.location.href = '../../../lobby/leave.php';">Leave Game</li>-->
->>>>>>> 30c5ab5024ead13f6de87a6707ebe07a7ca5a722
+                        <li class="mdl-menu__item" id="delete-game" style="color: #CE0000"onclick="if(confirm('Are you sure you want to delete the game?')){$('#delete-game-form').submit();}">Delete Game</li>
                         <?php
-                        if($isHost) {
-                            ?>
-                            <form action="../../../lobby/" method="post" id="delete-game-form">
-                                <input type="hidden" name="delete-game" value="true" />
-                            </form>
-                            <li class="mdl-menu__item" id="delete-game" style="color: #CE0000" onclick="if(confirm('Are you sure you want to stop the game?')){$('#delete-game-form').submit();}">Stop Game</li>
-                            <?php
-                        }
-                        ?>
-                    </ul>
-                    <?php
+                    }
                 }
                 ?>
             </nav>
