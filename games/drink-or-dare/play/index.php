@@ -165,7 +165,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
         </div>
 
         <!-- Stage 3 -->
-        <div class="mdl-cell mdl-cell--3-col mdl-cell--6-col-tablet mdl-cell--8-col-phone center" <?php echo ($state == 3 ? : 'style="display:none"'); ?> style="min-width: 300px;" id="game-stage-3">
+        <div class="mdl-cell mdl-cell--3-col mdl-cell--6-col-tablet mdl-cell--8-col-phone center" style="<?php echo ($state == 3 ? : 'display:none;'); ?> min-width: 300px;" id="game-stage-3">
 
             <div <?php echo ($dod->getIsMyTurn() ? '' : 'style="display:none"'); ?> id="game-stage-3-player">
                 <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="myCard">
@@ -179,7 +179,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                         </div>
                         <h5 class='dareText'><?php echo $dare['dare'] ?></h5>
                         <?php
-                    } else if($dare['assign_to_id'] == $thisUser['userid']) {
+                    } else if($dod->getIsMyTurn()) {
                         ?>
                         <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>
                         <?php
@@ -199,12 +199,12 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                     <div class="mdl-tooltip mdl-tooltip--large" for="only-skip">
                         Use a Free Pass
                     </div>
-                    <button id="done-dare" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="finishDare();">
-                        <i class="fa fa-check"></i>
-                    </button>
-                    <div class="mdl-tooltip mdl-tooltip--large" for="done-dare">
-                        I'm done the dare!
-                    </div>
+<!--                    <button id="done-dare" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="finishDare();">-->
+<!--                        <i class="fa fa-check"></i>-->
+<!--                    </button>-->
+<!--                    <div class="mdl-tooltip mdl-tooltip--large" for="done-dare">-->
+<!--                        I'm done the dare!-->
+<!--                    </div>-->
                 </div>
             </div>
 
@@ -220,7 +220,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                         </div>
                         <h5 class='dareText'><?php echo $dare['dare'] ?></h5>
                         <?php
-                    } else if($dare['assign_to_id'] == $thisUser['userid']) {
+                    } else if($dod->getIsMyTurn()) {
                         ?>
                         <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>
                         <?php

@@ -313,7 +313,7 @@ class DrinkOrDare {
         global $db;
 
         if (!empty($gameId)) {
-            $sql = 'SELECT * FROM drink_or_dare 
+            $sql = 'SELECT id FROM drink_or_dare 
                     WHERE game_id = :gameid';
 
             if ($checkGameInProgress) {
