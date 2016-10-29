@@ -107,18 +107,24 @@ $(function(){
                         if (result.allVotesCast && !hasNotifiedUserOfAllVotesCasted) {
                             hasNotifiedUserOfAllVotesCasted = true;
 
-                            var votingResult = "People voted "+result.verdict+"!<Br />";
-                            votingResult += (result.turn ? "You" : result.activePlayer.display_name) + " ";
+                            var votingResult = "<div class='votingResult'>";
 
                             if (result.verdict == "good") {
+                                votingResult = "<h4>People voted <span class='mdl-color-text--green'>"+result.verdict+"</span>!</h4><Br />";
+                                votingResult += result.activePlayer.display_name + " ";
                                 votingResult += "can give out "+result.drinksWorth+" drink(s).";
                             } else if (result.verdict == "skip") {
-                                votingResult += (result.turn ? "get" :"gets") + " to skip this dare.";
+                                votingResult = "<h4>People voted <span class='mdl-color-text--primary'>"+result.verdict+"</span>!</h4><Br />";
+                                votingResult += result.activePlayer.display_name + " ";
+                                votingResult += "gets to skip this dare.";
                             } else if (result.verdict == "bad") {
+                                votingResult = "<h4>People voted <span class='mdl-color-text--red'>"+result.verdict+"</span>!</h4><Br />";
+                                votingResult += result.activePlayer.display_name + " ";
                                 votingResult += "must drink "+result.drinksWorth+" drink(s).";
                             }
+                            votingResult += "</div>";
 
-                            msg("dialog", false, votingResult, "Voting Results", false, false, false, false, reload);
+                            msg("dialog", false, votingResult, "Voting Results", false, false, false, false);
                         }
 
                         //get voting stats
