@@ -15,7 +15,7 @@ $(function(){
 
                 //check for error messages
                 if (result.error != "" && typeof result.error != "undefined") {
-                    msg("dialog", false, result.error, "Game Error", "danger");
+                    msg("dialog", false, result.error, "Game Error", "danger", false, false, false, reload);
                     clearInterval(updateIneterval);
                 }
 
@@ -137,6 +137,7 @@ $(function(){
 
                     case 4:
                         //incrementing rounds and check for game completion
+                        window.location.reload();
                         break;
 
                     case 5:
@@ -366,7 +367,7 @@ function castVote(vote) {
                 if (result.status == true) {
                     msg(false, false, "game-drink-or-dare-vote-cast-success", "Cast Vote", "success");
                 } else if (result.status == "changed") {
-                    msg(false, false, "game-drink-or-dare-vote-cast-change", "Cast Vote", "info");
+                    msg(false, false, "game-drink-or-dare-vote-cast-change", "Cast Vote");
                 } else {
                     msg(false, false, "game-drink-or-dare-vote-cast-failure", "Cast Vote", "danger");
                 }

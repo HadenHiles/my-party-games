@@ -17,7 +17,7 @@
         z-index: 10;
         opacity: 0;
     " id="testerino">
-    <img src="/images/web.png" alt="" style="position: fixed; left: -25px; bottom: -25px; z-index: 9;" />
+    <img src="/images/web.png" alt="" style="position: fixed; left: -25px; bottom: -25px; z-index: 1; pointer-events: none;" />
 </div>
 
 
