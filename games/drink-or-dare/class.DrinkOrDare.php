@@ -957,13 +957,14 @@ class DrinkOrDare {
     }
 
     /**
+     * @param $isHost
      * @return bool
      */
-    public function checkNextRound() {
+    public function checkNextRound($isHost) {
 
         global $db;
 
-        if ($this->current_round < $this->total_rounds) {
+        if ($this->current_round < $this->total_rounds && $isHost) {
 
             $this->current_round++;
 
@@ -1004,14 +1005,14 @@ class DrinkOrDare {
     }
 
     /**
+     * @param $isHost
      * @return bool
      */
-    public function checkNextState() {
+    public function checkNextState($isHost) {
 
         global $db;
 
-        if (!empty($this->state)) {
-
+        if (!empty($this->state) && $isHost) {
             //get current state and compare to see if state should be updated
             $previous = $this->state;
 
@@ -1029,7 +1030,7 @@ class DrinkOrDare {
                 //check to reset to first round or complete game
                 if (self::checkAllRoundsComplete()) {
                     $this->state = 5;
-                } else if (self::checkNextRound()) {
+                } else if (self::checkNextRound($isHost)) {
                     $this->state = 1;
                 }
             }
