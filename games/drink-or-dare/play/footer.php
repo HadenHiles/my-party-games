@@ -7,6 +7,7 @@
     ?>
 
     <script src="drinkOrDare.js"></script>
+    <script src="activePlayer.js"></script>
     <script src="/leaderboard/update-leaders.js"></script>
     <script src="/leaderboard/leaderboard.js"></script>
 </body>

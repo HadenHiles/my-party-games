@@ -430,14 +430,16 @@ class DrinkOrDare {
             $userids = array();
 
             //get an array of the userids playing in the current game
-            for ($i = 0; $i < $this->numPlayers; $i++) {
-
-                $userids[] = $game['users'][$i]['id'];
+            for ($i = 0; $i < sizeof($game['users']); $i++) {
+                if(!$game['users'][$i]['is_display']) {
+                    $userids[] = $game['users'][$i]['id'];
+                }
             }
-
             $sql = 'SELECT * FROM drink_or_dare_user_dares 
                     WHERE user_id IN ('.implode(",", $userids).') 
                     AND round_number = :round_number';
+
+            var_dump($game['users']);
 
             $result = $db->prepare($sql);
             $result->bindValue(":round_number", $this->current_round);
