@@ -118,7 +118,7 @@ $(function(){
                                 votingResult += "must drink "+result.drinksWorth+" drink(s).";
                             }
 
-                            msg("dialog", false, votingResult, "Voting Results", false, false, false, false, reload);
+                            msg("dialog", false, votingResult, "Voting Results", false, false, false, false);
                         }
 
                         //get voting stats
