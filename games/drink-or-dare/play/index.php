@@ -112,7 +112,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                 <div class="leaderboard">
                     <div class="loadLeaderboard"></div>
                     <?php
-                    if($isHost) {
+                    if($isHost && $state == 5) {
                         ?>
                         <a onclick="restartGame();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right restart-button">Restart Game</a>
                         <?php
@@ -183,12 +183,15 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
             <div class="mdl-cell mdl-cell--8-col dares center" id="game-stage-2" <?php echo ($state == 2 ? : 'style="display:none"'); ?>>
                 <h4 style="color: #fff; margin: -50px 0 10px 0;">Pick a Dare!</h4>
                 <?php
-                foreach($game['users'] as $key => $u) {
-                    $key++;
-                    ?>
-                    <div class="mdl-card mdl-shadow--6dp square paper dare pickCard" data-cardnum="<?php echo $key; ?>">
-                    </div>
-                    <?php
+                $count = 0;
+                foreach($game['users'] as $u) {
+                    if(!$u['is_display']) {
+                        $count++;
+                        ?>
+                        <div class="mdl-card mdl-shadow--6dp square paper dare pickCard" data-cardnum="<?php echo $count; ?>">
+                        </div>
+                        <?php
+                    }
                 }
                 ?>
             </div>

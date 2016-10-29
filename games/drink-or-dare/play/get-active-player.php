@@ -11,7 +11,7 @@ $mySession = new GameSession(SESSION_ID, DEVICE_IP);
 $user = new User(SESSION_ID, DEVICE_IP);
 
 //check that the game is currently still alive
-if (!$game = $mySession->loadUsers($thisUser['game_id'])) {
+if (!$game = $mySession->loadUsers($_SESSION['game']['code'])) {
     $gameState["error"] = "Game could not be loaded";
 }
 
