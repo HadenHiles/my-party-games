@@ -439,8 +439,6 @@ class DrinkOrDare {
                     WHERE user_id IN ('.implode(",", $userids).') 
                     AND round_number = :round_number';
 
-            var_dump($game['users']);
-
             $result = $db->prepare($sql);
             $result->bindValue(":round_number", $this->current_round);
 
