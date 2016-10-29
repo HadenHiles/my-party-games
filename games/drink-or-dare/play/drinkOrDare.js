@@ -395,7 +395,7 @@ function hideAllExcept(except) {
         document.getElementById('game-stage-3').style.display = "none";
     }
     if (except != 4) {
-
+        document.getElementById('game-stage-4').style.display = "none";
     }
     if (except != 5) {
         document.getElementById('game-stage-5').style.display = "none";

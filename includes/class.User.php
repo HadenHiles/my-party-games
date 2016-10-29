@@ -357,6 +357,27 @@ class User {
     }
 
     /**
+     * @param $code
+     * @return bool
+     */
+    public function resetScore($code) {
+        global $db;
+
+        if(!empty($code)) {
+            //delete non verified users from this game session
+            $sql = 'UPDATE users SET score = 0 WHERE game_id = :gameid';
+
+            $result = $db->prepare($sql);
+            $result->bindValue(":gameid", $code);
+
+            if ($result->execute() && $result->errorCode() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param null $id
      * @return bool|null
      */

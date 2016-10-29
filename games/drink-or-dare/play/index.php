@@ -99,10 +99,9 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
         </div>
     </header>
 
-    <?php
-    //show leaderboard code here
-    require_once(ROOT."/leaderboard/leaderboard.php");
-    ?>
+    <div class="mdl-layout__drawer leaderboard" style="background: none; border: none; box-shadow: none;">
+        <div class="loadLeaderboard"></div>
+    </div>
 
     <main class="mdl-layout__content">
 
@@ -199,12 +198,12 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                     <div class="mdl-tooltip mdl-tooltip--large" for="only-skip">
                         Use a Free Pass
                     </div>
-<!--                    <button id="done-dare" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="finishDare();">-->
-<!--                        <i class="fa fa-check"></i>-->
-<!--                    </button>-->
-<!--                    <div class="mdl-tooltip mdl-tooltip--large" for="done-dare">-->
-<!--                        I'm done the dare!-->
-<!--                    </div>-->
+                    <button id="done-dare" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="finishDare();">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <div class="mdl-tooltip mdl-tooltip--large" for="done-dare">
+                        I'm done the dare!
+                    </div>
                 </div>
             </div>
 
@@ -267,10 +266,17 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
         </div>
 
         <!-- Stage 5 -->
-        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 5 ? : 'style="display:none"'); ?> id="game-stage-5">
-            <div class="mdl-card__supporting-text">
-                Game Over
-                <input type="button" onclick="restartGame();" value="Restart Game">
+        <div class="mdl-cell mdl-cell--4-col dares center" id="game-stage-5" <?php echo ($state == 5 ? : 'style="display:none"'); ?>>
+            <h1 style="color: #fff;">Game Over</h1>
+            <div class="leaderboard">
+                <div class="loadLeaderboard"></div>
+                <?php
+                if($isHost) {
+                    ?>
+                    <a onclick="restartGame();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--primary mdl-color-text--primary-contrast right restart-button">Restart Game</a>
+                    <?php
+                }
+                ?>
             </div>
         </div>
     </main>

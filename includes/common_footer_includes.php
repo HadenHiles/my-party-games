@@ -104,7 +104,7 @@ $(function() {
             $(ghost).css("top", Math.floor((Math.random() * 65) + 10)+"%");
             $(ghost).css("left", Math.floor((Math.random() * 70) + 10)+"%");
             current = 0;
-            wait = Math.floor(Math.random() * 250) + 1;
+            wait = Math.floor(Math.random() * 160) + 60;
         }
         $(ghost).css("opacity", op);
     }, 50);

@@ -271,7 +271,7 @@ class DrinkOrDare {
      */
     public function resetGame() {
 
-        global $db;
+        global $db, $user;
 
         $sql = 'DELETE dodo, dodud, dodv FROM drink_or_dare AS dod
                 LEFT JOIN drink_or_dare_order AS dodo ON dodo.game_id = dod.game_id
@@ -283,6 +283,9 @@ class DrinkOrDare {
         $result->bindValue(":gameid", $this->gameid);
 
         if ($result->execute() && $result->errorCode() == 0) {
+
+            // Update the user's score
+            $user->resetScore($this->gameid);
 
             $sql = 'UPDATE drink_or_dare SET state = 1, current_round = 1 WHERE game_id = :gameid';
 
@@ -960,11 +963,11 @@ class DrinkOrDare {
      * @param $isHost
      * @return bool
      */
-    public function checkNextRound($isHost) {
+    public function checkNextRound() {
 
         global $db;
 
-        if ($this->current_round < $this->total_rounds && $isHost) {
+        if ($this->current_round < $this->total_rounds) {
 
             $this->current_round++;
 
@@ -1026,11 +1029,10 @@ class DrinkOrDare {
                 //check to state 4
                 $this->state = 4;
             } else if ($this->state == 4) {
-
                 //check to reset to first round or complete game
                 if (self::checkAllRoundsComplete()) {
                     $this->state = 5;
-                } else if (self::checkNextRound($isHost)) {
+                } else if (self::checkNextRound()) {
                     $this->state = 1;
                 }
             }
