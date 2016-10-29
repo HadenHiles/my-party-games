@@ -8,7 +8,7 @@ $(function(){
             url:"get-update-game.php",
             method:"POST"
         }).done(function(result) {
-            //console.log(result);
+            console.log(result);
 
             if (result = JSON.parse(result)) {
                 //console.log(result);
@@ -69,7 +69,7 @@ $(function(){
                         //SHOW STAGE 3 DIV
                         document.getElementById('game-stage-3').style.display = "block";
                         var useElement;
-                        console.log(result);
+                        //console.log(result);
 
                         if (result.turn) {
                             useElement =  document.getElementById('myCard');
@@ -102,6 +102,11 @@ $(function(){
                         } else {
                             useElement.innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.display_name + "...</h5>";
                         }
+
+                        //show active user image
+                        useElement.innerHTML += '<div class="stage-3-active-player-image">\
+                                                <img src="'+result.activePlayer.picture+'">\
+                                                </div>';
 
                         //check for voting dialog to show results
                         if (result.allVotesCast && !hasNotifiedUserOfAllVotesCasted) {
@@ -137,7 +142,7 @@ $(function(){
 
                     case 4:
                         //incrementing rounds and check for game completion
-                        window.location.reload();
+                        reload();
                         break;
 
                     case 5:
@@ -145,18 +150,8 @@ $(function(){
                         document.getElementById('game-stage-5').style.display = "block";
 
                         if (result.reset) {
-                            window.location.reload();
+                            reload();
                         }
-                        break;
-
-                    case 6:
-                        //special case -- veto dare
-
-                        break;
-
-                    case 6:
-                        //special case -- free pass
-
                         break;
                 } //end of switch
 
@@ -205,7 +200,7 @@ function freePass() {
             if (result.status == true) {
                 msg(false, false, "game-drink-or-dare-free-pass-success", "Free Pass", "success");
             } else {
-                msg(false, false, "game-drink-or-dare-free-pass-failure", "Free Pass", "warning");
+                msg(false, false, "game-drink-or-dare-free-pass-failure", "Free Pass", "danger");
             }
         }
     });
@@ -307,7 +302,7 @@ function restartGame() {
         if (result = JSON.parse(result)) {
 
             if (result.reset) {
-                window.location.reload();
+                reload();
             } else {
                 msg(false, false, "game-drink-or-dare-reset-success", "Game Reset", "info");
             }
@@ -377,6 +372,9 @@ function castVote(vote) {
 
 }
 
+/**
+ * THIS FUNCTION IS NOT IN USE ANYMORE -- NOW ITS AUTOMAJIC
+ */
 function finishDare() {
 
     //ajax call to set dare
@@ -431,7 +429,9 @@ function hideAllExcept(except) {
     }
 }
 
-
+/**
+ * RELOADS THE USERS BROWSER
+ */
 function reload() {
     window.location.reload();
 }

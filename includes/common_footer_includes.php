@@ -20,16 +20,6 @@
     <img src="/images/web.png" alt="" style="position: fixed; left: -25px; bottom: -25px; z-index: 1; pointer-events: none;" />
 </div>
 
-
-<?php
-/**
- * Created by IntelliJ IDEA.
- * User: Justin
- * Date: 9/23/2016
- * Time: 9:27 PM
- */
-?>
-
 <script src="/bower_components/material-design-lite/material.min.js"></script>
 
 <!--<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>-->
@@ -37,7 +27,7 @@
 <script src="/3rd-party/imagefill/imagesLoaded.js"></script>
 <script src="/3rd-party/imagefill/jquery-imagefill.js"></script>
 
-<script>
+<script type="text/javascript">
 $(function() {
     var ghost = $('#testerino');
     var toggle = false;
@@ -75,8 +65,6 @@ $(function() {
         "http://cliparts.co/cliparts/yik/A5k/yikA5kq6T.png",
         "http://i.imgur.com/EvrkuXB.png",
         "http://vignette2.wikia.nocookie.net/animaljam/images/2/21/LETS_GET_SPOOKY.gif/revision/latest?cb=20150804223039",
-        "https://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwi6o7Dqw__PAhWDKCYKHS1QBYwQjBwIBA&url=http%3A%2F%2Frs717.pbsrc.com%2Falbums%2Fww173%2Fprestonjjrtr%2FHalloween%2FPirate_bones.gif~c200&bvm=bv.136811127,d.eWE&psig=AFQjCNEw0N599s_MxwiN9_4Xs2fQoROo1A&ust=1477813836505636",
-        "https://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=&url=http%3A%2F%2Fwww.crabapples.net%2Fartwork%2FlittlePirate.gif&bvm=bv.136811127,d.eWE&psig=AFQjCNEw0N599s_MxwiN9_4Xs2fQoROo1A&ust=1477813836505636",
         "http://www.partecipiamo.it/befana/befana/befana_00111.gif",
         "https://media.tenor.co/images/64b88333b0e1c4f5a3a11be05b6cbfff/raw",
         "https://lh3.googleusercontent.com/l_pr4qOF-Ba-8BQw9PxI2VQyGwSVopDbQIDpt3ArxgvOltDVRLVzW8BjtnCVSYN4vH8=h900",
@@ -119,7 +107,7 @@ $(function() {
             $(ghost).css("top", Math.floor((Math.random() * 65) + 10)+"%");
             $(ghost).css("left", Math.floor((Math.random() * 70) + 10)+"%");
             current = 0;
-            wait = Math.floor(Math.random() * 20) + 2;
+            wait = Math.floor(Math.random() * 160) + 60;
         }
         $(ghost).css("opacity", op);
     }, 50);

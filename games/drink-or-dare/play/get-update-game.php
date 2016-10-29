@@ -92,7 +92,6 @@ try {
                 $verdict = "skip";
             } else {
                 $verdict = "good";
-                $newScore = $score + $gameState["drinksWorth"];
             }
 
             //check if this is active user and update score if so
@@ -102,9 +101,13 @@ try {
                 } else if ($verdict == "good") {
                     $newScore = $score + $gameState["drinksWorth"];
                 }
-                $dod->updateScore($gameState['activePlayer']['id'], $newScore);
+                //update score if its been changed
+                if ($score != $newScore) {
+                    $dod->updateScore($gameState['activePlayer']['id'], $newScore);
+                }
             }
 
+            //add verdict to return array
             $gameState["verdict"] = $verdict;
         }
     }
