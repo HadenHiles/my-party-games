@@ -29,6 +29,35 @@ try {
 
     $gameState["status"] = $dod->castVote($_POST['vote']);
     $gameState["allVotesCast"] = $dod->checkAllVotesCast();
+    $gameState["votes"] = $dod->getVotes();
+    
+    if ($gameState["allVotesCast"]) {
+        $good = 0;
+        $bad = 0;
+        $skip = 0;
+
+        foreach ($gameState["votes"] as $vote) {
+            if ($vote["vote"] == 3) {
+                $good++;
+            } else if ($vote["vote"] == 2) {
+                $skip++;
+            } else if ($vote["vote"] == 1) {
+                $bad++;
+            }
+        }
+
+        if($bad > $good && $bad > $skip) {
+            $verdict = "bad";
+        } else if($skip >= $bad && $skip > $good) {
+            $verdict = "skip";
+        } else {
+            $verdict = "good";
+        }
+
+        $gameState["verdict"] = $verdict;
+        $gameState["drinksWorth"] = $dod->getDrinksWorth(true);
+    }
+
     $gameState["state"] = $state;
 
 } catch (Exception $e) {

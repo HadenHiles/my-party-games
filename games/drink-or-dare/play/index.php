@@ -196,93 +196,93 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
             <!-- Stage 3 -->
             <div class="mdl-cell mdl-cell--3-col mdl-cell--6-col-tablet mdl-cell--8-col-phone center" style="<?php echo ($state == 3 ? : 'display:none;'); ?> min-width: 300px;" id="game-stage-3">
 
-                <div <?php echo ($dod->getIsMyTurn() ? '' : 'style="display:none"'); ?> id="game-stage-3-player">
-                    <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="myCard">
-                        <?php
-                        $dare = $dod->getDare(true, true);
-                        if($dod->checkHasPeeked()) {
-                            ?>
-                            <h2 class="activeDrinksWorth"><?php echo $dare['drinks_worth']; ?></h2>
-                            <div class="activeDrinksWorthPic">
-                                <img src='/join/pictures/party/pint.png' />
-                            </div>
-                            <h5 class='dareText'><?php echo $dare['dare'] ?></h5>
-                            <?php
-                        } else if($dod->getIsMyTurn()) {
-                            ?>
-                            <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>
-                            <?php
-                        } else {
-                            $owner = $dod->getOwner(true, $dare['id']);
-                            $ownerName = $owner['display_name'];
-                            ?>
-                            <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?></h5>
-                            <?php
-                        }
+            <div <?php echo ($dod->getIsMyTurn() ? '' : 'style="display:none"'); ?> id="game-stage-3-player">
+                <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="myCard">
+                    <?php
+                    $dare = $dod->getDare(true, true);
+                    if($dod->checkHasPeeked()) {
                         ?>
-                    </div>
-                    <div class="mdl-cell mdl-cell--12-col actions center">
-                        <button id="only-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored left" onclick="freePass();">
-                            <i class="fa fa-fast-forward"></i>
-                        </button>
-                        <div class="mdl-tooltip mdl-tooltip--large" for="only-skip">
-                            Use a Free Pass
+                        <h2 class="activeDrinksWorth"><?php echo $dare['drinks_worth']; ?></h2>
+                        <div class="activeDrinksWorthPic">
+                            <img src='/join/pictures/party/pint.png' />
                         </div>
-                        <button id="done-dare" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="finishDare();">
-                            <i class="fa fa-check"></i>
-                        </button>
-                        <div class="mdl-tooltip mdl-tooltip--large" for="done-dare">
-                            I'm done the dare!
-                        </div>
-                    </div>
+                        <h5 class='dareText'><?php echo $dare['dare'] ?></h5>
+                        <?php
+                    } else if($dod->getIsMyTurn()) {
+                        ?>
+                        <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!<Br />Click me to reveal your dare!</h5>
+                        <?php
+                    } else {
+                        $owner = $dod->getOwner(true, $dare['id']);
+                        $ownerName = $owner['display_name'];
+                        ?>
+                        <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?>...</h5>
+                        <?php
+                    }
+                    ?>
                 </div>
+                <div class="mdl-cell mdl-cell--12-col actions center">
+                    <button id="only-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored right" onclick="freePass();">
+                        <i class="fa fa-fast-forward"></i>
+                    </button>
+                    <div class="mdl-tooltip mdl-tooltip--large" for="only-skip">
+                        Use a Free Pass
+                    </div>
+<!--                    <button id="done-dare" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="finishDare();">-->
+<!--                        <i class="fa fa-check"></i>-->
+<!--                    </button>-->
+<!--                    <div class="mdl-tooltip mdl-tooltip--large" for="done-dare">-->
+<!--                        I'm done the dare!-->
+<!--                    </div>-->
+                </div>
+            </div>
 
-                <div <?php echo (!$dod->getIsMyTurn() ? '' : 'style="display:none"'); ?> id="game-stage-3-viewer">
-                    <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="activeDare">
-                        <?php
-                        $dare = $dod->getDare(true, true);
-                        if($dod->checkHasPeeked()) {
-                            ?>
-                            <h2 class="activeDrinksWorth"><?php echo $dare['drinks_worth']; ?></h2>
-                            <div class="activeDrinksWorthPic">
-                                <img src='/join/pictures/party/pint.png' />
-                            </div>
-                            <h5 class='dareText'><?php echo $dare['dare'] ?></h5>
-                            <?php
-                        } else if($dod->getIsMyTurn()) {
-                            ?>
-                            <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>
-                            <?php
-                        } else {
-                            $owner = $dod->getOwner(true, $dare['id']);
-                            $ownerName = $owner['display_name'];
-                            ?>
-                            <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?></h5>
-                            <?php
-                        }
+            <div <?php echo (!$dod->getIsMyTurn() ? '' : 'style="display:none"'); ?> id="game-stage-3-viewer">
+                <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="activeDare">
+                    <?php
+                    $dare = $dod->getDare(true, true);
+                    if($dod->checkHasPeeked(true)) {
                         ?>
+                        <h2 class="activeDrinksWorth"><?php echo $dare['drinks_worth']; ?></h2>
+                        <div class="activeDrinksWorthPic">
+                            <img src='/join/pictures/party/pint.png' />
+                        </div>
+                        <h5 class='dareText'><?php echo $dare['dare'] ?></h5>
+                        <?php
+                    } else if($dod->getIsMyTurn()) {
+                        ?>
+                        <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!<Br />Click me to reveal your dare!</h5>
+                        <?php
+                    } else {
+                        $owner = $dod->getOwner(true, $dare['id']);
+                        $ownerName = $owner['display_name'];
+                        ?>
+                        <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?>...</h5>
+                        <?php
+                    }
+                    ?>
+                </div>
+                <div class="mdl-cell mdl-cell--12-col actions center">
+                    <button id="drink" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--red mdl-button--colored left" onclick="castVote(1);">
+                        <i class="fa fa-remove"></i>
+                    </button>
+                    <div class="mdl-tooltip mdl-tooltip--large" for="drink">
+                        Dare execution not worthy!
                     </div>
-                    <div class="mdl-cell mdl-cell--12-col actions center">
-                        <button id="drink" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--red mdl-button--colored left" onclick="castVote(1);">
-                            <i class="fa fa-remove"></i>
-                        </button>
-                        <div class="mdl-tooltip mdl-tooltip--large" for="drink">
-                            Dare execution not worthy!
-                        </div>
-                        <button id="free-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored middle" onclick="castVote(2);">
-                            <i class="fa fa-fast-forward"></i>
-                        </button>
-                        <div class="mdl-tooltip mdl-tooltip--large" for="free-skip">
-                            That dare is unreasonable.
-                        </div>
-                        <button id="give-drink" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="castVote(3);">
-                            <i class="fa fa-check"></i>
-                        </button>
-                        <div class="mdl-tooltip mdl-tooltip--large" for="give-drink">
-                            Well done Jackson!
-                        </div>
+                    <button id="free-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored middle" onclick="castVote(2);">
+                        <i class="fa fa-fast-forward"></i>
+                    </button>
+                    <div class="mdl-tooltip mdl-tooltip--large" for="free-skip">
+                        That dare is unreasonable.
+                    </div>
+                    <button id="give-drink" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--green mdl-button--colored right" onclick="castVote(3);">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <div class="mdl-tooltip mdl-tooltip--large" for="give-drink">
+                        Well done Jackson!
                     </div>
                 </div>
+            </div>
 
                 <div class="votes" id="votes">
                     <h3><span id="num-votes">0</span><span>/<?php echo $dod->getNumPlayers() - 1; ?></span> Votes</h3>

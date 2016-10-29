@@ -30,7 +30,7 @@ try {
 
     //store the state in JSON return object
     $state = $dod->getState();
-
+    $gameState["userid"] = $dod->getUserId();
 
     /*
      * some use cases for state 1
@@ -39,6 +39,9 @@ try {
         $gameState["waiting"] = $dod->getHasCurrentDare();
     }
 
+    /*
+     * some user cases for state 2
+     */
     if ($state == 2) {
         $gameState["cardInfo"] = $dod->getCardsInfo();
     }
@@ -47,26 +50,63 @@ try {
      * some use cases for state 3: using the cards
      */
     if ($state == 3) {
-        //check to see if user has looked at their dare or not
-        if ($dod->getIsMyTurn() && $dod->checkHasPeeked()) {
-            //this users turn and they have looked
-            $gameState["dare"] = $dod->getDare(true, true);
-        } else if ($dod->checkHasPeeked(true)) {
-            //not current users turn and they have looked
-            $gameState["dare"] = $dod->getDare(true, true);
-        } else {
-            //active player 
-            $gameState["dare"] = "hidden";
-        }
-
         //check to see if it's their turn
         $gameState["turn"] = $dod->getIsMyTurn();
-        $gameState["votes"] = $dod->getVotes();
         $gameState["allVotesCast"] = $dod->checkAllVotesCast();
         $gameState["activePlayer"] = $dod->getActivePlayer();
         $gameState["numPlayers"] = $dod->getNumPlayers();
-        //$gameState["dare"] = $dod->getDare(true, true);
         $gameState['hasPeeked'] = $dod->checkHasPeeked(true);
+        $gameState["votes"] = $dod->getVotes();
+
+        //check to see if user has looked at their dare or not
+        $gameState["dare"] = ($gameState['hasPeeked'] ? $dod->getDare(true, true) : "hidden");
+
+        //check if all votes have been cast
+        if ($gameState["allVotesCast"]) {
+            //check if this is active user
+            if ($gameState["userid"] == $gameState['activePlayer']['id']) {
+                $gameState["status"] = $dod->finishCurrentDare($gameState['activePlayer']['id']);
+                $score = $dod->getScore($gameState['activePlayer']['id']);
+            }
+
+            $gameState["drinksWorth"] = $dod->getDrinksWorth(true);
+            $good = 0;
+            $bad = 0;
+            $skip = 0;
+
+            //tally up votes
+            foreach ($gameState["votes"] as $vote) {
+                if ($vote["vote"] == 3) {
+                    $good++;
+                } else if ($vote["vote"] == 2) {
+                    $skip++;
+                } else if ($vote["vote"] == 1) {
+                    $bad++;
+                }
+            }
+
+            //find verdict based on tally
+            if($bad > $good && $bad > $skip) {
+                $verdict = "bad";
+            } else if($skip >= $bad && $skip > $good) {
+                $verdict = "skip";
+            } else {
+                $verdict = "good";
+                $newScore = $score + $gameState["drinksWorth"];
+            }
+
+            //check if this is active user and update score if so
+            if ($gameState["userid"] == $gameState['activePlayer']['id'] && $verdict != "skip") {
+                if ($verdict == "bad") {
+                    $newScore = $score - $gameState["drinksWorth"];
+                } else if ($verdict == "good") {
+                    $newScore = $score + $gameState["drinksWorth"];
+                }
+                $dod->updateScore($gameState['activePlayer']['id'], $newScore);
+            }
+
+            $gameState["verdict"] = $verdict;
+        }
     }
 
     //some use cases for state 4: incrementing round / checking if game completed
@@ -83,7 +123,6 @@ try {
     $gameState["state"] = $state;
     $gameState["totalRounds"] = $dod->getTotalRounds();
     $gameState["currentRound"] = $dod->getCurrentRound();
-    $gameState["userid"] = $dod->getUserId();
 
 } catch (Exception $e) {
     //show any errors
