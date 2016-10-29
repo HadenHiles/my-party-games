@@ -57,6 +57,7 @@ try {
         $gameState["numPlayers"] = $dod->getNumPlayers();
         $gameState['hasPeeked'] = $dod->checkHasPeeked(true);
         $gameState["votes"] = $dod->getVotes();
+        $gameState["freePasses"] = $dod->getMyFreePasses();
 
         //check to see if user has looked at their dare or not
         $gameState["dare"] = ($gameState['hasPeeked'] ? $dod->getDare(true, true) : "hidden");

@@ -1009,6 +1009,10 @@ class DrinkOrDare {
         return false;
     }
 
+    public function getMyFreePasses() {
+        return $this->freePass;
+    }
+
     /**
      * @param $isHost
      * @return bool

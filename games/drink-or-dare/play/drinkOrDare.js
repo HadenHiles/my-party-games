@@ -82,6 +82,8 @@ $(function(){
                             if (!isMyTurn) {
                                 isMyTurn = true;
                                 hasNotifiedUserOfAllVotesCasted = false;
+
+                                document.getElementById('action-buttons').innerHTML = '<span id="freePasses">You have '+result.freePasses+' free passes left</span>' + document.getElementById('action-buttons').innerHTML;
                             }
                         } else {
                             useElement =  document.getElementById('activeDare');

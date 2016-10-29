@@ -224,7 +224,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                     }
                     ?>
                 </div>
-                <div class="mdl-cell mdl-cell--12-col actions center">
+                <div class="mdl-cell mdl-cell--12-col actions center" id="action-buttons">
                     <button id="only-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored right" onclick="freePass();">
                         <i class="fa fa-fast-forward"></i>
                     </button>
