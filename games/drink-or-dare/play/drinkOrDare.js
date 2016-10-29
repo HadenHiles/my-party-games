@@ -135,6 +135,8 @@ $(function(){
         }); //end of ajax call
     }, gameCheckInterval); //end of interval
 
+    
+    
     $('.pickCard').unbind('click').click(function() {
         var num = $(this).data("cardnum");
         var $self = $(this);

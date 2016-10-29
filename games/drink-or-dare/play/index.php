@@ -273,10 +273,6 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                 <input type="button" onclick="restartGame();" value="Restart Game">
             </div>
         </div>
-        <div class="mdl-card mdl-shadow--6dp center" <?php echo ($state == 6 ? : 'style="display:none"'); ?> id="game-stage-6">
-            <div class="mdl-card__supporting-text">
-            </div>
-        </div>
     </main>
 </div>
 

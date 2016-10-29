@@ -26,7 +26,7 @@ try {
     $dod->start();
 
     //check for entered dares to be completed
-    $dod->checkNextState();
+    $dod->checkNextState($thisUser['is_host']);
 
     //store the state in JSON return object
     $state = $dod->getState();
@@ -71,7 +71,7 @@ try {
 
     //some use cases for state 4: incrementing round / checking if game completed
     if ($state == 4) {
-        $dod->checkNextRound();
+//        $dod->checkNextRound($thisUser['is_host']);
     }
 
     //some use cases for state 5
