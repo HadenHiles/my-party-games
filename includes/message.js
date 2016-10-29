@@ -108,6 +108,7 @@ function msg(popup, ele, msgid, title, type, icon, hide, delay, cb) {
                 //'use strict';
                 var snackbarContainer = document.querySelector('#'+ele);
 
+                $(snackbarContainer).removeClass('mdl-color--red').removeClass('mdl-color--green').removeClass('mdl-color--primary');
                 if (type == "danger") {
                     $(snackbarContainer).addClass('mdl-color--red');
                 } else if (type == "success") {
