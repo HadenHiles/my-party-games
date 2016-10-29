@@ -218,7 +218,7 @@ class User {
         global $db;
 
         if ($specificUserId > 0) {
-            $sql = 'SELECT * FROM users WHERE id = :userid';
+            $sql = 'SELECT id, game_id, is_host, is_display, display_name, picture, score FROM users WHERE id = :userid';
 
             $result = $db->prepare($sql);
             $result->bindParam(":userid", $specificUserId);
@@ -230,7 +230,7 @@ class User {
             }
         } else {
 
-            $sql = 'SELECT * FROM users WHERE session_id = :sessionid';
+            $sql = 'SELECT id, game_id, is_host, is_display, display_name, picture, score  FROM users WHERE session_id = :sessionid';
 
             $result = $db->prepare($sql);
             $result->bindParam(":sessionid", $this->sessionid);

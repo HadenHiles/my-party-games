@@ -1,7 +1,6 @@
 $(function(){
     var hasNotifiedUserOfAllVotesCasted = false;
     var isMyTurn = false;
-    var verdict = "";
     var gameCheckInterval = 1000; // 1 second
 
     var updateIneterval = setInterval(function() {
@@ -9,7 +8,7 @@ $(function(){
             url:"get-update-game.php",
             method:"POST"
         }).done(function(result) {
-            console.log(result);
+            //console.log(result);
 
             if (result = JSON.parse(result)) {
                 //console.log(result);
@@ -67,35 +66,59 @@ $(function(){
                         break;
 
                     case 3:
+                        //SHOW STAGE 3 DIV
                         document.getElementById('game-stage-3').style.display = "block";
+                        var useElement;
+                        console.log(result);
 
                         if (result.turn) {
-                            if(result.hasPeeked) {
-                                document.getElementById('myCard').innerHTML = "<h2 class='activeDrinksWorth'>" + result.dare.drinks_worth + "</h2><div class='activeDrinksWorthPic'><img src='/join/pictures/party/pint.png' /></div><h5 class='dareText'>" + result.dare.dare + "</h5>";
-                            } else {
-                                document.getElementById('myCard').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>";
-                                document.getElementById('activeDare').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.display_name + "</h5>";
-                            }
+                            useElement =  document.getElementById('myCard');
+
+                            //TOGGLE BETWEEN PLAYER VIEW AND ACTIVE PLAYER VIEW
                             document.getElementById('game-stage-3-player').style.display = "block";
                             document.getElementById('game-stage-3-viewer').style.display = "none";
 
+                            //IF JAVASCRIPT VARIABLE isMyTurn = false, set to TRUE HERE
                             if (!isMyTurn) {
                                 isMyTurn = true;
                                 hasNotifiedUserOfAllVotesCasted = false;
                             }
                         } else {
-                            if(result.hasPeeked) {
-                                document.getElementById('activeDare').innerHTML = "<h2 class='activeDrinksWorth'>" + result.dare.drinks_worth + "</h2><div class='activeDrinksWorthPic'><img src='/join/pictures/party/pint.png' /></div><h5 class='dareText'>" + result.dare.dare + "</h5>";
-                            } else {
-                                document.getElementById('activeDare').innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.display_name + "</h5>";
-                            }
+                            useElement =  document.getElementById('activeDare');
+
                             document.getElementById('game-stage-3-player').style.display = "none";
                             document.getElementById('game-stage-3-viewer').style.display = "block";
                         }
 
+                        //CHECK IF THEY HAVE ALREADY PEEKED AT THEIR DARE
+                        if(result.hasPeeked) {
+                            useElement.innerHTML = "<h2 class='activeDrinksWorth'>" + result.dare.drinks_worth + "</h2>\
+                                                    <div class='activeDrinksWorthPic'>\
+                                                        <img src='/join/pictures/party/pint.png' />\
+                                                    </div>\
+                                                    <h5 class='dareText'>" + result.dare.dare + "</h5>";
+                        } else if (result.turn) {
+                            useElement.innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!<br />Click me to reveal your dare!</h5>";
+                        } else {
+                            useElement.innerHTML = "<h5 class='dareText' style='margin-top: 37%;'>Waiting for " + result.activePlayer.display_name + "...</h5>";
+                        }
+
+                        //check for voting dialog to show results
                         if (result.allVotesCast && !hasNotifiedUserOfAllVotesCasted) {
                             hasNotifiedUserOfAllVotesCasted = true;
-                            msg(false, false, "game-drink-or-dare-all-votes-casted");
+
+                            var votingResult = "People voted "+result.verdict+"!<Br />";
+                            votingResult += (result.turn ? "You" : result.activePlayer.display_name) + " ";
+
+                            if (result.verdict == "good") {
+                                votingResult += "can give out "+result.drinksWorth+" drink(s).";
+                            } else if (result.verdict == "skip") {
+                                votingResult += (result.turn ? "get" :"gets") + " to skip this dare.";
+                            } else if (result.verdict == "bad") {
+                                votingResult += "must drink "+result.drinksWorth+" drink(s).";
+                            }
+
+                            msg("dialog", false, votingResult, "Voting Results", false, false, false, false, reload);
                         }
 
                         //get voting stats
@@ -108,7 +131,6 @@ $(function(){
 
                     case 4:
                         //incrementing rounds and check for game completion
-                        window.location.reload();
                         break;
 
                     case 5:
@@ -144,7 +166,7 @@ $(function(){
         pickCard(num, function(result) {
             if(result == true) {
                 getOwner(num, function(ownerResult) {
-                    console.log("ownerResult pic: " + ownerResult.picture);
+                    // console.log("ownerResult pic: " + ownerResult.picture);
                     if(ownerResult != false) {
                         var name = "<h5 class='owner-name'>" + ownerResult.display_name + "</h5>";
                         var picture = "<img class='owner-picture' src='" + ownerResult.picture + "' />";
@@ -298,7 +320,7 @@ function showCard() {
 
             if (typeof result.dare != "undefined" && result.dare != "hidden") {
                 //msg(false, false, "game-drink-or-dare-chosen-dare");
-                document.getElementById('myCard').innerHTML = result.dare;
+                document.getElementById('myCard').innerHTML = '<h5 class="dareText">'+ result.dare.dare + '</h5>';
             }
         }
     });
@@ -341,6 +363,19 @@ function castVote(vote) {
                     msg(false, false, "game-drink-or-dare-vote-cast-change");
                 } else {
                     msg(false, false, "game-drink-or-dare-vote-cast-failure");
+                }
+
+                if (result.allVotesCast) {
+                    var votingResult = "People voted "+result.verdict+"!<Br />";
+                    if (result.verdict == "good") {
+                        votingResult += "You can give out "+result.drinksWorth+" drink(s).";
+                    } else if (result.verdict == "skip") {
+                        votingResult += "You get to skip this dare.";
+                    } else if (result.verdict == "bad") {
+                        votingResult += "You must drink "+result.drinksWorth+" drink(s).";
+                    }
+
+                    msg("dialog", false, votingResult, "Voting Results", false, false, false, false, reload);
                 }
             }
         });
@@ -400,4 +435,9 @@ function hideAllExcept(except) {
     if (except != 5) {
         document.getElementById('game-stage-5').style.display = "none";
     }
+}
+
+
+function reload() {
+    window.location.reload();
 }

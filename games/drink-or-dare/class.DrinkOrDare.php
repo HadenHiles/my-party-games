@@ -788,12 +788,13 @@ class DrinkOrDare {
     /**
      * @return bool
      */
-    public function finishCurrentDare()  {
+    public function finishCurrentDare($userid = 0)  {
 
         global $db;
 
-        if (self::checkAllVotesCast()) {
-
+        //if (self::checkAllVotesCast()) {
+        if (!empty($userid)) {
+            
             $sql = 'UPDATE drink_or_dare_user_dares 
                     SET completed = 1 
                     WHERE game_id = :gameid
@@ -802,13 +803,14 @@ class DrinkOrDare {
 
             $result = $db->prepare($sql);
             $result->bindValue(":gameid", $this->gameid);
-            $result->bindValue(":userid", $this->userid);
+            $result->bindValue(":userid", $userid);
             $result->bindValue(":currentround", $this->current_round);
 
             if ($result->execute() && $result->errorCode() == 0) {
 
                 return true;
             }
+            //}
         }
 
         return false;
@@ -822,7 +824,7 @@ class DrinkOrDare {
 
         $dare = self::getDare(true, true);
 
-        $sql = 'SELECT * FROM drink_or_dare_votes AS dodv               
+        $sql = 'SELECT id FROM drink_or_dare_votes AS dodv               
                 WHERE dare_id = :dareid';
 
         $result = $db->prepare($sql);

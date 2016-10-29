@@ -181,19 +181,19 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                         <?php
                     } else if($dod->getIsMyTurn()) {
                         ?>
-                        <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>
+                        <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!<Br />Click me to reveal your dare!</h5>
                         <?php
                     } else {
                         $owner = $dod->getOwner(true, $dare['id']);
                         $ownerName = $owner['display_name'];
                         ?>
-                        <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?></h5>
+                        <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?>...</h5>
                         <?php
                     }
                     ?>
                 </div>
                 <div class="mdl-cell mdl-cell--12-col actions center">
-                    <button id="only-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored left" onclick="freePass();">
+                    <button id="only-skip" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--primary mdl-button--colored right" onclick="freePass();">
                         <i class="fa fa-fast-forward"></i>
                     </button>
                     <div class="mdl-tooltip mdl-tooltip--large" for="only-skip">
@@ -212,7 +212,7 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                 <div class="mdl-card mdl-shadow--6dp square dare full-width paper showCard" id="activeDare">
                     <?php
                     $dare = $dod->getDare(true, true);
-                    if($dod->checkHasPeeked()) {
+                    if($dod->checkHasPeeked(true)) {
                         ?>
                         <h2 class="activeDrinksWorth"><?php echo $dare['drinks_worth']; ?></h2>
                         <div class="activeDrinksWorthPic">
@@ -222,13 +222,13 @@ require_once(ROOT."/games/drink-or-dare/play/header.php");
                         <?php
                     } else if($dod->getIsMyTurn()) {
                         ?>
-                        <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!</h5>
+                        <h5 class='dareText' style='margin-top: 37%;'>It's Your Turn!<Br />Click me to reveal your dare!</h5>
                         <?php
                     } else {
                         $owner = $dod->getOwner(true, $dare['id']);
                         $ownerName = $owner['display_name'];
                         ?>
-                        <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?></h5>
+                        <h5 class="dareText" style='margin-top: 37%;'>Waiting for <?php echo $ownerName; ?>...</h5>
                         <?php
                     }
                     ?>

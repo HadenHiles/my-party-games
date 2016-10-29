@@ -76,7 +76,10 @@ window.onload = function() {
 
 
 //display an error on the webpage
-function msg(popup, ele, msgid, title, type, icon, hide, delay) {
+function msg(popup, ele, msgid, title, type, icon, hide, delay, cb) {
+    if(!cb) {
+        cb = () => {};
+    }
 
     //check for type
     // if (type != "warning" && type != "info" && type != "danger" && type != "success") {
@@ -143,6 +146,7 @@ function msg(popup, ele, msgid, title, type, icon, hide, delay) {
 
                 dialog.querySelector('.close').addEventListener('click', function() {
                     dialog.close();
+                    cb();
                 });
             }
 
