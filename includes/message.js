@@ -77,14 +77,10 @@ window.onload = function() {
 
 //display an error on the webpage
 function msg(popup, ele, msgid, title, type, icon, hide, delay, cb) {
+    //default callback function
     if(!cb) {
         cb = () => {};
     }
-
-    //check for type
-    // if (type != "warning" && type != "info" && type != "danger" && type != "success") {
-    //     type = "info";
-    // }
 
     /*
      * check for undefined parameters
@@ -111,6 +107,14 @@ function msg(popup, ele, msgid, title, type, icon, hide, delay, cb) {
                 //MDL
                 //'use strict';
                 var snackbarContainer = document.querySelector('#'+ele);
+
+                if (type == "danger") {
+                    $(snackbarContainer).addClass('mdl-color--red');
+                } else if (type == "success") {
+                    $(snackbarContainer).addClass('mdl-color--green');
+                } else if (type == "info") {
+                    $(snackbarContainer).addClass('mdl-color--primary');
+                }
                 // var showSnackbarButton = document.querySelector('#demo-show-snackbar');
                 // var handler = function (event) {
                 //     showSnackbarButton.style.backgroundColor = '';

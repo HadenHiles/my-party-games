@@ -15,7 +15,7 @@ $(function(){
 
                 //check for error messages
                 if (result.error != "" && typeof result.error != "undefined") {
-                    msg("dialog", false, result.error);
+                    msg("dialog", false, result.error, "Game Error", "danger");
                     clearInterval(updateIneterval);
                 }
 
@@ -202,9 +202,9 @@ function freePass() {
             //hideAll(result.state);
 
             if (result.status == true) {
-                msg(false, false, "game-drink-or-dare-free-pass-success");
+                msg(false, false, "game-drink-or-dare-free-pass-success", "Free Pass", "success");
             } else {
-                msg(false, false, "game-drink-or-dare-free-pass-failure");
+                msg(false, false, "game-drink-or-dare-free-pass-failure", "Free Pass", "warning");
             }
         }
     });
@@ -247,17 +247,17 @@ function setDare() {
                     //hideAll(result.state);
 
                     if (result.status == true) {
-                        msg(false, false, "game-drink-or-dare-submitted-dare");
+                        msg(false, false, "game-drink-or-dare-submitted-dare", "Create Dare", "success");
                         document.getElementById('game-stage-1').style.display = "none";
                         document.getElementById('game-stage-1-waiting').style.display = "block";
                     }
                 }
             });
         } else {
-            msg(false, false, 'game-drink-or-dare-empty-drinks-worth');
+            msg(false, false, 'game-drink-or-dare-empty-drinks-worth', "Create Dare", "danger");
         }
     } else {
-        msg(false, false, 'game-drink-or-dare-empty-dare');
+        msg(false, false, 'game-drink-or-dare-empty-dare', "Create Dare", "danger");
     }
 }
 
@@ -278,19 +278,19 @@ function pickCard(number, cb) {
             if (result = JSON.parse(result)) {
 
                 if (result.status == true) {
-                    msg(false, false, "game-drink-or-dare-chosen-dare");
+                    msg(false, false, "game-drink-or-dare-chosen-dare", "Pick Card", "success");
                     cb(true);
                 } else if (result.status == "already-picked") {
-                    msg(false, false, "game-drink-or-dare-already-picked-card");
+                    msg(false, false, "game-drink-or-dare-already-picked-card", "Pick Card", "info");
                     cb(false);
                 } else {
-                    msg(false, false, 'game-drink-or-dare-stolen');
+                    msg(false, false, 'game-drink-or-dare-stolen', "Pick Card", "danger");
                     cb(false);
                 }
             }
         });
     } else {
-        msg(false, false, 'game-drink-or-dare-empty-dare');
+        msg(false, false, 'game-drink-or-dare-empty-dare', "Error", "danger");
     }
 }
 
@@ -308,7 +308,7 @@ function restartGame() {
             if (result.reset) {
                 window.location.reload();
             } else {
-                msg(false, false, "game-drink-or-dare-reset-success");
+                msg(false, false, "game-drink-or-dare-reset-success", "Game Reset", "info");
             }
         }
     });
@@ -364,24 +364,11 @@ function castVote(vote) {
             if (result = JSON.parse(result)) {
 
                 if (result.status == true) {
-                    msg(false, false, "game-drink-or-dare-vote-cast-success");
+                    msg(false, false, "game-drink-or-dare-vote-cast-success", "Cast Vote", "success");
                 } else if (result.status == "changed") {
-                    msg(false, false, "game-drink-or-dare-vote-cast-change");
+                    msg(false, false, "game-drink-or-dare-vote-cast-change", "Cast Vote", "info");
                 } else {
-                    msg(false, false, "game-drink-or-dare-vote-cast-failure");
-                }
-
-                if (result.allVotesCast) {
-                    var votingResult = "People voted "+result.verdict+"!<Br />";
-                    if (result.verdict == "good") {
-                        votingResult += "You can give out "+result.drinksWorth+" drink(s).";
-                    } else if (result.verdict == "skip") {
-                        votingResult += "You get to skip this dare.";
-                    } else if (result.verdict == "bad") {
-                        votingResult += "You must drink "+result.drinksWorth+" drink(s).";
-                    }
-
-                    msg("dialog", false, votingResult, "Voting Results", false, false, false, false, reload);
+                    msg(false, false, "game-drink-or-dare-vote-cast-failure", "Cast Vote", "danger");
                 }
             }
         });
