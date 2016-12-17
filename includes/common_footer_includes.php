@@ -6,18 +6,18 @@
             }
         }
     </style>
-    <img src="https://a2ua.com/ghost/ghost-002.jpg" class="halloween-image" style="
-        pointer-events: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        /* right: 0; */
-        width: 20%;
-        /* bottom: 0; */
-        z-index: 10;
-        opacity: 0;
-    " id="testerino">
-    <img src="/images/web.png" alt="" style="position: fixed; left: -25px; bottom: -25px; z-index: 1; pointer-events: none;" />
+<!--    <img src="https://a2ua.com/ghost/ghost-002.jpg" class="halloween-image" style="-->
+<!--        pointer-events: none;-->
+<!--        position: fixed;-->
+<!--        top: 50%;-->
+<!--        left: 50%;-->
+<!--        /* right: 0; */-->
+<!--        width: 20%;-->
+<!--        /* bottom: 0; */-->
+<!--        z-index: 10;-->
+<!--        opacity: 0;-->
+<!--    " id="testerino">-->
+<!--    <img src="/images/web.png" alt="" style="position: fixed; left: -25px; bottom: -25px; z-index: 1; pointer-events: none;" />-->
 </div>
 
 <script src="/bower_components/material-design-lite/material.min.js"></script>
@@ -27,7 +27,9 @@
 <script src="/3rd-party/imagefill/imagesLoaded.js"></script>
 <script src="/3rd-party/imagefill/jquery-imagefill.js"></script>
 
-<script type="text/javascript">
+<?php
+/*
+ * <script type="text/javascript">
 $(function() {
     var ghost = $('#testerino');
     var toggle = false;
@@ -113,6 +115,8 @@ $(function() {
     }, 50);
 });
 </script>
+ */
+?>
 
 <?php
 require_once(ROOT.'/includes/message.php');

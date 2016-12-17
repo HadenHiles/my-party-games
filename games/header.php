@@ -8,7 +8,7 @@
     require_once(ROOT.'/includes/common_header_includes.php');
     ?>
 
-    <link rel="stylesheet" href="/games/halloween.css" />
+    <link rel="stylesheet" href="/games/android.css" />
     <link rel="stylesheet" href="/games/baseline.css" />
     <link rel="stylesheet" href="/games/info.css" />
 </head>
